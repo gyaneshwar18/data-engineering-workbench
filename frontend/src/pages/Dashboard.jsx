@@ -1,15 +1,17 @@
 import MetricCard from "../components/MetricCard";
-import Panel from "../components/Panel";
 import ProfileSnapshotCard from "../components/ProfileSnapshotCard";
+import QueryChart from "../components/QueryChart";
+import GithubHeatmap from "../components/GithubHeatmap";
 
 export default function Dashboard() {
   return (
     <div>
 
       <h1 className="text-2xl font-bold mb-6">
-        Dashboard
+        Dashboard Overview
       </h1>
 
+      {/* Metrics */}
       <div className="grid grid-cols-12 gap-6 mb-6">
 
         <div className="col-span-3">
@@ -25,15 +27,24 @@ export default function Dashboard() {
         </div>
 
         <div className="col-span-3">
-          <MetricCard title="APIs" value="3"/>
+          <MetricCard title="API Sources" value="3"/>
         </div>
 
+      </div>
+
+      {/* Charts + Profile */}
+      <div className="grid grid-cols-12 gap-6">
+
         <div className="col-span-8">
-          <Panel title="Query Growth Chart"/>
+          <QueryChart />
         </div>
 
         <div className="col-span-4">
-          <ProfileSnapshotCard/>
+          <ProfileSnapshotCard />
+        </div>
+
+        <div className="col-span-8">
+          <GithubHeatmap />
         </div>
 
       </div>
