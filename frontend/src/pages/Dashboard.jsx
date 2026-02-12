@@ -7,12 +7,12 @@ export default function Dashboard() {
   return (
     <div>
 
-      <h1 className="text-2xl font-bold mb-6">
+      <h1 className="text-2xl font-bold mb-8">
         Dashboard Overview
       </h1>
 
       {/* Metrics */}
-      <div className="grid grid-cols-12 gap-6 mb-6">
+      <div className="grid grid-cols-12 gap-8 mb-8">
 
         <div className="col-span-3">
           <MetricCard title="SQL Queries" value="128"/>
@@ -33,7 +33,7 @@ export default function Dashboard() {
       </div>
 
       {/* Charts + Profile */}
-      <div className="grid grid-cols-12 gap-6">
+      <div className="grid grid-cols-12 gap-8">
 
         <div className="col-span-8">
           <QueryChart />

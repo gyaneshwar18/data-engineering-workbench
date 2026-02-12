@@ -1,6 +1,8 @@
+import { motion } from "framer-motion";
+
 export default function ProjectCard({ title, problem, tech, impact }) {
   return (
-    <div className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
+    <motion.div whileHover={{ y: -6 }}>
 
       <h3 className="font-semibold text-lg mb-2">
         {title}
@@ -37,6 +39,6 @@ export default function ProjectCard({ title, problem, tech, impact }) {
         </button>
       </div>
 
-    </div>
+    </motion.div>
   );
 }

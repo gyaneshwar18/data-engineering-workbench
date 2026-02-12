@@ -2,7 +2,8 @@ export default function ProfileSnapshotCard() {
   return (
     <div className="bg-white rounded-xl shadow p-6">
 
-      <h3 className="font-semibold mb-4">
+      <h3 className="text-gray-800 font-semibold tracking-tight mb-4">
+
         Profile Snapshot
       </h3>
 

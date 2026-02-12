@@ -19,8 +19,18 @@ const data = [
 
 export default function QueryChart() {
   return (
-    <div className="bg-white p-6 rounded-xl shadow h-72">
-      <h3 className="font-semibold mb-4">
+    <div className="
+  bg-white/90 backdrop-blur
+  p-6 rounded-2xl
+  border border-gray-100
+  shadow-sm hover:shadow-md
+  transition
+  h-80
+">
+
+     <h3 className="text-gray-800 font-semibold tracking-tight mb-4">
+
+
         SQL Practice Trend
       </h3>
 

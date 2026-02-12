@@ -15,7 +15,8 @@ export default function AppLayout({ children }) {
         <Topbar />
 
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto bg-gray-100 p-6">
+        <main className="flex-1 overflow-y-auto bg-linear-to-br from-gray-100 to-gray-200 p-8">
+
           {children}
         </main>
 
