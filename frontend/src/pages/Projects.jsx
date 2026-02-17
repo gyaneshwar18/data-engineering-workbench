@@ -5,32 +5,40 @@ export default function Projects() {
   const projects = [
     {
       title: "API → ETL → SQL Analytics Pipeline",
-      problem: "Built automated ingestion and SQL analytics pipeline",
-      tech: ["Python", "PostgreSQL", "ETL"],
-      impact: "Processed 1M+ rows"
+      problem: "Automated ingestion, transformation, and analytics pipeline for multi-source datasets",
+      tech: ["Python", "PostgreSQL", "ETL", "API"],
+      impact: "Processed 1M+ rows daily",
+      status: "Production"
     },
     {
       title: "SQL Optimization Lab",
-      problem: "Advanced joins + window function optimization",
-      tech: ["SQL", "Performance"],
-      impact: "40% query speed gain"
+      problem: "Advanced joins and window function optimization experiments",
+      tech: ["SQL", "Indexes", "Performance"],
+      impact: "40% query speed improvement",
+      status: "Research"
     },
     {
-      title: "Data Dashboard Platform",
-      problem: "Analytics UI with live metrics",
-      tech: ["React", "Charts"],
-      impact: "Recruiter portfolio platform"
+      title: "Analytics Dashboard Platform",
+      problem: "Interactive portfolio dashboard with live metrics",
+      tech: ["React", "Charts", "UI"],
+      impact: "Recruiter-focused analytics UI",
+      status: "Live"
     }
   ];
 
   return (
     <div>
 
-      <h1 className="text-2xl font-bold mb-6">
-        Projects — Case Studies
-      </h1>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold tracking-tight text-gray-800 dark:text-gray-100">
+          Projects — Case Studies
+        </h1>
+        <p className="text-sm text-gray-500 mt-2">
+          Real data engineering & analytics implementations
+        </p>
+      </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-3 gap-8">
 
         {projects.map(p => (
           <ProjectCard key={p.title} {...p} />
