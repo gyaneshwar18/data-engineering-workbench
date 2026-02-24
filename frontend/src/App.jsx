@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AppLayout from "./layout/AppLayout";
+import Datasets from "./pages/Datasets";
 
 import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/pipelines" element={<Pipelines />} />
           <Route path="/education" element={<Education />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/datasets" element={<Datasets />} />
         </Routes>
       </AppLayout>
     </BrowserRouter>
