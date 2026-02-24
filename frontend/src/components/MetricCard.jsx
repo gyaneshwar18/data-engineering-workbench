@@ -6,12 +6,12 @@ export default function MetricCard({ title, value }) {
   whileHover={{ y: -6 }}
   transition={{ type: "spring", stiffness: 300 }}
   className="
-    bg-white/90 backdrop-blur
-    rounded-2xl p-6
-    border border-gray-100
-    shadow-sm hover:shadow-md
-    transition
-  "
+  rounded-2xl p-6
+  border border-gray-200 dark:border-gray-800
+  bg-white shadow-sm
+  dark:bg-gray-900
+  transition
+"
 >
 
 

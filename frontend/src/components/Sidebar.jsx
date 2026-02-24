@@ -4,8 +4,6 @@ import {
   FolderKanban,
   Database,
   Workflow,
-  GraduationCap,
-  Mail,
   Table
 } from "lucide-react";
 
@@ -34,65 +32,69 @@ export default function Sidebar() {
           DE Workbench
         </h1>
         <p className="text-xs text-gray-500">
-          Analytics Portfolio
+          Data Platform
         </p>
       </div>
 
+      {/* Navigation */}
       <nav className="space-y-2 text-sm">
 
-        <NavLink to="/" end
+        <NavLink
+          to="/workbench"
+          end
           className={({ isActive }) =>
             `${base} ${isActive ? active : idle}`
-          }>
-          <LayoutDashboard size={18} /> Dashboard
+          }
+        >
+          <LayoutDashboard size={18} />
+          Dashboard
         </NavLink>
 
-        <NavLink to="/projects"
+        <NavLink
+          to="/workbench/projects"
           className={({ isActive }) =>
             `${base} ${isActive ? active : idle}`
-          }>
-          <FolderKanban size={18} /> Projects
+          }
+        >
+          <FolderKanban size={18} />
+          Projects
         </NavLink>
 
-        <NavLink to="/sql-lab"
+        <NavLink
+          to="/workbench/sql-lab"
           className={({ isActive }) =>
             `${base} ${isActive ? active : idle}`
-          }>
-          <Database size={18} /> SQL Lab
+          }
+        >
+          <Database size={18} />
+          SQL Lab
         </NavLink>
 
-        <NavLink to="/pipelines"
+        <NavLink
+          to="/workbench/pipelines"
           className={({ isActive }) =>
             `${base} ${isActive ? active : idle}`
-          }>
-          <Workflow size={18} /> Pipelines
+          }
+        >
+          <Workflow size={18} />
+          Pipelines
         </NavLink>
 
-        <NavLink to="/datasets"
+        <NavLink
+          to="/workbench/datasets"
           className={({ isActive }) =>
             `${base} ${isActive ? active : idle}`
-          }>
-          <Table size={18} /> Datasets
-        </NavLink>
-
-        <NavLink to="/education"
-          className={({ isActive }) =>
-            `${base} ${isActive ? active : idle}`
-          }>
-          <GraduationCap size={18} /> Education
-        </NavLink>
-
-        <NavLink to="/contact"
-          className={({ isActive }) =>
-            `${base} ${isActive ? active : idle}`
-          }>
-          <Mail size={18} /> Contact
+          }
+        >
+          <Table size={18} />
+          Datasets
         </NavLink>
 
       </nav>
 
+      {/* Footer */}
       <div className="mt-auto text-xs text-gray-400 pt-8">
-        v1 Portfolio
+        v2 Workbench
       </div>
 
     </div>

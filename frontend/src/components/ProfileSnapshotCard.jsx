@@ -1,6 +1,11 @@
 export default function ProfileSnapshotCard() {
   return (
-    <div className="bg-white rounded-xl shadow p-6">
+    <div className="
+  rounded-2xl p-6
+  border border-gray-200 dark:border-gray-800
+  bg-white shadow-sm
+  dark:bg-gray-900
+">
 
       <h3 className="text-gray-800 font-semibold tracking-tight mb-4">
 

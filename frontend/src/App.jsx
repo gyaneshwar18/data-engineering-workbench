@@ -1,28 +1,31 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Landing from "./pages/Landing";
 import AppLayout from "./layout/AppLayout";
-import Datasets from "./pages/Datasets";
 
 import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
 import SqlLab from "./pages/SqlLab";
 import Pipelines from "./pages/Pipelines";
-import Education from "./pages/Education";
-import Contact from "./pages/Contact";
+import Datasets from "./pages/Datasets";
 
 export default function App() {
   return (
     <BrowserRouter>
-      <AppLayout>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/sql-lab" element={<SqlLab />} />
-          <Route path="/pipelines" element={<Pipelines />} />
-          <Route path="/education" element={<Education />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/datasets" element={<Datasets />} />
-        </Routes>
-      </AppLayout>
+      <Routes>
+
+        {/* Public Landing */}
+        <Route path="/" element={<Landing />} />
+
+        {/* Workbench Layout */}
+        <Route path="/workbench" element={<AppLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="projects" element={<Projects />} />
+          <Route path="sql-lab" element={<SqlLab />} />
+          <Route path="pipelines" element={<Pipelines />} />
+          <Route path="datasets" element={<Datasets />} />
+        </Route>
+
+      </Routes>
     </BrowserRouter>
   );
 }

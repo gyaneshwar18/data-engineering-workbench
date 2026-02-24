@@ -1,7 +1,8 @@
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
+import { Outlet } from "react-router-dom";
 
-export default function AppLayout({ children }) {
+export default function AppLayout() {
   return (
     <div className="flex h-screen w-full">
 
@@ -21,7 +22,7 @@ export default function AppLayout({ children }) {
   dark:from-gray-950 dark:to-gray-900
 ">
 
-          {children}
+          <Outlet />
         </main>
 
       </div>

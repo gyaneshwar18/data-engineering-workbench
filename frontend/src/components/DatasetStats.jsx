@@ -14,11 +14,8 @@ export default function DatasetStats({ dataset }) {
 function StatCard({ label, value }) {
   return (
     <div className="
-      bg-white/90 backdrop-blur
-      rounded-2xl p-6
-      border border-gray-100
-      shadow-sm
-      dark:bg-gray-900/80 dark:border-gray-800
+     bg-white dark:bg-gray-900
+border border-gray-200 dark:border-gray-800
     ">
       <p className="text-xs uppercase text-gray-500 tracking-wide">
         {label}

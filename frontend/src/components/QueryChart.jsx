@@ -20,11 +20,10 @@ const data = [
 export default function QueryChart() {
   return (
     <div className="
-  bg-white/90 backdrop-blur
-  p-6 rounded-2xl
-  border border-gray-100
-  shadow-sm hover:shadow-md
-  transition
+  rounded-2xl p-6
+  border border-gray-200 dark:border-gray-800
+  bg-white shadow-sm
+  dark:bg-gray-900
   h-80
 ">
 
