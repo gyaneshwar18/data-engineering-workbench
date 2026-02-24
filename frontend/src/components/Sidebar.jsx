@@ -5,7 +5,8 @@ import {
   Database,
   Workflow,
   GraduationCap,
-  Mail
+  Mail,
+  Table
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -40,45 +41,52 @@ export default function Sidebar() {
       <nav className="space-y-2 text-sm">
 
         <NavLink to="/" end
-          className={({isActive}) =>
+          className={({ isActive }) =>
             `${base} ${isActive ? active : idle}`
           }>
-          <LayoutDashboard size={18}/> Dashboard
+          <LayoutDashboard size={18} /> Dashboard
         </NavLink>
 
         <NavLink to="/projects"
-          className={({isActive}) =>
+          className={({ isActive }) =>
             `${base} ${isActive ? active : idle}`
           }>
-          <FolderKanban size={18}/> Projects
+          <FolderKanban size={18} /> Projects
         </NavLink>
 
         <NavLink to="/sql-lab"
-          className={({isActive}) =>
+          className={({ isActive }) =>
             `${base} ${isActive ? active : idle}`
           }>
-          <Database size={18}/> SQL Lab
+          <Database size={18} /> SQL Lab
         </NavLink>
 
         <NavLink to="/pipelines"
-          className={({isActive}) =>
+          className={({ isActive }) =>
             `${base} ${isActive ? active : idle}`
           }>
-          <Workflow size={18}/> Pipelines
+          <Workflow size={18} /> Pipelines
+        </NavLink>
+
+        <NavLink to="/datasets"
+          className={({ isActive }) =>
+            `${base} ${isActive ? active : idle}`
+          }>
+          <Table size={18} /> Datasets
         </NavLink>
 
         <NavLink to="/education"
-          className={({isActive}) =>
+          className={({ isActive }) =>
             `${base} ${isActive ? active : idle}`
           }>
-          <GraduationCap size={18}/> Education
+          <GraduationCap size={18} /> Education
         </NavLink>
 
         <NavLink to="/contact"
-          className={({isActive}) =>
+          className={({ isActive }) =>
             `${base} ${isActive ? active : idle}`
           }>
-          <Mail size={18}/> Contact
+          <Mail size={18} /> Contact
         </NavLink>
 
       </nav>
