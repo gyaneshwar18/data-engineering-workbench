@@ -1,7 +1,7 @@
 export default function GithubHeatmap() {
   return (
     <div
-      className="
+      className="               
         rounded-2xl p-6
         border border-gray-200 dark:border-gray-800
         bg-white shadow-sm
