@@ -1,9 +1,25 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
 import MetricCard from "../components/MetricCard";
 import ProfileSnapshotCard from "../components/ProfileSnapshotCard";
 import QueryChart from "../components/QueryChart";
 import GithubHeatmap from "../components/GithubHeatmap";
 
+
+
 export default function Dashboard() {
+  const [stats, setStats] = useState(null);
+
+useEffect(() => {
+  axios
+    .get("http://127.0.0.1:8000/dashboard/stats")
+    .then((res) => {
+      setStats(res.data);
+    })
+    .catch((err) => {
+      console.error("API Error:", err);
+    });
+}, []);
   return (
     <div>
 
@@ -15,19 +31,19 @@ export default function Dashboard() {
       <div className="grid grid-cols-12 gap-8 mb-8">
 
         <div className="col-span-3">
-          <MetricCard title="SQL Queries" value="128"/>
+          <MetricCard label="SQL Queries" value={stats?.sql_queries ?? 0} />
         </div>
 
         <div className="col-span-3">
-          <MetricCard title="Pipelines" value="6"/>
+          <MetricCard label="Pipelines" value={stats?.pipelines ?? 0} />
         </div>
 
         <div className="col-span-3">
-          <MetricCard title="Datasets" value="14"/>
+          <MetricCard label="Datasets" value={stats?.datasets ?? 0} />
         </div>
 
         <div className="col-span-3">
-          <MetricCard title="API Sources" value="3"/>
+          <MetricCard label="API Sources" value={stats?.api_sources ?? 0} />
         </div>
 
       </div>
