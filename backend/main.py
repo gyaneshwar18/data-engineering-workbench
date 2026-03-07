@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.routes import dashboard
+
 app = FastAPI(title="DE Workbench API")
 
-# Allow frontend (Vite) to access backend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -12,15 +13,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# include routes
+app.include_router(dashboard.router)
+
 @app.get("/")
 def root():
     return {"status": "Backend running successfully"}
-
-@app.get("/dashboard/stats")
-def dashboard_stats():
-    return {
-        "sql_queries": 142,
-        "datasets": 12,
-        "pipelines": 5,
-        "api_sources": 3
-    }
