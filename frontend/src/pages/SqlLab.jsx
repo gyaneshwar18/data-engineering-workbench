@@ -1,9 +1,11 @@
 import { useState } from "react";
+import axios from "axios";
+
 import SqlQueryList from "../components/SqlQueryList";
 import SqlCodeBlock from "../components/SqlCodeBlock";
 import ResultTable from "../components/ResultTable";
 
-const MOCK_QUERIES = [
+const QUERIES = [
   {
     id: 1,
     title: "Top Customers by Revenue",
@@ -14,12 +16,7 @@ FROM orders
 GROUP BY customer_id
 ORDER BY total DESC
 LIMIT 5;`,
-    explanation: "Groups orders and finds highest revenue customers",
-    columns: ["customer_id", "total"],
-    rows: [
-      { customer_id: 101, total: 9200 },
-      { customer_id: 203, total: 8700 }
-    ]
+    explanation: "Groups orders and finds highest revenue customers"
   },
   {
     id: 2,
@@ -29,17 +26,39 @@ LIMIT 5;`,
     sql: `SELECT name, salary,
 RANK() OVER (ORDER BY salary DESC) rnk
 FROM employees;`,
-    explanation: "Uses window function ranking",
-    columns: ["name", "salary", "rnk"],
-    rows: [
-      { name: "A", salary: 90000, rnk: 1 },
-      { name: "B", salary: 85000, rnk: 2 }
-    ]
+    explanation: "Uses window function ranking"
   }
 ];
 
 export default function SqlLab() {
-  const [selected, setSelected] = useState(MOCK_QUERIES[0]);
+
+  const [selected, setSelected] = useState(QUERIES[0]);
+
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const runQuery = async () => {
+
+    setLoading(true);
+
+    try {
+
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/sql-lab/run`,
+        { query: selected.sql }
+      );
+
+      setResult(res.data);
+
+    } catch (err) {
+
+      console.error("SQL execution error:", err);
+      alert("Query execution failed");
+
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div>
@@ -50,16 +69,19 @@ export default function SqlLab() {
 
       <div className="grid grid-cols-12 gap-6">
 
-        {/* LEFT — query list */}
+        {/* LEFT — Query List */}
         <div className="col-span-4">
           <SqlQueryList
-            queries={MOCK_QUERIES}
-            onSelect={setSelected}
+            queries={QUERIES}
+            onSelect={(q) => {
+              setSelected(q);
+              setResult(null);
+            }}
             selectedId={selected.id}
           />
         </div>
 
-        {/* RIGHT — detail */}
+        {/* RIGHT — Query Details */}
         <div className="col-span-8 space-y-4">
 
           <div className="bg-white p-6 rounded-xl shadow">
@@ -74,21 +96,37 @@ export default function SqlLab() {
 
           </div>
 
+          {/* SQL Code */}
           <SqlCodeBlock code={selected.sql} />
 
+          {/* Run Button */}
+          <button
+            onClick={runQuery}
+            className="bg-blue-600 text-white px-6 py-2 rounded"
+          >
+            {loading ? "Running..." : "Run Query"}
+          </button>
+
+          {/* Explanation */}
           <div className="bg-white p-6 rounded-xl shadow">
+
             <h3 className="font-semibold mb-2">
               Explanation
             </h3>
+
             <p className="text-sm text-gray-600">
               {selected.explanation}
             </p>
+
           </div>
 
-          <ResultTable
-            columns={selected.columns}
-            rows={selected.rows}
-          />
+          {/* Results */}
+          {result && (
+            <ResultTable
+              columns={result.columns}
+              rows={result.rows}
+            />
+          )}
 
         </div>
 
