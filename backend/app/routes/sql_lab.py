@@ -6,18 +6,18 @@ from pydantic import BaseModel
 
 router = APIRouter()
 
+
 class SQLQuery(BaseModel):
     query: str
 
 
 @router.post("/sql-lab/run")
 def run_query(payload: SQLQuery, db: Session = Depends(get_db)):
-
     try:
         result = db.execute(text(payload.query))
 
         rows = result.fetchall()
-        columns = result.keys()
+        columns = list(result.keys())   # convert to list
 
         data = [dict(zip(columns, row)) for row in rows]
 
