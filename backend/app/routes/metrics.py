@@ -1,32 +1,30 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from sqlalchemy import text
+from sqlalchemy import func
 from app.database import get_db
+from app.models import QueryHistory
 
 router = APIRouter()
 
+
 @router.get("/metrics/query-stats")
-def query_metrics(db: Session = Depends(get_db)):
+def get_query_metrics(db: Session = Depends(get_db)):
 
-    total = db.execute(text(
-        "SELECT COUNT(*) FROM query_history"
-    )).scalar()
+    total_queries = db.query(func.count(QueryHistory.id)).scalar()
 
-    success = db.execute(text(
-        "SELECT COUNT(*) FROM query_history WHERE status='success'"
-    )).scalar()
+    successful_queries = db.query(func.count(QueryHistory.id))\
+        .filter(QueryHistory.status == "success")\
+        .scalar()
 
-    avg_time = db.execute(text(
-        "SELECT AVG(execution_time) FROM query_history"
-    )).scalar()
+    avg_execution_time = db.query(func.avg(QueryHistory.execution_time)).scalar()
 
-    last_query = db.execute(text(
-        "SELECT query FROM query_history ORDER BY created_at DESC LIMIT 1"
-    )).scalar()
+    last_query = db.query(QueryHistory.query)\
+        .order_by(QueryHistory.created_at.desc())\
+        .first()
 
     return {
-        "total_queries": total,
-        "successful_queries": success,
-        "avg_execution_time": avg_time,
-        "last_query": last_query
+        "total_queries": total_queries,
+        "successful_queries": successful_queries,
+        "avg_execution_time": avg_execution_time,
+        "last_query": last_query[0] if last_query else None
     }

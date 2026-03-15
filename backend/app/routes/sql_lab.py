@@ -3,8 +3,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.database import get_db
+from app.models import QueryHistory
 
 router = APIRouter()
+
 
 @router.post("/sql-lab/run")
 def run_query(payload: dict, db: Session = Depends(get_db)):
@@ -14,10 +16,9 @@ def run_query(payload: dict, db: Session = Depends(get_db)):
     if not query.lower().startswith("select"):
         raise HTTPException(status_code=400, detail="Only SELECT queries allowed")
 
-    start = time.time()
+    start_time = time.time()
 
     try:
-
         result = db.execute(text(query))
 
         rows = result.fetchall()
@@ -25,20 +26,15 @@ def run_query(payload: dict, db: Session = Depends(get_db)):
 
         data = [dict(zip(columns, row)) for row in rows]
 
-        execution_time = time.time() - start
+        execution_time = time.time() - start_time
 
-        db.execute(
-            text("""
-                INSERT INTO query_history(query, execution_time, status)
-                VALUES(:query, :execution_time, :status)
-            """),
-            {
-                "query": query,
-                "execution_time": execution_time,
-                "status": "success"
-            }
+        history = QueryHistory(
+            query=query,
+            execution_time=execution_time,
+            status="success"
         )
 
+        db.add(history)
         db.commit()
 
         return {
@@ -48,20 +44,15 @@ def run_query(payload: dict, db: Session = Depends(get_db)):
 
     except Exception as e:
 
-        execution_time = time.time() - start
+        execution_time = time.time() - start_time
 
-        db.execute(
-            text("""
-                INSERT INTO query_history(query, execution_time, status)
-                VALUES(:query, :execution_time, :status)
-            """),
-            {
-                "query": query,
-                "execution_time": execution_time,
-                "status": "failed"
-            }
+        history = QueryHistory(
+            query=query,
+            execution_time=execution_time,
+            status="failed"
         )
 
+        db.add(history)
         db.commit()
 
         raise HTTPException(status_code=400, detail=str(e))

@@ -5,6 +5,7 @@ from app import models
 from app.routes import dashboard
 from app.routes import metrics
 
+
 # create tables
 models.Base.metadata.create_all(bind=engine)
 
