@@ -5,11 +5,11 @@ from app import models
 from app.routes import dashboard
 from app.routes import metrics
 
-
+app = FastAPI()
 # create tables
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+
 
 # include routes
 app.include_router(dashboard.router)

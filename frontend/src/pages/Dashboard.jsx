@@ -42,6 +42,16 @@ export default function Dashboard() {
 
   }, []);
 
+  const [metrics, setMetrics] = useState(null);
+
+useEffect(() => {
+
+  axios.get(`${import.meta.env.VITE_API_BASE_URL}/metrics/query-stats`)
+    .then(res => setMetrics(res.data))
+    .catch(err => console.error(err));
+
+}, []);
+
   return (
     <div>
 
