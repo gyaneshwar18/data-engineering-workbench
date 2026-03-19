@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 import SqlQueryList from "../components/SqlQueryList";
@@ -36,10 +36,13 @@ export default function SqlLab() {
 
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  
 
   const runQuery = async () => {
 
     setLoading(true);
+    await axios.get(`${import.meta.env.VITE_API_BASE_URL}/sql-lab/history`)
+  .then(res => setHistory(res.data));
 
     try {
 
@@ -59,6 +62,15 @@ export default function SqlLab() {
       setLoading(false);
     }
   };
+
+  const [history, setHistory] = useState([]);
+  useEffect(() => {
+
+  axios.get(`${import.meta.env.VITE_API_BASE_URL}/sql-lab/history`)
+    .then(res => setHistory(res.data))
+    .catch(err => console.error(err));
+
+}, []);
 
   return (
     <div>

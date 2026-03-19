@@ -19,15 +19,13 @@ export default function Dashboard() {
   const [performance, setPerformance] = useState(null);
 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
 
     const fetchData = async () => {
-
       try {
 
-        const [statsRes, metricsRes, performanceRes] = await Promise.all([
+        const [statsRes, metricsRes, perfRes] = await Promise.all([
           axios.get(`${import.meta.env.VITE_API_BASE_URL}/dashboard/stats`),
           axios.get(`${import.meta.env.VITE_API_BASE_URL}/metrics/query-stats`),
           axios.get(`${import.meta.env.VITE_API_BASE_URL}/metrics/query-performance`)
@@ -35,19 +33,13 @@ export default function Dashboard() {
 
         setStats(statsRes.data);
         setMetrics(metricsRes.data);
-        setPerformance(performanceRes.data);
+        setPerformance(perfRes.data);
 
       } catch (err) {
-
-        console.error("Dashboard API Error:", err);
-        setError("Failed to load dashboard data.");
-
+        console.error(err);
       } finally {
-
         setLoading(false);
-
       }
-
     };
 
     fetchData();
@@ -61,83 +53,36 @@ export default function Dashboard() {
         Dashboard Overview
       </h1>
 
-      {error && (
-        <div className="bg-red-500/20 text-red-400 p-4 rounded mb-6">
-          {error}
-        </div>
-      )}
-
-      {/* Dashboard Stats */}
+      {/* ✅ CORE PRODUCT METRICS */}
       <div className="grid grid-cols-12 gap-8 mb-8">
 
         <div className="col-span-3">
-          <MetricCard
-            label="SQL Queries"
-            value={loading ? "..." : stats.sql_queries}
-          />
+          <MetricCard label="SQL Queries" value={stats.sql_queries} />
         </div>
 
         <div className="col-span-3">
-          <MetricCard
-            label="Pipelines"
-            value={loading ? "..." : stats.pipelines}
-          />
+          <MetricCard label="Pipelines" value={stats.pipelines} />
         </div>
 
         <div className="col-span-3">
-          <MetricCard
-            label="Datasets"
-            value={loading ? "..." : stats.datasets}
-          />
+          <MetricCard label="Datasets" value={stats.datasets} />
         </div>
 
         <div className="col-span-3">
-          <MetricCard
-            label="API Sources"
-            value={loading ? "..." : stats.api_sources}
-          />
+          <MetricCard label="API Sources" value={stats.api_sources} />
         </div>
 
       </div>
 
-      {/* Query Metrics */}
-      <div className="grid grid-cols-12 gap-8 mb-8">
 
-        <div className="col-span-3">
-          <MetricCard
-            label="Total Queries"
-            value={loading ? "..." : metrics?.total_queries}
-          />
-        </div>
-
-        <div className="col-span-3">
-          <MetricCard
-            label="Successful Queries"
-            value={loading ? "..." : metrics?.successful_queries}
-          />
-        </div>
-
-        <div className="col-span-3">
-          <MetricCard
-            label="Avg Execution Time"
-            value={loading ? "..." : metrics?.avg_execution_time?.toFixed(3)}
-          />
-        </div>
-
-        <div className="col-span-3">
-          <MetricCard
-            label="Last Query"
-            value={loading ? "..." : metrics?.last_query}
-          />
-        </div>
-
-      </div>
-
-      {/* Charts + Profile */}
+      {/* 🔥 REAL PERFORMANCE CHART */}
       <div className="grid grid-cols-12 gap-8">
 
         <div className="col-span-8">
-          <QueryChart data={performance?.queries_per_day} />
+          <QueryChart
+  data={performance?.queries_per_day}
+  metrics={metrics}
+/>
         </div>
 
         <div className="col-span-4">
