@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-
+import QueryHistoryPanel from "../components/QueryHistoryPanel";
 import SqlQueryList from "../components/SqlQueryList";
 import SqlCodeBlock from "../components/SqlCodeBlock";
 import ResultTable from "../components/ResultTable";
@@ -33,19 +33,31 @@ FROM employees;`,
 export default function SqlLab() {
 
   const [selected, setSelected] = useState(QUERIES[0]);
-
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
-  
+  const [history, setHistory] = useState([]);
 
+  // Fetch history ONCE
+  useEffect(() => {
+    fetchHistory();
+  }, []);
+
+  const fetchHistory = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/sql-lab/history`
+      );
+      setHistory(res.data);
+    } catch (err) {
+      console.error("Error fetching history", err);
+    }
+  };
+
+  // Run query
   const runQuery = async () => {
-
     setLoading(true);
-    await axios.get(`${import.meta.env.VITE_API_BASE_URL}/sql-lab/history`)
-  .then(res => setHistory(res.data));
 
     try {
-
       const res = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/sql-lab/run`,
         { query: selected.sql }
@@ -53,24 +65,25 @@ export default function SqlLab() {
 
       setResult(res.data);
 
-    } catch (err) {
+      // Refresh history after execution
+      fetchHistory();
 
+    } catch (err) {
       console.error("SQL execution error:", err);
       alert("Query execution failed");
-
     } finally {
       setLoading(false);
     }
   };
 
-  const [history, setHistory] = useState([]);
-  useEffect(() => {
-
-  axios.get(`${import.meta.env.VITE_API_BASE_URL}/sql-lab/history`)
-    .then(res => setHistory(res.data))
-    .catch(err => console.error(err));
-
-}, []);
+  // 🔁 Run Again logic (VERY IMPORTANT)
+  const handleRunAgain = (query) => {
+    setSelected({
+      ...selected,
+      sql: query
+    });
+    setResult(null);
+  };
 
   return (
     <div>
@@ -97,7 +110,6 @@ export default function SqlLab() {
         <div className="col-span-8 space-y-4">
 
           <div className="bg-white p-6 rounded-xl shadow">
-
             <h2 className="font-semibold text-lg">
               {selected.title}
             </h2>
@@ -105,7 +117,6 @@ export default function SqlLab() {
             <span className="text-xs bg-gray-200 px-2 py-1 rounded">
               {selected.difficulty}
             </span>
-
           </div>
 
           {/* SQL Code */}
@@ -121,7 +132,6 @@ export default function SqlLab() {
 
           {/* Explanation */}
           <div className="bg-white p-6 rounded-xl shadow">
-
             <h3 className="font-semibold mb-2">
               Explanation
             </h3>
@@ -129,7 +139,6 @@ export default function SqlLab() {
             <p className="text-sm text-gray-600">
               {selected.explanation}
             </p>
-
           </div>
 
           {/* Results */}
@@ -140,10 +149,11 @@ export default function SqlLab() {
             />
           )}
 
+          {/* 🔥 Query History Panel */}
+          <QueryHistoryPanel onRunAgain={handleRunAgain} />
+
         </div>
-
       </div>
-
     </div>
   );
 }
