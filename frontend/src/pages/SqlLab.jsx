@@ -33,11 +33,12 @@ FROM employees;`,
 export default function SqlLab() {
 
   const [selected, setSelected] = useState(QUERIES[0]);
+  const [sqlQuery, setSqlQuery] = useState(QUERIES[0].sql);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState([]);
 
-  // Fetch history ONCE
+  // Fetch history
   useEffect(() => {
     fetchHistory();
   }, []);
@@ -60,28 +61,23 @@ export default function SqlLab() {
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/sql-lab/run`,
-        { query: selected.sql }
+        { query: sqlQuery }   // ✅ FIXED
       );
 
       setResult(res.data);
-
-      // Refresh history after execution
       fetchHistory();
 
     } catch (err) {
       console.error("SQL execution error:", err);
-      alert("Query execution failed");
+      alert(err.response?.data?.detail || "Query execution failed");
     } finally {
       setLoading(false);
     }
   };
 
-  // 🔁 Run Again logic (VERY IMPORTANT)
+  // Run Again
   const handleRunAgain = (query) => {
-    setSelected({
-      ...selected,
-      sql: query
-    });
+    setSqlQuery(query);   // ✅ FIXED
     setResult(null);
   };
 
@@ -94,49 +90,74 @@ export default function SqlLab() {
 
       <div className="grid grid-cols-12 gap-6">
 
-        {/* LEFT — Query List */}
-        <div className="col-span-4">
+        {/* LEFT */}
+        <div className="col-span-3">
           <SqlQueryList
             queries={QUERIES}
             onSelect={(q) => {
               setSelected(q);
+              setSqlQuery(q.sql);
               setResult(null);
             }}
             selectedId={selected.id}
           />
         </div>
 
-        {/* RIGHT — Query Details */}
-        <div className="col-span-8 space-y-4">
+        {/* RIGHT */}
+        <div className="col-span-9 space-y-6">
 
-          <div className="bg-white p-6 rounded-xl shadow">
-            <h2 className="font-semibold text-lg">
-              {selected.title}
-            </h2>
+          {/* Header */}
+          <div className="bg-gray-900 border border-gray-800 p-5 rounded-xl">
+            <div className="flex justify-between items-center">
 
-            <span className="text-xs bg-gray-200 px-2 py-1 rounded">
-              {selected.difficulty}
-            </span>
+              <div>
+                <h2 className="font-semibold text-lg text-white">
+                  {selected.title}
+                </h2>
+                <p className="text-sm text-gray-400">
+                  {selected.category}
+                </p>
+              </div>
+
+              {/* ✅ FIXED BADGE */}
+              <span
+                className={`text-xs px-2 py-1 rounded font-medium
+                  ${
+                    selected.difficulty === "Easy"
+                      ? "bg-green-600/20 text-green-400"
+                      : selected.difficulty === "Medium"
+                      ? "bg-yellow-600/20 text-yellow-400"
+                      : "bg-red-600/20 text-red-400"
+                  }
+                `}
+              >
+                {selected.difficulty}
+              </span>
+
+            </div>
           </div>
 
-          {/* SQL Code */}
-          <SqlCodeBlock code={selected.sql} />
+          {/* ✅ EDITABLE SQL */}
+          <SqlCodeBlock
+            code={sqlQuery}
+            onChange={setSqlQuery}
+          />
 
-          {/* Run Button */}
+          {/* Run */}
           <button
             onClick={runQuery}
-            className="bg-blue-600 text-white px-6 py-2 rounded"
+            className="bg-blue-600 hover:bg-blue-700 transition px-6 py-2 rounded-lg text-white"
           >
             {loading ? "Running..." : "Run Query"}
           </button>
 
           {/* Explanation */}
-          <div className="bg-white p-6 rounded-xl shadow">
-            <h3 className="font-semibold mb-2">
+          <div className="bg-gray-900 border border-gray-800 p-5 rounded-xl">
+            <h3 className="font-semibold mb-2 text-white">
               Explanation
             </h3>
 
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-400">
               {selected.explanation}
             </p>
           </div>
@@ -149,7 +170,7 @@ export default function SqlLab() {
             />
           )}
 
-          {/* 🔥 Query History Panel */}
+          {/* History */}
           <QueryHistoryPanel onRunAgain={handleRunAgain} />
 
         </div>

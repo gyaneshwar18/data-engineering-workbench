@@ -8,20 +8,22 @@ export default function QueryHistoryPanel({ onRunAgain }) {
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
 
-  // Fetch history
-  useEffect(() => {
-    fetchHistory();
-  }, []);
+  const API = import.meta.env.VITE_API_BASE_URL;
 
+  // Fetch history
   const fetchHistory = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/sql-lab/history");
+      const res = await axios.get(`${API}/sql-lab/history`);
       setHistory(res.data);
       setFiltered(res.data);
     } catch (err) {
       console.error("Error fetching history", err);
     }
   };
+
+  useEffect(() => {
+    fetchHistory();
+  }, []);
 
   // Filter + Search Logic
   useEffect(() => {
@@ -40,8 +42,14 @@ export default function QueryHistoryPanel({ onRunAgain }) {
     setFiltered(data);
   }, [filter, search, history]);
 
+  // Copy query
+  const handleCopy = (query) => {
+    navigator.clipboard.writeText(query);
+  };
+
   return (
     <div className="bg-gray-900 p-5 rounded-2xl shadow-lg mt-6">
+
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between gap-4 mb-4">
         <h2 className="text-xl font-semibold text-white">
@@ -77,7 +85,8 @@ export default function QueryHistoryPanel({ onRunAgain }) {
               <th className="py-2">Query</th>
               <th>Time (s)</th>
               <th>Status</th>
-              <th>Run</th>
+              <th>Executed At</th>
+              <th>Actions</th>
             </tr>
           </thead>
 
@@ -89,12 +98,15 @@ export default function QueryHistoryPanel({ onRunAgain }) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
               >
+                {/* Query */}
                 <td className="py-2 max-w-xs truncate">
                   {q.query}
                 </td>
 
-                <td>{q.execution_time}</td>
+                {/* Time */}
+                <td>{q.execution_time?.toFixed(3)}</td>
 
+                {/* Status */}
                 <td>
                   <span
                     className={`px-2 py-1 rounded text-xs ${
@@ -107,12 +119,25 @@ export default function QueryHistoryPanel({ onRunAgain }) {
                   </span>
                 </td>
 
+                {/* Timestamp */}
                 <td>
+                  {new Date(q.created_at).toLocaleString()}
+                </td>
+
+                {/* Actions */}
+                <td className="flex gap-2">
                   <button
                     onClick={() => onRunAgain(q.query)}
-                    className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-xs"
+                    className="bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded text-xs"
                   >
-                    Run Again
+                    Run
+                  </button>
+
+                  <button
+                    onClick={() => handleCopy(q.query)}
+                    className="bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-xs"
+                  >
+                    Copy
                   </button>
                 </td>
               </motion.tr>
@@ -121,6 +146,7 @@ export default function QueryHistoryPanel({ onRunAgain }) {
         </table>
       </div>
 
+      {/* Empty state */}
       {filtered.length === 0 && (
         <p className="text-gray-500 text-center mt-4">
           No queries found
