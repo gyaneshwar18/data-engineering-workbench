@@ -38,9 +38,13 @@ export default function ChartRenderer({ columns, rows }) {
     if (isNumeric) {
 
       // 🔵 LINE CHART detection (date-like)
-      const isDateLike = rows.every(row =>
-        !isNaN(Date.parse(row[xKey]))
-      );
+      const isDateLike = rows.every(row => {
+  const value = row[xKey];
+  return (
+    typeof value === "string" &&
+    /^\d{4}-\d{2}-\d{2}/.test(value)
+  );
+});
 
       if (isDateLike) {
         return (
