@@ -10,7 +10,7 @@ export default function QueryHistoryPanel({ onRunAgain }) {
 
   const API = import.meta.env.VITE_API_BASE_URL;
 
-  // Fetch history
+  // ✅ Fetch history ONLY once
   const fetchHistory = async () => {
     try {
       const res = await axios.get(`${API}/sql-lab/history`);
@@ -25,7 +25,7 @@ export default function QueryHistoryPanel({ onRunAgain }) {
     fetchHistory();
   }, []);
 
-  // Filter + Search Logic
+  // ✅ Filter + Search
   useEffect(() => {
     let data = [...history];
 
@@ -98,15 +98,12 @@ export default function QueryHistoryPanel({ onRunAgain }) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
               >
-                {/* Query */}
                 <td className="py-2 max-w-xs truncate">
                   {q.query}
                 </td>
 
-                {/* Time */}
                 <td>{q.execution_time?.toFixed(3)}</td>
 
-                {/* Status */}
                 <td>
                   <span
                     className={`px-2 py-1 rounded text-xs ${
@@ -119,12 +116,10 @@ export default function QueryHistoryPanel({ onRunAgain }) {
                   </span>
                 </td>
 
-                {/* Timestamp */}
                 <td>
                   {new Date(q.created_at).toLocaleString()}
                 </td>
 
-                {/* Actions */}
                 <td className="flex gap-2">
                   <button
                     onClick={() => onRunAgain(q.query)}
@@ -146,7 +141,7 @@ export default function QueryHistoryPanel({ onRunAgain }) {
         </table>
       </div>
 
-      {/* Empty state */}
+      {/* Empty */}
       {filtered.length === 0 && (
         <p className="text-gray-500 text-center mt-4">
           No queries found

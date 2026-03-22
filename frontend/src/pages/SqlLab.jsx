@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import QueryHistoryPanel from "../components/QueryHistoryPanel";
 import SqlQueryList from "../components/SqlQueryList";
@@ -16,8 +16,7 @@ const QUERIES = [
 FROM orders
 GROUP BY customer_id
 ORDER BY total DESC
-LIMIT 5;`,
-    explanation: "Groups orders and finds highest revenue customers"
+LIMIT 5;`
   },
   {
     id: 2,
@@ -26,8 +25,7 @@ LIMIT 5;`,
     difficulty: "Hard",
     sql: `SELECT name, salary,
 RANK() OVER (ORDER BY salary DESC) rnk
-FROM employees;`,
-    explanation: "Uses window function ranking"
+FROM employees;`
   }
 ];
 
@@ -38,37 +36,48 @@ export default function SqlLab() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Run query
+  const API = import.meta.env.VITE_API_BASE_URL;
+
   const runQuery = async () => {
+    console.log("API URL:", API);        // ✅ ADD HERE
+  console.log("Query:", sqlQuery);     // ✅ ADD HERE
+
+    if (!sqlQuery.trim()) {
+      alert("Query is empty");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/sql-lab/run`,
-        { query: sqlQuery }
-      );
+      const res = await axios.post(`${API}/sql-lab/run`, {
+        query: sqlQuery
+      });
 
       setResult(res.data);
 
     } catch (err) {
-      console.error("SQL execution error:", err);
-      alert(err.response?.data?.detail || "Query execution failed");
+      console.error(err);
+      console.log("FULL ERROR:", err);
+console.log("RESPONSE:", err.response);
+
+alert(JSON.stringify(err.response?.data));
     } finally {
       setLoading(false);
     }
   };
 
-  // Run Again
   const handleRunAgain = (query) => {
     setSqlQuery(query);
     setResult(null);
   };
+  
 
   return (
-    <div>
+    <div className="p-6">
 
-      <h1 className="text-2xl font-bold mb-6">
-        SQL Lab — Query Showcase
+      <h1 className="text-2xl font-bold mb-6 text-white">
+        SQL Lab
       </h1>
 
       <div className="grid grid-cols-12 gap-6">
@@ -77,82 +86,39 @@ export default function SqlLab() {
         <div className="col-span-3">
           <SqlQueryList
             queries={QUERIES}
+            selectedId={selected.id}
             onSelect={(q) => {
               setSelected(q);
               setSqlQuery(q.sql);
               setResult(null);
             }}
-            selectedId={selected.id}
           />
         </div>
 
         {/* RIGHT */}
         <div className="col-span-9 space-y-6">
 
-          {/* Header */}
-          <div className="bg-gray-900 border border-gray-800 p-5 rounded-xl">
-            <div className="flex justify-between items-center">
-
-              <div>
-                <h2 className="font-semibold text-lg text-white">
-                  {selected.title}
-                </h2>
-                <p className="text-sm text-gray-400">
-                  {selected.category}
-                </p>
-              </div>
-
-              <span
-                className={`text-xs px-2 py-1 rounded font-medium
-                  ${
-                    selected.difficulty === "Easy"
-                      ? "bg-green-600/20 text-green-400"
-                      : selected.difficulty === "Medium"
-                      ? "bg-yellow-600/20 text-yellow-400"
-                      : "bg-red-600/20 text-red-400"
-                  }
-                `}
-              >
-                {selected.difficulty}
-              </span>
-
-            </div>
+          {/* HEADER */}
+          <div className="bg-gray-900 border border-gray-800 p-4 rounded-xl">
+            <h2 className="text-white font-semibold">{selected.title}</h2>
           </div>
 
-          {/* SQL Editor */}
+          {/* EDITOR */}
           <SqlCodeBlock code={sqlQuery} onChange={setSqlQuery} />
 
-          {/* Run */}
+          {/* RUN */}
           <button
             onClick={runQuery}
-            className="bg-blue-600 hover:bg-blue-700 transition px-6 py-2 rounded-lg text-white"
+            className="bg-blue-600 px-6 py-2 rounded text-white"
           >
             {loading ? "Running..." : "Run Query"}
           </button>
 
-          {/* Explanation */}
-          <div className="bg-gray-900 border border-gray-800 p-5 rounded-xl">
-            <h3 className="font-semibold mb-2 text-white">
-              Explanation
-            </h3>
-
-            <p className="text-sm text-gray-400">
-              {selected.explanation}
-            </p>
-          </div>
-
-          {/* RESULT + CHART */}
+          {/* RESULT */}
           {result && (
             <>
-              <ResultTable
-                columns={result.columns}
-                rows={result.rows}
-              />
-
-              <ChartRenderer
-                columns={result.columns}
-                rows={result.rows}
-              />
+              <ResultTable columns={result.columns} rows={result.rows} />
+              <ChartRenderer columns={result.columns} rows={result.rows} />
             </>
           )}
 
