@@ -4,6 +4,7 @@ import QueryHistoryPanel from "../components/QueryHistoryPanel";
 import SqlQueryList from "../components/SqlQueryList";
 import SqlCodeBlock from "../components/SqlCodeBlock";
 import ResultTable from "../components/ResultTable";
+import ChartRenderer from "../components/ChartRenderer";
 
 const QUERIES = [
   {
@@ -36,23 +37,6 @@ export default function SqlLab() {
   const [sqlQuery, setSqlQuery] = useState(QUERIES[0].sql);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [history, setHistory] = useState([]);
-
-  // Fetch history
-  useEffect(() => {
-    fetchHistory();
-  }, []);
-
-  const fetchHistory = async () => {
-    try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/sql-lab/history`
-      );
-      setHistory(res.data);
-    } catch (err) {
-      console.error("Error fetching history", err);
-    }
-  };
 
   // Run query
   const runQuery = async () => {
@@ -61,11 +45,10 @@ export default function SqlLab() {
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/sql-lab/run`,
-        { query: sqlQuery }   // ✅ FIXED
+        { query: sqlQuery }
       );
 
       setResult(res.data);
-      fetchHistory();
 
     } catch (err) {
       console.error("SQL execution error:", err);
@@ -77,7 +60,7 @@ export default function SqlLab() {
 
   // Run Again
   const handleRunAgain = (query) => {
-    setSqlQuery(query);   // ✅ FIXED
+    setSqlQuery(query);
     setResult(null);
   };
 
@@ -119,7 +102,6 @@ export default function SqlLab() {
                 </p>
               </div>
 
-              {/* ✅ FIXED BADGE */}
               <span
                 className={`text-xs px-2 py-1 rounded font-medium
                   ${
@@ -137,11 +119,8 @@ export default function SqlLab() {
             </div>
           </div>
 
-          {/* ✅ EDITABLE SQL */}
-          <SqlCodeBlock
-            code={sqlQuery}
-            onChange={setSqlQuery}
-          />
+          {/* SQL Editor */}
+          <SqlCodeBlock code={sqlQuery} onChange={setSqlQuery} />
 
           {/* Run */}
           <button
@@ -162,15 +141,22 @@ export default function SqlLab() {
             </p>
           </div>
 
-          {/* Results */}
+          {/* RESULT + CHART */}
           {result && (
-            <ResultTable
-              columns={result.columns}
-              rows={result.rows}
-            />
+            <>
+              <ResultTable
+                columns={result.columns}
+                rows={result.rows}
+              />
+
+              <ChartRenderer
+                columns={result.columns}
+                rows={result.rows}
+              />
+            </>
           )}
 
-          {/* History */}
+          {/* HISTORY */}
           <QueryHistoryPanel onRunAgain={handleRunAgain} />
 
         </div>
