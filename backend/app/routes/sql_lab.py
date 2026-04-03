@@ -56,3 +56,23 @@ def run_query(payload: dict, db: Session = Depends(get_db)):
         db.commit()
 
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/sql-lab/history")
+def get_query_history(db: Session = Depends(get_db)):
+
+    history = db.query(QueryHistory)\
+        .order_by(QueryHistory.created_at.desc())\
+        .limit(20)\
+        .all()
+
+    return [
+        {
+            "id": h.id,
+            "query": h.query,
+            "execution_time": h.execution_time,
+            "status": h.status,
+            "created_at": h.created_at
+        }
+        for h in history
+    ]
