@@ -76,3 +76,4 @@ def get_query_history(db: Session = Depends(get_db)):
         }
         for h in history
     ]
+    
