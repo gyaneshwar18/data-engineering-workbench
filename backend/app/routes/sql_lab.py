@@ -3,7 +3,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.database import get_db
-from app.models import QueryHistory
+from app.models import QueryHistory, SavedQuery
+
 
 router = APIRouter()
 
@@ -76,4 +77,25 @@ def get_query_history(db: Session = Depends(get_db)):
         }
         for h in history
     ]
-    
+
+
+@router.post("/sql-lab/save")
+def save_query(payload: dict, db: Session = Depends(get_db)):
+
+    query = payload["query"]
+
+    new_query = SavedQuery(query=query)
+
+    db.add(new_query)
+    db.commit()
+
+    return {"message": "Query saved successfully"}
+
+@router.get("/sql-lab/saved")
+def get_saved_queries(db: Session = Depends(get_db)):
+
+    queries = db.query(SavedQuery)\
+        .order_by(SavedQuery.created_at.desc())\
+        .all()
+
+    return queries

@@ -21,3 +21,10 @@ class DashboardStats(Base):
     datasets = Column(Integer)
     pipelines = Column(Integer)
     api_sources = Column(Integer)
+
+class SavedQuery(Base):
+    __tablename__ = "saved_queries"
+
+    id = Column(Integer, primary_key=True, index=True)
+    query = Column(Text)
+    created_at = Column(DateTime, default=datetime.utcnow)
