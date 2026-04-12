@@ -5,6 +5,7 @@ import SqlQueryList from "../components/SqlQueryList";
 import SqlCodeBlock from "../components/SqlCodeBlock";
 import ResultTable from "../components/ResultTable";
 import ChartRenderer from "../components/ChartRenderer";
+import SavedQueriesPanel from "../components/SavedQueriesPanel";
 
 const QUERIES = [
   {
@@ -163,6 +164,8 @@ export default function SqlLab() {
 
           {/* HISTORY */}
           <QueryHistoryPanel onRunAgain={handleRunAgain} />
+
+          <SavedQueriesPanel onSelect={setSqlQuery} />
 
         </div>
       </div>
