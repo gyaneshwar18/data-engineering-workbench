@@ -1,10 +1,10 @@
 import time
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.database import get_db
 from app.models import QueryHistory, SavedQuery
-
+import pandas as pd
 
 router = APIRouter()
 
@@ -125,3 +125,24 @@ def toggle_pin(id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return {"message": "Updated"}
+
+@router.post("/sql-lab/upload")
+def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)):
+
+    try:
+        # Read CSV
+        df = pd.read_csv(file.file)
+
+        # Clean table name
+        table_name = file.filename.replace(".csv", "").lower()
+
+        # Save to DB
+        df.to_sql(table_name, db.bind, if_exists="replace", index=False)
+
+        return {
+            "message": f"Table '{table_name}' created successfully",
+            "columns": list(df.columns)
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

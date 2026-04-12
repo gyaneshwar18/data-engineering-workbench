@@ -85,6 +85,76 @@ export default function SqlLab() {
     setResult(null);
   };
 
+  const exportCSV = () => {
+    if (!result || result.rows.length === 0) {
+      alert("No data to export");
+      return;
+    }
+
+    const headers = result.columns.join(",");
+
+    const rows = result.rows.map(row =>
+      result.columns.map(col => row[col]).join(",")
+    );
+
+    const csvContent = [headers, ...rows].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv" });
+
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "query_result.csv";
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+  };
+
+  const uploadCSV = async (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    console.log("Uploading file:", file.name); // 🔍 DEBUG
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await axios.post(
+        `${API}/sql-lab/upload`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        }
+      );
+
+      console.log("Upload response:", res.data); // 🔍 DEBUG
+
+      // ✅ Extract table name
+      const tableName = file.name.replace(".csv", "").toLowerCase();
+
+      // ✅ Store in state (IMPORTANT)
+      setUploadedTable(tableName);
+
+      alert(res.data.message);
+
+      // ✅ Reset file input (IMPORTANT FIX)
+      e.target.value = null;
+
+    } catch (err) {
+      console.error("Upload error:", err);
+      console.log("Response:", err.response);
+
+      alert(err.response?.data?.detail || "Upload failed");
+    }
+  };
+  const [uploadedTable, setUploadedTable] = useState("");
+
+
   return (
     <div className="p-6">
 
@@ -118,8 +188,29 @@ export default function SqlLab() {
 
           <SqlCodeBlock code={sqlQuery} onChange={setSqlQuery} />
 
+          <div className="bg-gray-900 border border-gray-800 p-4 rounded-xl">
+            <p className="text-gray-400 text-sm mb-2">Upload Dataset</p>
+
+            <label className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded text-white cursor-pointer inline-block">
+              Upload CSV
+              <input
+                type="file"
+                accept=".csv"
+                onChange={uploadCSV}
+                className="hidden"
+              />
+            </label>
+            {uploadedTable && (
+              <p className="text-green-400 text-sm mt-2">
+                Table "{uploadedTable}" ready to query ✅
+              </p>
+            )}
+          </div>
+
+
           {/* ACTION BUTTONS */}
           <div className="flex gap-4">
+
             <button onClick={runQuery} className="bg-blue-600 px-6 py-2 rounded text-white">
               {loading ? "Running..." : "Run Query"}
             </button>
@@ -127,7 +218,14 @@ export default function SqlLab() {
             <button onClick={saveQuery} className="bg-yellow-600 px-6 py-2 rounded text-white">
               ⭐ Save
             </button>
+            <button
+              onClick={exportCSV}
+              className="bg-green-600 hover:bg-green-700 px-6 py-2 rounded text-white"
+            >
+              ⬇ Export CSV
+            </button>
           </div>
+
 
           {/* ⭐ CHART SELECTOR */}
           <div className="flex gap-3">
