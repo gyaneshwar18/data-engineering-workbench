@@ -1,90 +1,64 @@
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-  LineChart,
-  Line
+  BarChart, Bar, XAxis, YAxis, Tooltip,
+  ResponsiveContainer, CartesianGrid,
+  LineChart, Line
 } from "recharts";
 
-export default function ChartRenderer({ columns, rows }) {
+export default function ChartRenderer({ columns, rows, chartType }) {
 
   if (!rows || rows.length === 0) return null;
 
-  // 🧠 CASE 1 — KPI (Single value)
-  if (columns.length === 1 && rows.length === 1) {
-    const value = rows[0][columns[0]];
+  const [xKey, yKey] = columns;
 
+  const renderBar = () => (
+    <ResponsiveContainer width="100%" height={300}>
+      <BarChart data={rows}>
+        <CartesianGrid stroke="#444" />
+        <XAxis dataKey={xKey} stroke="#aaa" />
+        <YAxis stroke="#aaa" />
+        <Tooltip />
+        <Bar dataKey={yKey} fill="#3b82f6" />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+
+  const renderLine = () => (
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart data={rows}>
+        <CartesianGrid stroke="#444" />
+        <XAxis dataKey={xKey} stroke="#aaa" />
+        <YAxis stroke="#aaa" />
+        <Tooltip />
+        <Line dataKey={yKey} stroke="#22c55e" />
+      </LineChart>
+    </ResponsiveContainer>
+  );
+
+  // ❌ No chart
+  if (chartType === "none") return null;
+
+  // 🔵 Manual override
+  if (chartType === "bar") return renderBar();
+  if (chartType === "line") return renderLine();
+
+  // 🧠 AUTO MODE
+
+  // KPI
+  if (columns.length === 1 && rows.length === 1) {
     return (
-      <div className="bg-gray-900 border border-gray-800 p-6 rounded-xl mt-6 text-center">
-        <h3 className="text-gray-400 mb-2">KPI</h3>
-        <p className="text-3xl font-bold text-blue-400">
-          {value}
+      <div className="bg-gray-900 p-6 rounded-xl text-center mt-6">
+        <p className="text-3xl text-blue-400 font-bold">
+          {rows[0][columns[0]]}
         </p>
       </div>
     );
   }
 
-  // 🧠 CASE 2 — Two columns
   if (columns.length === 2) {
-    const [xKey, yKey] = columns;
+    const isDate = typeof rows[0][xKey] === "string" &&
+      /^\d{4}-\d{2}-\d{2}/.test(rows[0][xKey]);
 
-    const isNumeric = typeof rows[0][yKey] === "number";
-
-    // 🟢 BAR CHART
-    if (isNumeric) {
-
-      // 🔵 LINE CHART detection (date-like)
-      const isDateLike = rows.every(row => {
-  const value = row[xKey];
-  return (
-    typeof value === "string" &&
-    /^\d{4}-\d{2}-\d{2}/.test(value)
-  );
-});
-
-      if (isDateLike) {
-        return (
-          <div className="bg-gray-900 border border-gray-800 p-4 rounded-xl mt-6">
-            <h3 className="text-white mb-3 font-semibold">
-              Trend
-            </h3>
-
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={rows}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-                <XAxis dataKey={xKey} stroke="#aaa" />
-                <YAxis stroke="#aaa" />
-                <Tooltip />
-                <Line type="monotone" dataKey={yKey} stroke="#22c55e" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        );
-      }
-
-      // 📊 BAR CHART
-      return (
-        <div className="bg-gray-900 border border-gray-800 p-4 rounded-xl mt-6">
-          <h3 className="text-white mb-3 font-semibold">
-            Distribution
-          </h3>
-
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={rows}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-              <XAxis dataKey={xKey} stroke="#aaa" />
-              <YAxis stroke="#aaa" />
-              <Tooltip />
-              <Bar dataKey={yKey} fill="#3b82f6" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      );
-    }
+    return isDate ? renderLine() : renderBar();
   }
 
   return null;

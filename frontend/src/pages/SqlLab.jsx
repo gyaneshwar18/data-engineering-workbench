@@ -37,11 +37,12 @@ export default function SqlLab() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // ⭐ NEW STATE
+  const [chartType, setChartType] = useState("auto");
+
   const API = import.meta.env.VITE_API_BASE_URL;
 
-  // 🚀 RUN QUERY
   const runQuery = async () => {
-    console.log("API URL:", API);
     console.log("Query:", sqlQuery);
 
     if (!sqlQuery.trim()) {
@@ -56,38 +57,29 @@ export default function SqlLab() {
         query: sqlQuery
       });
 
-      console.log("RESULT:", res.data); // 🔍 DEBUG
-
       setResult(res.data);
 
     } catch (err) {
-      console.error("FULL ERROR:", err);
-      console.error("RESPONSE:", err.response);
-
+      console.error(err);
       alert(err.response?.data?.detail || "Execution failed");
     } finally {
       setLoading(false);
     }
   };
 
-  // ⭐ SAVE QUERY
   const saveQuery = async () => {
     try {
-      console.log("Saving query:", sqlQuery); // 🔍 DEBUG
-
       await axios.post(`${API}/sql-lab/save`, {
         query: sqlQuery
       });
 
-      alert("Query saved successfully ⭐");
+      alert("Saved ⭐");
 
-    } catch (err) {
-      console.error("SAVE ERROR:", err);
-      alert("Failed to save query");
+    } catch {
+      alert("Save failed");
     }
   };
 
-  // 🔁 RUN AGAIN
   const handleRunAgain = (query) => {
     setSqlQuery(query);
     setResult(null);
@@ -102,7 +94,7 @@ export default function SqlLab() {
 
       <div className="grid grid-cols-12 gap-6">
 
-        {/* LEFT PANEL */}
+        {/* LEFT */}
         <div className="col-span-3">
           <SqlQueryList
             queries={QUERIES}
@@ -115,56 +107,58 @@ export default function SqlLab() {
           />
         </div>
 
-        {/* RIGHT PANEL */}
+        {/* RIGHT */}
         <div className="col-span-9 space-y-6">
 
-          {/* HEADER */}
-          <div className="bg-gray-900 border border-gray-800 p-4 rounded-xl">
+          <div className="bg-gray-900 border p-4 rounded-xl">
             <h2 className="text-white font-semibold">
               {selected.title}
             </h2>
           </div>
 
-          {/* SQL EDITOR */}
           <SqlCodeBlock code={sqlQuery} onChange={setSqlQuery} />
 
           {/* ACTION BUTTONS */}
           <div className="flex gap-4">
-
-            <button
-              onClick={runQuery}
-              className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded text-white"
-            >
+            <button onClick={runQuery} className="bg-blue-600 px-6 py-2 rounded text-white">
               {loading ? "Running..." : "Run Query"}
             </button>
 
-            <button
-              onClick={saveQuery}
-              className="bg-yellow-600 hover:bg-yellow-700 px-6 py-2 rounded text-white"
-            >
-              ⭐ Save Query
+            <button onClick={saveQuery} className="bg-yellow-600 px-6 py-2 rounded text-white">
+              ⭐ Save
             </button>
-
           </div>
 
-          {/* RESULT + CHART */}
+          {/* ⭐ CHART SELECTOR */}
+          <div className="flex gap-3">
+            <button onClick={() => setChartType("auto")} className="bg-gray-700 px-3 py-1 rounded text-white text-sm">
+              Auto
+            </button>
+            <button onClick={() => setChartType("bar")} className="bg-blue-600 px-3 py-1 rounded text-white text-sm">
+              Bar
+            </button>
+            <button onClick={() => setChartType("line")} className="bg-green-600 px-3 py-1 rounded text-white text-sm">
+              Line
+            </button>
+            <button onClick={() => setChartType("none")} className="bg-red-600 px-3 py-1 rounded text-white text-sm">
+              Table Only
+            </button>
+          </div>
+
+          {/* RESULT */}
           {result && (
             <>
-              <ResultTable
-                columns={result.columns}
-                rows={result.rows}
-              />
+              <ResultTable columns={result.columns} rows={result.rows} />
 
               <ChartRenderer
                 columns={result.columns}
                 rows={result.rows}
+                chartType={chartType}
               />
             </>
           )}
 
-          {/* HISTORY */}
           <QueryHistoryPanel onRunAgain={handleRunAgain} />
-
           <SavedQueriesPanel onSelect={setSqlQuery} />
 
         </div>
