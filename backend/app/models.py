@@ -1,7 +1,6 @@
-from sqlalchemy import Column, Integer, String, Float, Text, DateTime
+from sqlalchemy import Column, Integer, String, Float, Text, DateTime, Boolean
 from .database import Base
 from datetime import datetime
-
 
 
 class QueryHistory(Base):
@@ -27,4 +26,6 @@ class SavedQuery(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     query = Column(Text)
+    is_pinned = Column(Boolean, default=False)   # ⭐ NEW
     created_at = Column(DateTime, default=datetime.utcnow)
+

@@ -6,20 +6,26 @@ export default function SavedQueriesPanel({ onSelect }) {
   const [queries, setQueries] = useState([]);
   const API = import.meta.env.VITE_API_BASE_URL;
 
-  // 🔄 Fetch saved queries
   const fetchSaved = async () => {
-    try {
-      const res = await axios.get(`${API}/sql-lab/saved`);
-      console.log("Saved Queries:", res.data); // 🔍 DEBUG
-      setQueries(res.data);
-    } catch (err) {
-      console.error("Error fetching saved queries", err);
-    }
+    const res = await axios.get(`${API}/sql-lab/saved`);
+    setQueries(res.data);
   };
 
   useEffect(() => {
     fetchSaved();
   }, []);
+
+  // 🗑 DELETE
+  const deleteQuery = async (id) => {
+    await axios.delete(`${API}/sql-lab/saved/${id}`);
+    fetchSaved();
+  };
+
+  // 📌 PIN
+  const togglePin = async (id) => {
+    await axios.put(`${API}/sql-lab/saved/${id}/pin`);
+    fetchSaved();
+  };
 
   return (
     <div className="bg-gray-900 p-5 rounded-xl mt-6">
@@ -28,19 +34,39 @@ export default function SavedQueriesPanel({ onSelect }) {
         ⭐ Saved Queries
       </h2>
 
-      {queries.length === 0 && (
-        <p className="text-gray-400 text-sm">
-          No saved queries yet
-        </p>
-      )}
-
       {queries.map((q) => (
         <div
           key={q.id}
-          className="bg-gray-800 p-3 rounded mb-2 cursor-pointer hover:bg-gray-700 text-sm text-gray-200"
-          onClick={() => onSelect(q.query)}
+          className={`p-3 rounded mb-2 ${
+            q.is_pinned ? "bg-yellow-900" : "bg-gray-800"
+          }`}
         >
-          {q.query}
+
+          <div
+            className="cursor-pointer text-sm text-gray-200 mb-2"
+            onClick={() => onSelect(q.query)}
+          >
+            {q.query}
+          </div>
+
+          <div className="flex gap-2 text-xs">
+
+            <button
+              onClick={() => togglePin(q.id)}
+              className="bg-yellow-600 px-2 py-1 rounded text-white"
+            >
+              {q.is_pinned ? "Unpin" : "Pin"}
+            </button>
+
+            <button
+              onClick={() => deleteQuery(q.id)}
+              className="bg-red-600 px-2 py-1 rounded text-white"
+            >
+              Delete
+            </button>
+
+          </div>
+
         </div>
       ))}
 

@@ -99,3 +99,29 @@ def get_saved_queries(db: Session = Depends(get_db)):
         .all()
 
     return queries
+
+@router.delete("/sql-lab/saved/{id}")
+def delete_saved_query(id: int, db: Session = Depends(get_db)):
+
+    query = db.query(SavedQuery).filter(SavedQuery.id == id).first()
+
+    if not query:
+        raise HTTPException(status_code=404, detail="Not found")
+
+    db.delete(query)
+    db.commit()
+
+    return {"message": "Deleted"}
+
+@router.put("/sql-lab/saved/{id}/pin")
+def toggle_pin(id: int, db: Session = Depends(get_db)):
+
+    query = db.query(SavedQuery).filter(SavedQuery.id == id).first()
+
+    if not query:
+        raise HTTPException(status_code=404, detail="Not found")
+
+    query.is_pinned = not query.is_pinned
+    db.commit()
+
+    return {"message": "Updated"}
