@@ -6,6 +6,7 @@ import SqlCodeBlock from "../components/SqlCodeBlock";
 import ResultTable from "../components/ResultTable";
 import ChartRenderer from "../components/ChartRenderer";
 import SavedQueriesPanel from "../components/SavedQueriesPanel";
+import TableExplorer from "../components/TableExplorer";
 
 const QUERIES = [
   {
@@ -189,7 +190,14 @@ export default function SqlLab() {
           <SqlCodeBlock code={sqlQuery} onChange={setSqlQuery} />
 
           <div className="bg-gray-900 border border-gray-800 p-4 rounded-xl">
-            <p className="text-gray-400 text-sm mb-2">Upload Dataset</p>
+
+            <p className="text-gray-400 text-sm mb-1">
+              Upload Dataset
+            </p>
+
+            <p className="text-xs text-gray-500 mb-3">
+              Upload CSV to create a table in PostgreSQL
+            </p>
 
             <label className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded text-white cursor-pointer inline-block">
               Upload CSV
@@ -200,13 +208,15 @@ export default function SqlLab() {
                 className="hidden"
               />
             </label>
+
             {uploadedTable && (
-              <p className="text-green-400 text-sm mt-2">
+              <p className="text-green-400 text-sm mt-3">
                 Table "{uploadedTable}" ready to query ✅
               </p>
             )}
+             <TableExplorer onSelectTable={setSqlQuery} />
           </div>
-
+            
 
           {/* ACTION BUTTONS */}
           <div className="flex gap-4">
@@ -258,6 +268,7 @@ export default function SqlLab() {
 
           <QueryHistoryPanel onRunAgain={handleRunAgain} />
           <SavedQueriesPanel onSelect={setSqlQuery} />
+          
 
         </div>
       </div>

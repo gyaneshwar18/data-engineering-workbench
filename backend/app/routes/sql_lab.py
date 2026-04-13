@@ -5,6 +5,7 @@ from sqlalchemy import text
 from app.database import get_db
 from app.models import QueryHistory, SavedQuery
 import pandas as pd
+from sqlalchemy import text
 
 router = APIRouter()
 
@@ -146,3 +147,34 @@ def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/sql-lab/tables")
+def get_tables(db: Session = Depends(get_db)):
+
+    tables = db.execute(text("""
+        SELECT table_name
+        FROM information_schema.tables
+        WHERE table_schema='public'
+    """)).fetchall()
+
+    return [t[0] for t in tables]
+
+
+@router.get("/sql-lab/table/{table_name}")
+def get_table_data(table_name: str, db: Session = Depends(get_db)):
+
+    try:
+        result = db.execute(text(f"SELECT * FROM {table_name} LIMIT 10"))
+
+        rows = result.fetchall()
+        columns = list(result.keys())
+
+        data = [dict(zip(columns, row)) for row in rows]
+
+        return {
+            "columns": columns,
+            "rows": data
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
