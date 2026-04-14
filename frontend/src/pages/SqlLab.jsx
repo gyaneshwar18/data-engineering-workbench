@@ -33,19 +33,18 @@ FROM employees;`
 
 export default function SqlLab() {
 
+  // ✅ STATES (FIXED ORDER)
   const [selected, setSelected] = useState(QUERIES[0]);
   const [sqlQuery, setSqlQuery] = useState(QUERIES[0].sql);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  // ⭐ NEW STATE
   const [chartType, setChartType] = useState("auto");
+  const [uploadedTable, setUploadedTable] = useState(""); // ✅ FIXED
 
   const API = import.meta.env.VITE_API_BASE_URL;
 
+  // 🚀 RUN QUERY
   const runQuery = async () => {
-    console.log("Query:", sqlQuery);
-
     if (!sqlQuery.trim()) {
       alert("Query is empty");
       return;
@@ -68,6 +67,7 @@ export default function SqlLab() {
     }
   };
 
+  // ⭐ SAVE QUERY
   const saveQuery = async () => {
     try {
       await axios.post(`${API}/sql-lab/save`, {
@@ -81,11 +81,13 @@ export default function SqlLab() {
     }
   };
 
+  // 🔁 RUN AGAIN
   const handleRunAgain = (query) => {
     setSqlQuery(query);
     setResult(null);
   };
 
+  // 📥 EXPORT CSV
   const exportCSV = () => {
     if (!result || result.rows.length === 0) {
       alert("No data to export");
@@ -112,49 +114,29 @@ export default function SqlLab() {
     window.URL.revokeObjectURL(url);
   };
 
+  // 📤 UPLOAD CSV
   const uploadCSV = async (e) => {
     const file = e.target.files[0];
-
     if (!file) return;
-
-    console.log("Uploading file:", file.name); // 🔍 DEBUG
 
     const formData = new FormData();
     formData.append("file", file);
 
     try {
-      const res = await axios.post(
-        `${API}/sql-lab/upload`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        }
-      );
+      const res = await axios.post(`${API}/sql-lab/upload`, formData);
 
-      console.log("Upload response:", res.data); // 🔍 DEBUG
-
-      // ✅ Extract table name
       const tableName = file.name.replace(".csv", "").toLowerCase();
-
-      // ✅ Store in state (IMPORTANT)
       setUploadedTable(tableName);
 
-      alert(res.data.message);
+      console.log(res.data.message); // ✅ clean UX
 
-      // ✅ Reset file input (IMPORTANT FIX)
       e.target.value = null;
 
     } catch (err) {
-      console.error("Upload error:", err);
-      console.log("Response:", err.response);
-
+      console.error(err);
       alert(err.response?.data?.detail || "Upload failed");
     }
   };
-  const [uploadedTable, setUploadedTable] = useState("");
-
 
   return (
     <div className="p-6">
@@ -181,14 +163,17 @@ export default function SqlLab() {
         {/* RIGHT */}
         <div className="col-span-9 space-y-6">
 
+          {/* HEADER */}
           <div className="bg-gray-900 border p-4 rounded-xl">
             <h2 className="text-white font-semibold">
               {selected.title}
             </h2>
           </div>
 
+          {/* SQL EDITOR */}
           <SqlCodeBlock code={sqlQuery} onChange={setSqlQuery} />
 
+          {/* 📤 UPLOAD SECTION */}
           <div className="bg-gray-900 border border-gray-800 p-4 rounded-xl">
 
             <p className="text-gray-400 text-sm mb-1">
@@ -214,30 +199,38 @@ export default function SqlLab() {
                 Table "{uploadedTable}" ready to query ✅
               </p>
             )}
-             <TableExplorer onSelectTable={setSqlQuery} />
           </div>
-            
+
+          {/* 📦 TABLE EXPLORER (FIXED POSITION) */}
+          <TableExplorer onSelectTable={setSqlQuery} />
 
           {/* ACTION BUTTONS */}
           <div className="flex gap-4">
 
-            <button onClick={runQuery} className="bg-blue-600 px-6 py-2 rounded text-white">
+            <button
+              onClick={runQuery}
+              className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded text-white"
+            >
               {loading ? "Running..." : "Run Query"}
             </button>
 
-            <button onClick={saveQuery} className="bg-yellow-600 px-6 py-2 rounded text-white">
+            <button
+              onClick={saveQuery}
+              className="bg-yellow-600 hover:bg-yellow-700 px-6 py-2 rounded text-white"
+            >
               ⭐ Save
             </button>
+
             <button
               onClick={exportCSV}
               className="bg-green-600 hover:bg-green-700 px-6 py-2 rounded text-white"
             >
               ⬇ Export CSV
             </button>
+
           </div>
 
-
-          {/* ⭐ CHART SELECTOR */}
+          {/* 📊 CHART SELECTOR */}
           <div className="flex gap-3">
             <button onClick={() => setChartType("auto")} className="bg-gray-700 px-3 py-1 rounded text-white text-sm">
               Auto
@@ -266,9 +259,9 @@ export default function SqlLab() {
             </>
           )}
 
+          {/* HISTORY + SAVED */}
           <QueryHistoryPanel onRunAgain={handleRunAgain} />
           <SavedQueriesPanel onSelect={setSqlQuery} />
-          
 
         </div>
       </div>
