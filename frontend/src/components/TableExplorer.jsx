@@ -7,6 +7,7 @@ export default function TableExplorer({ onSelectTable }) {
   const [tables, setTables] = useState([]);
   const [selected, setSelected] = useState("");
   const [data, setData] = useState(null);
+  const [schema, setSchema] = useState([]); // ✅ NEW
 
   const API = import.meta.env.VITE_API_BASE_URL;
 
@@ -18,14 +19,14 @@ export default function TableExplorer({ onSelectTable }) {
   const fetchTables = async () => {
     try {
       const res = await axios.get(`${API}/sql-lab/tables`);
-      console.log("Tables:", res.data); // 🔍 DEBUG
+      console.log("Tables:", res.data);
       setTables(res.data);
     } catch (err) {
       console.error("Error fetching tables:", err);
     }
   };
 
-  // 🔹 Load table preview + auto query
+  // 🔹 Load table preview + schema + auto query
   const loadTable = async (table) => {
     setSelected(table);
 
@@ -35,9 +36,16 @@ export default function TableExplorer({ onSelectTable }) {
     }
 
     try {
+      // 🔹 Fetch table data
       const res = await axios.get(`${API}/sql-lab/table/${table}`);
-      console.log("Table data:", res.data); // 🔍 DEBUG
+      console.log("Table data:", res.data);
       setData(res.data);
+
+      // 🔹 Fetch schema
+      const schemaRes = await axios.get(`${API}/sql-lab/schema/${table}`);
+      console.log("Schema:", schemaRes.data);
+      setSchema(schemaRes.data);
+
     } catch (err) {
       console.error("Error loading table:", err);
     }
@@ -73,6 +81,27 @@ export default function TableExplorer({ onSelectTable }) {
           columns={data.columns}
           rows={data.rows}
         />
+      )}
+
+      {/* 🔥 SCHEMA VIEWER */}
+      {schema.length > 0 && (
+        <div className="mt-6">
+          <h3 className="text-white font-semibold mb-2">
+            🧠 Schema
+          </h3>
+
+          <div className="bg-gray-800 p-3 rounded">
+            {schema.map((col, i) => (
+              <div
+                key={i}
+                className="flex justify-between text-sm text-gray-300 border-b border-gray-700 py-1"
+              >
+                <span>{col.column}</span>
+                <span className="text-gray-400">{col.type}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
 
     </div>

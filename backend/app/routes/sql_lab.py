@@ -178,3 +178,24 @@ def get_table_data(table_name: str, db: Session = Depends(get_db)):
 
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+        
+@router.get("/sql-lab/schema/{table_name}")
+def get_table_schema(table_name: str, db: Session = Depends(get_db)):
+
+    try:
+        result = db.execute(text(f"""
+            SELECT column_name, data_type
+            FROM information_schema.columns
+            WHERE table_name = '{table_name}'
+        """)).fetchall()
+
+        return [
+            {
+                "column": row[0],
+                "type": row[1]
+            }
+            for row in result
+        ]
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
