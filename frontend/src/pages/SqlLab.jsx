@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect  } from "react";
 import axios from "axios";
 import QueryHistoryPanel from "../components/QueryHistoryPanel";
 import SqlQueryList from "../components/SqlQueryList";
@@ -40,8 +40,12 @@ export default function SqlLab() {
   const [loading, setLoading] = useState(false);
   const [chartType, setChartType] = useState("auto");
   const [uploadedTable, setUploadedTable] = useState(""); // ✅ FIXED
+  const [suggestions, setSuggestions] = useState([]);
+  const [allTables, setAllTables] = useState([]);
+  const [allColumns, setAllColumns] = useState({});
 
   const API = import.meta.env.VITE_API_BASE_URL;
+
 
   // 🚀 RUN QUERY
   const runQuery = async () => {
@@ -138,6 +142,50 @@ export default function SqlLab() {
     }
   };
 
+  useEffect(() => {
+    fetchMetadata();
+  }, []);
+
+  const fetchMetadata = async () => {
+    try {
+      const tablesRes = await axios.get(`${API}/sql-lab/tables`);
+      setAllTables(tablesRes.data);
+
+      const cols = {};
+
+      for (let table of tablesRes.data) {
+        const res = await axios.get(`${API}/sql-lab/schema/${table}`);
+        cols[table] = res.data.map(c => c.column);
+      }
+
+      setAllColumns(cols);
+
+    } catch (err) {
+      console.error("Metadata error", err);
+    }
+  };
+  const handleEditorChange = (value) => {
+    setSqlQuery(value);
+
+    const words = value.trim().split(/\s+/);
+    const lastWord = words[words.length - 1]?.toLowerCase() || "";
+
+    let matches = [];
+
+    if (lastWord.length > 0) {
+      matches = allTables.filter(t => t.toLowerCase().startsWith(lastWord));
+
+      Object.values(allColumns).forEach(cols => {
+        matches.push(...cols.filter(c => c.toLowerCase().startsWith(lastWord)));
+      });
+    } else {
+      // 👇 Suggest tables when empty
+      matches = allTables;
+    }
+
+    setSuggestions(matches.slice(0, 5));
+  };
+
   return (
     <div className="p-6">
 
@@ -171,7 +219,24 @@ export default function SqlLab() {
           </div>
 
           {/* SQL EDITOR */}
-          <SqlCodeBlock code={sqlQuery} onChange={setSqlQuery} />
+          <SqlCodeBlock code={sqlQuery} onChange={handleEditorChange} />
+
+          {suggestions.length > 0 && (
+            <div className="bg-gray-800 border border-gray-700 rounded mt-2 p-2">
+              {suggestions.map((s, i) => (
+                <div
+                  key={i}
+                  onClick={() => {
+                    setSqlQuery(prev => prev + " " + s);
+                    setSuggestions([]);
+                  }}
+                  className="text-sm text-white px-2 py-1 hover:bg-gray-700 cursor-pointer"
+                >
+                  {s}
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* 📤 UPLOAD SECTION */}
           <div className="bg-gray-900 border border-gray-800 p-4 rounded-xl">

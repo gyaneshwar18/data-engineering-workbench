@@ -1,10 +1,22 @@
+import Editor from "react-simple-code-editor";
+import Prism from "prismjs";
+import "prismjs/components/prism-sql";
+import "prismjs/themes/prism-tomorrow.css";
+
 export default function SqlCodeBlock({ code, onChange }) {
   return (
-    <textarea
-      value={code}
-      onChange={(e) => onChange(e.target.value)}
-      className="w-full bg-black text-green-400 font-mono text-sm p-4 rounded-xl border border-gray-800 focus:outline-none"
-      rows={8}
-    />
+    <div className="bg-gray-900 rounded-xl p-4 text-sm">
+      <Editor
+        value={code}
+        onValueChange={onChange}
+        highlight={(code) => Prism.highlight(code, Prism.languages.sql, "sql")}
+        padding={10}
+        className="outline-none text-green-400"
+        style={{
+          fontFamily: "monospace",
+          minHeight: "120px"
+        }}
+      />
+    </div>
   );
 }

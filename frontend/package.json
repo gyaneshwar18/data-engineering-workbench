@@ -15,9 +15,11 @@
     "framer-motion": "^12.34.0",
     "lucide-react": "^0.563.0",
     "postcss": "^8.5.6",
+    "prismjs": "^1.30.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.13.0",
+    "react-simple-code-editor": "^0.14.1",
     "recharts": "^3.7.0"
   },
   "devDependencies": {
