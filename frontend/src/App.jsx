@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
 import Landing from "./pages/Landing";
 import AppLayout from "./layout/AppLayout";
 
@@ -13,17 +14,25 @@ export default function App() {
     <BrowserRouter>
       <Routes>
 
-        {/* Public Landing */}
+        {/* 🔹 Public Landing Page */}
         <Route path="/" element={<Landing />} />
 
-        {/* Workbench Layout */}
+        {/* 🔹 Workbench Layout (Main App) */}
         <Route path="/workbench" element={<AppLayout />}>
+
+          {/* Default → Dashboard */}
           <Route index element={<Dashboard />} />
+
+          {/* Pages */}
           <Route path="projects" element={<Projects />} />
           <Route path="sql-lab" element={<SqlLab />} />
           <Route path="pipelines" element={<Pipelines />} />
           <Route path="datasets" element={<Datasets />} />
+
         </Route>
+
+        {/* 🔹 Fallback Route (IMPORTANT) */}
+        <Route path="*" element={<Navigate to="/" />} />
 
       </Routes>
     </BrowserRouter>
