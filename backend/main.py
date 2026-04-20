@@ -5,6 +5,7 @@ from app.database import engine
 from app import models
 from app.routes import dashboard
 from app.routes import metrics
+from app.routes import pipelines
 
 app = FastAPI()
 app.add_middleware(
@@ -23,3 +24,6 @@ models.Base.metadata.create_all(bind=engine)
 app.include_router(dashboard.router)
 app.include_router(sql_lab.router)
 app.include_router(metrics.router)
+
+#pipelines routes
+app.include_router(pipelines.router)

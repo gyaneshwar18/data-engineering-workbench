@@ -3,6 +3,7 @@ from .database import Base
 from datetime import datetime
 
 
+
 class QueryHistory(Base):
     __tablename__ = "query_history"
 
@@ -29,3 +30,13 @@ class SavedQuery(Base):
     is_pinned = Column(Boolean, default=False)   # ⭐ NEW
     created_at = Column(DateTime, default=datetime.utcnow)
 
+
+class Pipeline(Base):
+    __tablename__ = "pipelines"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    source = Column(String, nullable=False)        # csv / api
+    destination = Column(String, nullable=False)   # table name
+    status = Column(String, default="idle")        # idle / running / success / failed
+    last_run = Column(DateTime, default=None)
