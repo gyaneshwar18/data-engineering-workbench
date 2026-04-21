@@ -14,16 +14,15 @@ export default function App() {
     <BrowserRouter>
       <Routes>
 
-        {/* 🔹 Public Landing Page */}
+        {/* Landing */}
         <Route path="/" element={<Landing />} />
 
-        {/* 🔹 Workbench Layout (Main App) */}
+        {/* Workbench (with Sidebar + Topbar) */}
         <Route path="/workbench" element={<AppLayout />}>
 
-          {/* Default → Dashboard */}
+          {/* Default Dashboard */}
           <Route index element={<Dashboard />} />
 
-          {/* Pages */}
           <Route path="projects" element={<Projects />} />
           <Route path="sql-lab" element={<SqlLab />} />
           <Route path="pipelines" element={<Pipelines />} />
@@ -31,7 +30,7 @@ export default function App() {
 
         </Route>
 
-        {/* 🔹 Fallback Route (IMPORTANT) */}
+        {/* Fallback */}
         <Route path="*" element={<Navigate to="/" />} />
 
       </Routes>

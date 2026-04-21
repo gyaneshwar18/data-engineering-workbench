@@ -17,11 +17,10 @@ export default function AppLayout() {
 
         {/* Main Content */}
         <main className="
-  flex-1 overflow-y-auto p-8
-  bg-linear-to-br from-gray-100 to-gray-200
-  dark:from-gray-950 dark:to-gray-900
-">
-
+          flex-1 overflow-y-auto p-8
+          bg-linear-to-br from-gray-100 to-gray-200
+          dark:from-gray-950 dark:to-gray-900
+        ">
           <Outlet />
         </main>
 
