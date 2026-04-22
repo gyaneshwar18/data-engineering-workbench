@@ -40,3 +40,4 @@ class Pipeline(Base):
     destination = Column(String, nullable=False)   # table name
     status = Column(String, default="idle")        # idle / running / success / failed
     last_run = Column(DateTime, default=None)
+    file_path = Column(String, nullable=True) 
