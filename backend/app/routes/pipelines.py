@@ -124,3 +124,42 @@ def run_pipeline(pipeline_id: int, db: Session = Depends(get_db)):
         db.commit()
 
         raise HTTPException(status_code=500, detail=str(e))
+    
+@router.get("/pipelines/{pipeline_id}/logs")
+def get_pipeline_logs(pipeline_id: int, db: Session = Depends(get_db)):
+    pipeline = db.query(Pipeline).filter(Pipeline.id == pipeline_id).first()
+
+    if not pipeline:
+        raise HTTPException(status_code=404, detail="Pipeline not found")
+
+    # latest run
+    run = (
+        db.query(PipelineRun)
+        .filter(PipelineRun.pipeline_id == pipeline_id)
+        .order_by(PipelineRun.started_at.desc())
+        .first()
+    )
+
+    if not run:
+        return {"logs": "No runs yet"}
+
+    return {
+        "status": run.status,
+        "started_at": run.started_at,
+        "finished_at": run.finished_at,
+        "logs": run.logs
+    }
+
+@router.get("/pipeline-runs/{run_id}/logs")
+def get_run_logs(run_id: int, db: Session = Depends(get_db)):
+    run = db.query(PipelineRun).filter(PipelineRun.id == run_id).first()
+
+    if not run:
+        raise HTTPException(status_code=404, detail="Run not found")
+
+    return {
+        "status": run.status,
+        "started_at": run.started_at,
+        "finished_at": run.finished_at,
+        "logs": run.logs
+    }
