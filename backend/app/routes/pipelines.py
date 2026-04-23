@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.models import Pipeline
+from app.models import Pipeline, PipelineRun
 from datetime import datetime
 import csv
 from sqlalchemy import text
 
-# ✅ THIS MUST COME BEFORE ANY ROUTES
 router = APIRouter()
 
 
@@ -32,7 +31,7 @@ def get_pipelines(db: Session = Depends(get_db)):
     return db.query(Pipeline).all()
 
 
-# 🔹 RUN PIPELINE
+# 🔹 RUN PIPELINE (UPDATED WITH LOGS + HISTORY)
 @router.post("/pipelines/run/{pipeline_id}")
 def run_pipeline(pipeline_id: int, db: Session = Depends(get_db)):
 
@@ -41,25 +40,41 @@ def run_pipeline(pipeline_id: int, db: Session = Depends(get_db)):
     if not pipeline:
         raise HTTPException(status_code=404, detail="Pipeline not found")
 
+    logs = []
+    start_time = datetime.utcnow()
+
+    # 🔄 mark running
     pipeline.status = "running"
+    pipeline.logs = ""
+    pipeline.error = None
     db.commit()
 
     try:
+        logs.append("🚀 Pipeline started")
+
         if pipeline.source == "csv":
+
+            logs.append("📂 Reading CSV file")
 
             with open(pipeline.file_path, "r") as f:
                 reader = csv.DictReader(f)
                 columns = reader.fieldnames
 
+                logs.append(f"📊 Columns: {columns}")
+
                 col_defs = ", ".join([f"{col} TEXT" for col in columns])
 
+                logs.append("🧹 Dropping old table")
                 db.execute(text(f"DROP TABLE IF EXISTS {pipeline.destination}"))
-                
+
+                logs.append("🏗 Creating table")
                 db.execute(text(f"""
-                    CREATE TABLE IF NOT EXISTS {pipeline.destination} (
+                    CREATE TABLE {pipeline.destination} (
                         {col_defs}
                     );
                 """))
+
+                count = 0
 
                 for row in reader:
                     values = ", ".join([f":{col}" for col in columns])
@@ -67,16 +82,45 @@ def run_pipeline(pipeline_id: int, db: Session = Depends(get_db)):
                         text(f"INSERT INTO {pipeline.destination} VALUES ({values})"),
                         row
                     )
+                    count += 1
 
+                logs.append(f"✅ Inserted {count} rows")
                 db.commit()
 
+        # ✅ SUCCESS
         pipeline.status = "success"
         pipeline.last_run = datetime.utcnow()
+        pipeline.logs = "\n".join(logs)
+
+        # 🔥 SAVE RUN HISTORY
+        run = PipelineRun(
+            pipeline_id=pipeline.id,
+            status="success",
+            started_at=start_time,
+            finished_at=datetime.utcnow(),
+            logs=pipeline.logs
+        )
+
+        db.add(run)
         db.commit()
 
         return {"message": "Pipeline executed successfully"}
 
     except Exception as e:
         pipeline.status = "failed"
+        pipeline.error = str(e)
+        pipeline.logs = "\n".join(logs)
+
+        # 🔥 SAVE FAILED RUN
+        run = PipelineRun(
+            pipeline_id=pipeline.id,
+            status="failed",
+            started_at=start_time,
+            finished_at=datetime.utcnow(),
+            logs=pipeline.logs
+        )
+
+        db.add(run)
         db.commit()
+
         raise HTTPException(status_code=500, detail=str(e))

@@ -41,3 +41,15 @@ class Pipeline(Base):
     status = Column(String, default="idle")        # idle / running / success / failed
     last_run = Column(DateTime, default=None)
     file_path = Column(String, nullable=True) 
+    logs = Column(Text, nullable=True)
+    error = Column(Text, nullable=True)
+
+class PipelineRun(Base):
+    __tablename__ = "pipeline_runs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    pipeline_id = Column(Integer)
+    status = Column(String)
+    started_at = Column(DateTime)
+    finished_at = Column(DateTime)
+    logs = Column(Text)
