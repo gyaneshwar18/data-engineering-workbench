@@ -52,4 +52,4 @@ class PipelineRun(Base):
     status = Column(String)
     started_at = Column(DateTime)
     finished_at = Column(DateTime)
-    logs = Column(Text)
+    

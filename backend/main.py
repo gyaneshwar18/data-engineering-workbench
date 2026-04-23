@@ -10,7 +10,7 @@ from app.routes import pipelines
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # For development
+    allow_origins=["http://localhost:5173"],  # For development
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

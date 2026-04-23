@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { getPipelineLogs } from "../api/pipelineApi";
+import PipelineLogsModal from "../components/PipelineLogsModal";
 
 export default function Pipelines() {
-
   const [pipelines, setPipelines] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [logsOpen, setLogsOpen] = useState(false);
+  const [logsData, setLogsData] = useState(null);
 
   const API = import.meta.env.VITE_API_BASE_URL;
 
@@ -25,7 +28,7 @@ export default function Pipelines() {
     try {
       setLoading(true);
       await axios.post(`${API}/pipelines/run/${id}`);
-      await fetchPipelines(); // refresh after run
+      await fetchPipelines();
     } catch (err) {
       console.error("Run error:", err);
     } finally {
@@ -39,6 +42,16 @@ export default function Pipelines() {
       case "failed": return "bg-red-600";
       case "running": return "bg-yellow-500";
       default: return "bg-gray-600";
+    }
+  };
+
+  const handleViewLogs = async (pipelineId) => {
+    try {
+      const data = await getPipelineLogs(pipelineId);
+      setLogsData(data);
+      setLogsOpen(true);
+    } catch (error) {
+      console.error("Error fetching logs", error);
     }
   };
 
@@ -74,19 +87,28 @@ export default function Pipelines() {
               {p.source} → {p.destination}
             </p>
 
-            {/* STATUS */}
+            {/* STATUS + ACTIONS */}
             <div className="mt-3 flex items-center justify-between">
 
               <span className={`px-3 py-1 rounded text-sm ${getStatusColor(p.status)}`}>
                 {p.status}
               </span>
 
-              <button
-                onClick={() => runPipeline(p.id)}
-                className="bg-green-600 px-3 py-1 rounded text-sm"
-              >
-                ▶ Run
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => runPipeline(p.id)}
+                  className="bg-green-600 px-3 py-1 rounded text-sm"
+                >
+                  ▶ Run
+                </button>
+
+                <button
+                  onClick={() => handleViewLogs(p.id)}
+                  className="bg-blue-600 px-2 py-1 rounded text-sm"
+                >
+                  View Logs
+                </button>
+              </div>
 
             </div>
 
@@ -101,6 +123,14 @@ export default function Pipelines() {
         ))}
 
       </div>
+
+      {/* ✅ MODAL (YOU FORGOT THIS — VERY IMPORTANT) */}
+      <PipelineLogsModal
+        isOpen={logsOpen}
+        onClose={() => setLogsOpen(false)}
+        logsData={logsData}
+      />
+
     </div>
   );
 }
