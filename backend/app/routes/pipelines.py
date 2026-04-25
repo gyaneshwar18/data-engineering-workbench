@@ -163,3 +163,15 @@ def get_run_logs(run_id: int, db: Session = Depends(get_db)):
         "finished_at": run.finished_at,
         "logs": run.logs
     }
+
+@router.get("/pipelines/{pipeline_id}/runs")
+def get_pipeline_runs(pipeline_id: int, db: Session = Depends(get_db)):
+
+    runs = (
+        db.query(PipelineRun)
+        .filter(PipelineRun.pipeline_id == pipeline_id)
+        .order_by(PipelineRun.started_at.desc())
+        .all()
+    )
+
+    return runs
