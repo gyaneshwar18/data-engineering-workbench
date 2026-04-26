@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, Text, DateTime, Boolean
-from .database import Base
+from app.database import Base
 from datetime import datetime
-
 
 
 class QueryHistory(Base):
@@ -13,6 +12,7 @@ class QueryHistory(Base):
     status = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+
 class DashboardStats(Base):
     __tablename__ = "dashboard_stats"
 
@@ -22,12 +22,13 @@ class DashboardStats(Base):
     pipelines = Column(Integer)
     api_sources = Column(Integer)
 
+
 class SavedQuery(Base):
     __tablename__ = "saved_queries"
 
     id = Column(Integer, primary_key=True, index=True)
     query = Column(Text)
-    is_pinned = Column(Boolean, default=False)   # ⭐ NEW
+    is_pinned = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
@@ -36,13 +37,14 @@ class Pipeline(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
-    source = Column(String, nullable=False)        # csv / api
-    destination = Column(String, nullable=False)   # table name
-    status = Column(String, default="idle")        # idle / running / success / failed
+    source = Column(String, nullable=False)
+    destination = Column(String, nullable=False)
+    status = Column(String, default="idle")
     last_run = Column(DateTime, default=None)
-    file_path = Column(String, nullable=True) 
+    file_path = Column(String, nullable=True)
     logs = Column(Text, nullable=True)
     error = Column(Text, nullable=True)
+
 
 class PipelineRun(Base):
     __tablename__ = "pipeline_runs"
@@ -52,4 +54,4 @@ class PipelineRun(Base):
     status = Column(String)
     started_at = Column(DateTime)
     finished_at = Column(DateTime)
-    
+    logs = Column(Text)
