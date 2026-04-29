@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { getPipelineLogs } from "../api/pipelineApi";
 import PipelineLogsModal from "../components/PipelineLogsModal";
+import PipelineRunHistory from "../components/PipelineRunHistory";
 
 export default function Pipelines() {
   const [pipelines, setPipelines] = useState([]);
@@ -118,6 +119,7 @@ export default function Pipelines() {
                 Last Run: {new Date(p.last_run).toLocaleString()}
               </p>
             )}
+            <PipelineRunHistory pipelineId={p.id} />
 
           </div>
         ))}
