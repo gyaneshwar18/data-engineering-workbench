@@ -194,7 +194,3 @@ def get_pipeline_logs(pipeline_id: int, db: Session = Depends(get_db)):
         "finished_at": run.finished_at,
         "logs": run.logs or "No logs"
     }
-
-@router.post("/pipelines/run/{pipeline_id}")
-def run_pipeline(pipeline_id: int, db: Session = Depends(get_db)):
-    return {"message": f"Pipeline {pipeline_id} triggered"}

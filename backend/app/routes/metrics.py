@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from sqlalchemy import text
+from sqlalchemy import text, func
 from app.database import get_db
+from app.models import QueryHistory
 
 router = APIRouter(
     prefix="/metrics",
@@ -70,3 +71,28 @@ def query_performance(db: Session = Depends(get_db)):
         "success_rate": success_rate,
         "execution_trend": [dict(row._mapping) for row in execution_trend]
     }
+
+
+@router.get("/analytics/top-slow-queries")
+def top_slow_queries(db: Session = Depends(get_db)):
+
+    results = (
+        db.query(
+            QueryHistory.query,
+            func.avg(QueryHistory.execution_time).label("avg_time"),
+            func.count(QueryHistory.id).label("count")
+        )
+        .group_by(QueryHistory.query)
+        .order_by(func.avg(QueryHistory.execution_time).desc())
+        .limit(10)
+        .all()
+    )
+
+    return [
+        {
+            "query": r.query,
+            "avg_time": round(r.avg_time, 2),
+            "count": r.count
+        }
+        for r in results
+    ]
