@@ -96,3 +96,26 @@ def top_slow_queries(db: Session = Depends(get_db)):
         }
         for r in results
     ]
+
+# 🔥 MOST USED QUERIES
+@router.get("/analytics/most-used-queries")
+def most_used_queries(db: Session = Depends(get_db)):
+
+    results = (
+        db.query(
+            QueryHistory.query,
+            func.count(QueryHistory.id).label("count")
+        )
+        .group_by(QueryHistory.query)
+        .order_by(func.count(QueryHistory.id).desc())
+        .limit(10)
+        .all()
+    )
+
+    return [
+        {
+            "query": r.query,
+            "count": r.count
+        }
+        for r in results
+    ]
