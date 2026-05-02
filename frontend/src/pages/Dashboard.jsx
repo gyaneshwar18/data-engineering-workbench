@@ -57,7 +57,12 @@ export default function Dashboard() {
     }
   };
 
-  if (loading || !stats || !performance) {
+  if (
+    loading ||
+    !stats ||
+    !performance ||
+    !pipelineAnalytics
+  ) {
     return <p className="text-white p-6">Loading dashboard...</p>;
   }
 
@@ -88,6 +93,45 @@ export default function Dashboard() {
           <MetricCard label="API Sources" value={stats.api_sources} />
         </div>
 
+      </div>
+
+      {/* 🔥 PIPELINE HEALTH */}
+      <div>
+        <h2 className="text-xl font-semibold mb-4">
+          Pipeline Health
+        </h2>
+
+        <div className="grid grid-cols-12 gap-6">
+
+          <div className="col-span-3">
+            <MetricCard
+              label="Active Pipelines"
+              value={pipelineAnalytics.active_pipelines}
+            />
+          </div>
+
+          <div className="col-span-3">
+            <MetricCard
+              label="Success Rate %"
+              value={pipelineAnalytics.success_rate}
+            />
+          </div>
+
+          <div className="col-span-3">
+            <MetricCard
+              label="Successful Runs"
+              value={pipelineAnalytics.successful_runs}
+            />
+          </div>
+
+          <div className="col-span-3">
+            <MetricCard
+              label="Failed Runs"
+              value={pipelineAnalytics.failed_runs}
+            />
+          </div>
+
+        </div>
       </div>
 
       {/* 🔥 MAIN SECTION */}
