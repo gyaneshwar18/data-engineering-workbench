@@ -25,3 +25,22 @@ def list_datasets(db: Session = Depends(get_db)):
         {"table_name": row.table_name}
         for row in result
     ]
+
+# 🔥 DATASET PREVIEW
+@router.get("/{table_name}")
+def preview_dataset(
+    table_name: str,
+    db: Session = Depends(get_db)
+):
+    result = db.execute(
+        text(f"""
+            SELECT *
+            FROM {table_name}
+            LIMIT 10
+        """)
+    ).fetchall()
+
+    return [
+        dict(row._mapping)
+        for row in result
+    ]
