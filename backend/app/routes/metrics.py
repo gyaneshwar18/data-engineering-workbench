@@ -119,3 +119,21 @@ def most_used_queries(db: Session = Depends(get_db)):
         }
         for r in results
     ]
+
+# 🔥 QUERY EXECUTION TREND
+@router.get("/analytics/query-execution-trend")
+def query_execution_trend(db: Session = Depends(get_db)):
+
+    results = db.execute(text("""
+        SELECT
+            DATE(created_at) as date,
+            COUNT(*) as total
+        FROM query_history
+        GROUP BY DATE(created_at)
+        ORDER BY DATE(created_at)
+    """)).fetchall()
+
+    return [
+        dict(row._mapping)
+        for row in results
+    ]
