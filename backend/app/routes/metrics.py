@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text, func
 from app.database import get_db
 from app.models import QueryHistory
+from app.models import PipelineRun
 
 router = APIRouter(
     prefix="/metrics",
@@ -137,3 +138,39 @@ def query_execution_trend(db: Session = Depends(get_db)):
         dict(row._mapping)
         for row in results
     ]
+
+
+
+
+# 🔥 PIPELINE ANALYTICS
+@router.get("/analytics/pipeline-stats")
+def pipeline_stats(db: Session = Depends(get_db)):
+
+    total_runs = db.query(PipelineRun).count()
+
+    successful_runs = (
+        db.query(PipelineRun)
+        .filter(PipelineRun.status == "success")
+        .count()
+    )
+
+    failed_runs = (
+        db.query(PipelineRun)
+        .filter(PipelineRun.status == "failed")
+        .count()
+    )
+
+    success_rate = 0
+
+    if total_runs > 0:
+        success_rate = round(
+            (successful_runs / total_runs) * 100,
+            2
+        )
+
+    return {
+        "total_runs": total_runs,
+        "successful_runs": successful_runs,
+        "failed_runs": failed_runs,
+        "success_rate": success_rate
+    }
