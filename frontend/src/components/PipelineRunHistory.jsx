@@ -90,7 +90,7 @@ export default function PipelineRunHistory({ pipelineId }) {
       </table>
 
       {selectedLogs && (
-        <div className="mt-4 bg-black p-3 rounded text-green-400 text-xs overflow-auto max-h-[300px]">
+        <div className="mt-4 bg-black p-3 rounded text-green-400 text-xs overflow-auto max-h-75">
           <pre>{selectedLogs.logs}</pre>
         </div>
       )}
