@@ -5,7 +5,7 @@ import MetricCard from "../components/MetricCard";
 import ProfileSnapshotCard from "../components/ProfileSnapshotCard";
 import QueryChart from "../components/QueryChart";
 import GithubHeatmap from "../components/GithubHeatmap";
-import TopSlowQueries from "../components/TopSlowQueries";
+
 
 import {
   LineChart,
@@ -121,7 +121,7 @@ export default function Dashboard() {
         </ResponsiveContainer>
       </div>
       {/* 🔥 TOP SLOW QUERIES */}
-      <TopSlowQueries />
+      
 
     </div>
   );
