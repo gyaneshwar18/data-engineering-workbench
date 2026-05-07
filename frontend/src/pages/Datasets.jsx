@@ -1,49 +1,128 @@
-import { useState } from "react";
-import DatasetStats from "../components/DatasetStats";
-import SchemaTable from "../components/SchemaTable";
-import SampleTable from "../components/SampleTable";
-
-const MOCK_DATASETS = [
-  {
-    id: 1,
-    name: "Sales Data",
-    rows: 120000,
-    columns: 8,
-    nullPercent: 2.3,
-    lastRefresh: "2025-09-10",
-    schema: [
-      { column: "order_id", type: "INT", null: 0, desc: "Primary key" },
-      { column: "customer_id", type: "INT", null: 0.1, desc: "Customer reference" },
-      { column: "amount", type: "DECIMAL", null: 0.3, desc: "Order amount" },
-      { column: "order_date", type: "DATE", null: 0, desc: "Order date" }
-    ],
-    sample: [
-      { order_id: 101, customer_id: 23, amount: 540, order_date: "2025-01-10" },
-      { order_id: 102, customer_id: 45, amount: 120, order_date: "2025-01-11" }
-    ]
-  }
-];
+import { useEffect, useState } from "react";
+import {
+  getDatasets,
+  getDatasetPreview,
+  getDatasetSchema
+} from "../api/datasetApi";
 
 export default function Datasets() {
-  const [selected] = useState(MOCK_DATASETS[0]);
+
+  const [datasets, setDatasets] = useState([]);
+  const [selectedTable, setSelectedTable] = useState(null);
+  const [preview, setPreview] = useState([]);
+  const [schema, setSchema] = useState([]);
+
+  useEffect(() => {
+    loadDatasets();
+  }, []);
+
+  const loadDatasets = async () => {
+    try {
+      const data = await getDatasets();
+      setDatasets(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSelectTable = async (tableName) => {
+    setSelectedTable(tableName);
+
+    const previewData =
+      await getDatasetPreview(tableName);
+
+    const schemaData =
+      await getDatasetSchema(tableName);
+
+    setPreview(previewData);
+    setSchema(schemaData);
+  };
 
   return (
-    <div>
+    <div className="p-6 text-white">
 
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold tracking-tight text-gray-800 dark:text-gray-100">
-          Dataset Explorer
-        </h1>
-        <p className="text-sm text-gray-500 mt-2">
-          Data profiling and schema inspection
-        </p>
-      </div>
+      <h1 className="text-2xl font-bold mb-6">
+        Dataset Explorer
+      </h1>
 
-      <DatasetStats dataset={selected} />
+      <div className="grid grid-cols-12 gap-6">
 
-      <div className="mt-8 space-y-8">
-        <SchemaTable schema={selected.schema} />
-        <SampleTable rows={selected.sample} />
+        {/* LEFT PANEL */}
+        <div className="col-span-3 bg-gray-900 p-4 rounded">
+
+          <h2 className="font-semibold mb-4">
+            Datasets
+          </h2>
+
+          {datasets.map((d) => (
+            <div
+              key={d.table_name}
+              onClick={() =>
+                handleSelectTable(d.table_name)
+              }
+              className="cursor-pointer p-2 rounded hover:bg-gray-800"
+            >
+              {d.table_name}
+            </div>
+          ))}
+
+        </div>
+
+        {/* RIGHT PANEL */}
+        <div className="col-span-9">
+
+          {selectedTable && (
+            <>
+              <h2 className="text-xl mb-4">
+                {selectedTable}
+              </h2>
+
+              {/* SCHEMA */}
+              <div className="bg-gray-900 p-4 rounded mb-4">
+
+                <h3 className="font-semibold mb-3">
+                  Schema
+                </h3>
+
+                <table className="w-full">
+
+                  <thead>
+                    <tr>
+                      <th>Column</th>
+                      <th>Type</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {schema.map((col, idx) => (
+                      <tr key={idx}>
+                        <td>{col.column_name}</td>
+                        <td>{col.data_type}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+
+                </table>
+
+              </div>
+
+              {/* PREVIEW */}
+              <div className="bg-gray-900 p-4 rounded">
+
+                <h3 className="font-semibold mb-3">
+                  Preview
+                </h3>
+
+                <pre className="overflow-auto">
+                  {JSON.stringify(preview, null, 2)}
+                </pre>
+
+              </div>
+            </>
+          )}
+
+        </div>
+
       </div>
 
     </div>
