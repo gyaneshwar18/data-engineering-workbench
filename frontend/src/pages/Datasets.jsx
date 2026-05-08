@@ -113,9 +113,51 @@ export default function Datasets() {
                   Preview
                 </h3>
 
-                <pre className="overflow-auto">
-                  {JSON.stringify(preview, null, 2)}
-                </pre>
+                <div className="overflow-auto">
+
+                  {preview.length > 0 && (
+
+                    <table className="w-full border-collapse">
+
+                      <thead>
+                        <tr>
+
+                          {Object.keys(preview[0]).map((key) => (
+                            <th
+                              key={key}
+                              className="border border-gray-700 p-2 text-left"
+                            >
+                              {key}
+                            </th>
+                          ))}
+
+                        </tr>
+                      </thead>
+
+                      <tbody>
+
+                        {preview.map((row, index) => (
+                          <tr key={index}>
+
+                            {Object.values(row).map((value, idx) => (
+                              <td
+                                key={idx}
+                                className="border border-gray-700 p-2"
+                              >
+                                {String(value)}
+                              </td>
+                            ))}
+
+                          </tr>
+                        ))}
+
+                      </tbody>
+
+                    </table>
+
+                  )}
+
+                </div>
 
               </div>
             </>
