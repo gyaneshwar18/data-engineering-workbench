@@ -40,10 +40,10 @@ export default function Datasets() {
   };
 
   const filteredDatasets = datasets.filter((d) =>
-  d.table_name.toLowerCase().includes(
-    search.toLowerCase()
-  )
-);
+    d.table_name.toLowerCase().includes(
+      search.toLowerCase()
+    )
+  );
 
   return (
     <div className="p-6 text-white">
@@ -60,7 +60,13 @@ export default function Datasets() {
           <h2 className="font-semibold mb-4">
             Datasets
           </h2>
-
+          <input
+            type="text"
+            placeholder="Search datasets..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full p-2 mb-4 rounded bg-gray-800 text-white"
+          />
           {datasets.map((d) => (
             <div
               key={d.table_name}
