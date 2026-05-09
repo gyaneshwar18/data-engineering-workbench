@@ -11,6 +11,7 @@ export default function Datasets() {
   const [selectedTable, setSelectedTable] = useState(null);
   const [preview, setPreview] = useState([]);
   const [schema, setSchema] = useState([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     loadDatasets();
@@ -37,6 +38,12 @@ export default function Datasets() {
     setPreview(previewData);
     setSchema(schemaData);
   };
+
+  const filteredDatasets = datasets.filter((d) =>
+  d.table_name.toLowerCase().includes(
+    search.toLowerCase()
+  )
+);
 
   return (
     <div className="p-6 text-white">
