@@ -67,7 +67,7 @@ export default function Datasets() {
             onChange={(e) => setSearch(e.target.value)}
             className="w-full p-2 mb-4 rounded bg-gray-800 text-white"
           />
-          {datasets.map((d) => (
+          {filteredDatasets.map((d) => (
             <div
               key={d.table_name}
               onClick={() =>
