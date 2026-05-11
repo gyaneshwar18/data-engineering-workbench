@@ -69,3 +69,27 @@ def get_dataset_schema(
         for row in result
     ]
 
+# 🔥 DATASET STATS
+@router.get("/{table_name}/stats")
+def get_dataset_stats(
+    table_name: str,
+    db: Session = Depends(get_db)
+):
+
+    row_count = db.execute(
+        text(f"SELECT COUNT(*) FROM {table_name}")
+    ).scalar()
+
+    column_count = db.execute(
+        text("""
+            SELECT COUNT(*)
+            FROM information_schema.columns
+            WHERE table_name = :table_name
+        """),
+        {"table_name": table_name}
+    ).scalar()
+
+    return {
+        "row_count": row_count,
+        "column_count": column_count
+    }
