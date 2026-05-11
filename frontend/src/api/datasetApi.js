@@ -20,3 +20,11 @@ export const getDatasetSchema = async (tableName) => {
   );
   return res.data;
 };
+
+export const getDatasetStats = async (tableName) => {
+  const res = await axios.get(
+    `${API}/datasets/${tableName}/stats`
+  );
+
+  return res.data;
+};
