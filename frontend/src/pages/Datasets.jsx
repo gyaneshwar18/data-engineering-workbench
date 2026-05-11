@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import {
   getDatasets,
   getDatasetPreview,
-  getDatasetSchema
+  getDatasetSchema,
+  getDatasetStats
 } from "../api/datasetApi";
 
 export default function Datasets() {
