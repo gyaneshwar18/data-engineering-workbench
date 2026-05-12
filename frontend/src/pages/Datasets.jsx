@@ -13,6 +13,7 @@ export default function Datasets() {
   const [preview, setPreview] = useState([]);
   const [schema, setSchema] = useState([]);
   const [search, setSearch] = useState("");
+  const [stats, setStats] = useState(null);
 
   useEffect(() => {
     loadDatasets();
