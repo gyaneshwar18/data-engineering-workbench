@@ -37,8 +37,12 @@ export default function Datasets() {
     const schemaData =
       await getDatasetSchema(tableName);
 
+    const statsData =
+    await getDatasetStats(tableName);
+
     setPreview(previewData);
     setSchema(schemaData);
+    setStats(statsData);
   };
 
   const filteredDatasets = datasets.filter((d) =>
