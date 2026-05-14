@@ -38,7 +38,7 @@ export default function Datasets() {
       await getDatasetSchema(tableName);
 
     const statsData =
-    await getDatasetStats(tableName);
+      await getDatasetStats(tableName);
 
     setPreview(previewData);
     setSchema(schemaData);
@@ -95,6 +95,35 @@ export default function Datasets() {
               <h2 className="text-xl mb-4">
                 {selectedTable}
               </h2>
+
+              
+              {stats && (
+                <div className="bg-gray-900 p-4 rounded mb-4">
+
+                  <h3 className="font-semibold mb-3">
+                    Dataset Statistics
+                  </h3>
+
+                  <div className="grid grid-cols-2 gap-4">
+
+                    <div>
+                      <p className="text-gray-400">Rows</p>
+                      <p className="text-xl font-bold">
+                        {stats.row_count}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-gray-400">Columns</p>
+                      <p className="text-xl font-bold">
+                        {stats.column_count}
+                      </p>
+                    </div>
+
+                  </div>
+
+                </div>
+              )}
 
               {/* SCHEMA */}
               <div className="bg-gray-900 p-4 rounded mb-4">
