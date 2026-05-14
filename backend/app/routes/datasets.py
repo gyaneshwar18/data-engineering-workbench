@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-
 from app.database import get_db
+from fastapi.responses import StreamingResponse
+import io
+import csv
 
 router = APIRouter(
     prefix="/datasets",
@@ -93,3 +95,35 @@ def get_dataset_stats(
         "row_count": row_count,
         "column_count": column_count
     }
+
+@router.get("/{table_name}/export")
+def export_dataset(
+    table_name: str,
+    db: Session = Depends(get_db)
+):
+
+    result = db.execute(
+        text(f"SELECT * FROM {table_name}")
+    )
+
+    rows = result.fetchall()
+
+    output = io.StringIO()
+
+    writer = csv.writer(output)
+
+    writer.writerow(result.keys())
+
+    for row in rows:
+        writer.writerow(row)
+
+    output.seek(0)
+
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={
+            "Content-Disposition":
+            f"attachment; filename={table_name}.csv"
+        }
+    )
