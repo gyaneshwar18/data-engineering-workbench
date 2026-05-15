@@ -3,7 +3,8 @@ import {
   getDatasets,
   getDatasetPreview,
   getDatasetSchema,
-  getDatasetStats
+  getDatasetStats,
+  exportDataset
 } from "../api/datasetApi";
 
 export default function Datasets() {
@@ -92,11 +93,22 @@ export default function Datasets() {
 
           {selectedTable && (
             <>
-              <h2 className="text-xl mb-4">
-                {selectedTable}
-              </h2>
+              <div className="flex justify-between items-center mb-4">
 
-              
+                <h2 className="text-xl">
+                  {selectedTable}
+                </h2>
+
+                <button
+                  onClick={() => exportDataset(selectedTable)}
+                  className="bg-green-600 px-4 py-2 rounded"
+                >
+                  Export CSV
+                </button>
+
+              </div>
+
+
               {stats && (
                 <div className="bg-gray-900 p-4 rounded mb-4">
 
