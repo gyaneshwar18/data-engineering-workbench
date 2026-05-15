@@ -28,3 +28,10 @@ export const getDatasetStats = async (tableName) => {
 
   return res.data;
 };
+
+export const exportDataset = async (tableName) => {
+  window.open(
+    `${API}/datasets/${tableName}/export`,
+    "_blank"
+  );
+};
