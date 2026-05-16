@@ -42,6 +42,7 @@ class Pipeline(Base):
     status = Column(String, default="idle")
     last_run = Column(DateTime, default=None)
     file_path = Column(String, nullable=True)
+    api_url = Column(String, nullable=True)
     logs = Column(Text, nullable=True)
     error = Column(Text, nullable=True)
 
