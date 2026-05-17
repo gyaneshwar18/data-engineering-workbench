@@ -44,7 +44,6 @@ def run_pipeline(pipeline_id: int, db: Session = Depends(get_db)):
     logs = []
     start_time = datetime.utcnow()
 
-    # mark running
     pipeline.status = "running"
     pipeline.logs = ""
     pipeline.error = None
@@ -52,64 +51,206 @@ def run_pipeline(pipeline_id: int, db: Session = Depends(get_db)):
 
     try:
         logs.append("🚀 Pipeline started")
-        logs.append(f"📂 Input path: {pipeline.file_path}")
 
+        # ==================================================
+        # CSV PIPELINE
+        # ==================================================
         if pipeline.source == "csv":
+
+            logs.append(f"📂 Input path: {pipeline.file_path}")
 
             if not pipeline.file_path:
                 raise Exception("CSV file path missing")
 
-            # 🔥 SAFE PATH RESOLUTION
-            base_dir = os.getcwd()   # backend folder
+            base_dir = os.getcwd()
             file_path = os.path.join(base_dir, pipeline.file_path)
 
             logs.append(f"📂 Resolved path: {file_path}")
 
-            # 🔥 CHECK FILE EXISTS
             if not os.path.exists(file_path):
                 raise Exception(f"File not found at {file_path}")
 
-            with open(file_path, "r") as f:
+            with open(file_path, "r", encoding="utf-8") as f:
+
                 reader = csv.DictReader(f)
 
                 if not reader.fieldnames:
                     raise Exception("CSV has no headers")
 
                 columns = reader.fieldnames
+
                 logs.append(f"📊 Columns: {columns}")
 
-                # 🔥 CLEAN COLUMN NAMES (avoid SQL issues)
-                safe_columns = [col.strip().replace(" ", "_") for col in columns]
+                safe_columns = [
+                    col.strip().replace(" ", "_")
+                    for col in columns
+                ]
 
-                col_defs = ", ".join([f"{col} TEXT" for col in safe_columns])
+                col_defs = ", ".join(
+                    [f"{col} TEXT" for col in safe_columns]
+                )
 
                 logs.append("🧹 Dropping old table")
-                db.execute(text(f"DROP TABLE IF EXISTS {pipeline.destination}"))
+
+                db.execute(
+                    text(
+                        f"DROP TABLE IF EXISTS {pipeline.destination}"
+                    )
+                )
 
                 logs.append("🏗 Creating table")
-                db.execute(text(f"CREATE TABLE {pipeline.destination} ({col_defs});"))
+
+                db.execute(
+                    text(
+                        f"""
+                        CREATE TABLE {pipeline.destination}
+                        (
+                            {col_defs}
+                        )
+                        """
+                    )
+                )
 
                 count = 0
 
                 for row in reader:
-                    # map cleaned column names
+
                     clean_row = {
                         col.strip().replace(" ", "_"): value
                         for col, value in row.items()
                     }
 
-                    values = ", ".join([f":{col}" for col in safe_columns])
+                    values = ", ".join(
+                        [f":{col}" for col in safe_columns]
+                    )
 
                     db.execute(
-                        text(f"INSERT INTO {pipeline.destination} VALUES ({values})"),
+                        text(
+                            f"""
+                            INSERT INTO {pipeline.destination}
+                            VALUES ({values})
+                            """
+                        ),
                         clean_row
                     )
+
                     count += 1
 
-                logs.append(f"✅ Inserted {count} rows")
                 db.commit()
 
+                logs.append(
+                    f"✅ Inserted {count} rows"
+                )
+
+        # ==================================================
+        # API PIPELINE
+        # ==================================================
+        elif pipeline.source == "api":
+
+            if not pipeline.api_url:
+                raise Exception("API URL missing")
+
+            logs.append(f"🌐 API URL: {pipeline.api_url}")
+
+            response = requests.get(
+                pipeline.api_url,
+                timeout=30
+            )
+
+            response.raise_for_status()
+
+            data = response.json()
+
+            if not isinstance(data, list):
+                raise Exception(
+                    "API must return JSON array"
+                )
+
+            if len(data) == 0:
+                raise Exception(
+                    "API returned empty data"
+                )
+
+            columns = list(data[0].keys())
+
+            logs.append(
+                f"📊 Columns: {columns}"
+            )
+
+            safe_columns = [
+                col.strip().replace(" ", "_")
+                for col in columns
+            ]
+
+            col_defs = ", ".join(
+                [f"{col} TEXT" for col in safe_columns]
+            )
+
+            logs.append(
+                "🧹 Dropping old table"
+            )
+
+            db.execute(
+                text(
+                    f"DROP TABLE IF EXISTS {pipeline.destination}"
+                )
+            )
+
+            logs.append(
+                "🏗 Creating table"
+            )
+
+            db.execute(
+                text(
+                    f"""
+                    CREATE TABLE {pipeline.destination}
+                    (
+                        {col_defs}
+                    )
+                    """
+                )
+            )
+
+            count = 0
+
+            for row in data:
+
+                clean_row = {
+                    col.strip().replace(" ", "_"):
+                    str(row.get(col))
+                    for col in columns
+                }
+
+                values = ", ".join(
+                    [f":{col}" for col in safe_columns]
+                )
+
+                db.execute(
+                    text(
+                        f"""
+                        INSERT INTO {pipeline.destination}
+                        VALUES ({values})
+                        """
+                    ),
+                    clean_row
+                )
+
+                count += 1
+
+            db.commit()
+
+            logs.append(
+                f"✅ Inserted {count} rows"
+            )
+
+        else:
+            raise Exception(
+                f"Unsupported source type: {pipeline.source}"
+            )
+
+        # ==================================================
         # SUCCESS
+        # ==================================================
         pipeline.status = "success"
         pipeline.last_run = datetime.utcnow()
         pipeline.logs = "\n".join(logs)
@@ -125,9 +266,12 @@ def run_pipeline(pipeline_id: int, db: Session = Depends(get_db)):
         db.add(run)
         db.commit()
 
-        return {"message": "Pipeline executed successfully"}
+        return {
+            "message": "Pipeline executed successfully"
+        }
 
     except Exception as e:
+
         logs.append(f"❌ Error: {str(e)}")
 
         pipeline.status = "failed"
@@ -145,8 +289,12 @@ def run_pipeline(pipeline_id: int, db: Session = Depends(get_db)):
         db.add(run)
         db.commit()
 
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
 
+    
 # 🔹 GET RUN HISTORY
 @router.get("/pipelines/{pipeline_id}/runs")
 def get_pipeline_runs(pipeline_id: int, db: Session = Depends(get_db)):
