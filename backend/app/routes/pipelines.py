@@ -6,6 +6,8 @@ from datetime import datetime
 import csv
 from sqlalchemy import text
 import os
+import requests
+
 
 router = APIRouter()
 
