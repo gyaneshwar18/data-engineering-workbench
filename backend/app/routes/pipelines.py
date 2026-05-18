@@ -19,7 +19,8 @@ def create_pipeline(payload: dict, db: Session = Depends(get_db)):
         name=payload["name"],
         source=payload["source"],
         destination=payload["destination"],
-        file_path=payload.get("file_path")
+        file_path=payload.get("file_path"),
+        api_url=payload.get("api_url")
     )
     db.add(pipeline)
     db.commit()
