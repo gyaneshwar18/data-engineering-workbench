@@ -45,6 +45,8 @@ class Pipeline(Base):
     api_url = Column(String, nullable=True)
     logs = Column(Text, nullable=True)
     error = Column(Text, nullable=True)
+    schedule_type = Column(String, nullable=True)
+    is_active = Column(Boolean, default=False)
 
 
 class PipelineRun(Base):
