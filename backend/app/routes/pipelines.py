@@ -20,7 +20,10 @@ def create_pipeline(payload: dict, db: Session = Depends(get_db)):
         source=payload["source"],
         destination=payload["destination"],
         file_path=payload.get("file_path"),
-        api_url=payload.get("api_url")
+        api_url=payload.get("api_url"),
+        schedule_type=payload.get("schedule_type"),
+        is_active=payload.get("is_active", False)
+        
     )
     db.add(pipeline)
     db.commit()
@@ -344,4 +347,26 @@ def get_pipeline_logs(pipeline_id: int, db: Session = Depends(get_db)):
         "started_at": run.started_at,
         "finished_at": run.finished_at,
         "logs": run.logs or "No logs"
+    }
+
+
+@router.post("/pipelines/run-scheduler")
+def run_scheduler(db: Session = Depends(get_db)):
+
+    active_pipelines = (
+        db.query(Pipeline)
+        .filter(Pipeline.is_active == True)
+        .all()
+    )
+
+    return {
+        "pipelines_found": len(active_pipelines),
+        "pipelines": [
+            {
+                "id": p.id,
+                "name": p.name,
+                "schedule": p.schedule_type
+            }
+            for p in active_pipelines
+        ]
     }
