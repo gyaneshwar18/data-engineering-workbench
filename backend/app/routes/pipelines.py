@@ -11,6 +11,14 @@ import requests
 
 router = APIRouter()
 
+def execute_pipeline(
+    pipeline: Pipeline,
+    db: Session
+):
+    pass
+
+
+
 
 # 🔹 CREATE PIPELINE
 @router.post("/pipelines/create")
@@ -36,8 +44,10 @@ def get_pipelines(db: Session = Depends(get_db)):
     return db.query(Pipeline).all()
 
 
+
 # 🔹 RUN PIPELINE (WITH FULL DEBUG LOGGING)
 @router.post("/pipelines/run/{pipeline_id}")
+
 def run_pipeline(pipeline_id: int, db: Session = Depends(get_db)):
 
     pipeline = db.query(Pipeline).filter(Pipeline.id == pipeline_id).first()
@@ -350,8 +360,11 @@ def get_pipeline_logs(pipeline_id: int, db: Session = Depends(get_db)):
     }
 
 
+
 @router.post("/pipelines/run-scheduler")
-def run_scheduler(db: Session = Depends(get_db)):
+def run_scheduler(
+    db: Session = Depends(get_db)
+):
 
     active_pipelines = (
         db.query(Pipeline)
@@ -359,14 +372,39 @@ def run_scheduler(db: Session = Depends(get_db)):
         .all()
     )
 
+    executed = []
+
+    for pipeline in active_pipelines:
+
+        try:
+
+            execute_pipeline(
+                pipeline,
+                db
+            )
+
+            executed.append({
+                "id": pipeline.id,
+                "name": pipeline.name,
+                "status": "success"
+            })
+
+        except Exception as e:
+
+            executed.append({
+                "id": pipeline.id,
+                "name": pipeline.name,
+                "status": "failed",
+                "error": str(e)
+            })
+
     return {
-        "pipelines_found": len(active_pipelines),
-        "pipelines": [
-            {
-                "id": p.id,
-                "name": p.name,
-                "schedule": p.schedule_type
-            }
-            for p in active_pipelines
-        ]
+        "pipelines_found":
+        len(active_pipelines),
+
+        "pipelines_executed":
+        len(executed),
+
+        "results":
+        executed
     }
