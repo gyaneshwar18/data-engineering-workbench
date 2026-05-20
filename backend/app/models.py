@@ -47,6 +47,7 @@ class Pipeline(Base):
     error = Column(Text, nullable=True)
     schedule_type = Column(String, nullable=True)
     is_active = Column(Boolean, default=False)
+    last_scheduled_run = Column(DateTime, nullable=True)
 
 
 class PipelineRun(Base):
