@@ -2,11 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import Pipeline, PipelineRun
-from datetime import datetime
+from datetime import datetime, timedelta
 import csv
 from sqlalchemy import text
 import os
 import requests
+
 
 
 router = APIRouter()
@@ -16,6 +17,24 @@ def execute_pipeline(
     db: Session
 ):
     pass
+
+def should_run_pipeline(pipeline):
+
+    if not pipeline.last_scheduled_run:
+        return True
+
+    now = datetime.utcnow()
+
+    if pipeline.schedule_type == "hourly":
+        return now - pipeline.last_scheduled_run >= timedelta(hours=1)
+
+    elif pipeline.schedule_type == "daily":
+        return now - pipeline.last_scheduled_run >= timedelta(days=1)
+
+    elif pipeline.schedule_type == "weekly":
+        return now - pipeline.last_scheduled_run >= timedelta(days=7)
+
+    return False
 
 
 
