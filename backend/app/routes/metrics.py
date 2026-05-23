@@ -174,3 +174,46 @@ def pipeline_stats(db: Session = Depends(get_db)):
         "failed_runs": failed_runs,
         "success_rate": success_rate
     }
+
+@router.get("/pipeline-analytics")
+def pipeline_analytics(db: Session = Depends(get_db)):
+
+    total_pipelines = db.execute(text("""
+        SELECT COUNT(*)
+        FROM pipelines
+    """)).scalar()
+
+    active_pipelines = db.execute(text("""
+        SELECT COUNT(*)
+        FROM pipelines
+        WHERE is_active = true
+    """)).scalar()
+
+    successful_runs = db.execute(text("""
+        SELECT COUNT(*)
+        FROM pipeline_runs
+        WHERE status = 'success'
+    """)).scalar()
+
+    failed_runs = db.execute(text("""
+        SELECT COUNT(*)
+        FROM pipeline_runs
+        WHERE status = 'failed'
+    """)).scalar()
+
+    success_rate = 0
+
+    if (successful_runs + failed_runs) > 0:
+        success_rate = round(
+            successful_runs * 100 /
+            (successful_runs + failed_runs),
+            2
+        )
+
+    return {
+        "total_pipelines": total_pipelines,
+        "active_pipelines": active_pipelines,
+        "successful_runs": successful_runs,
+        "failed_runs": failed_runs,
+        "success_rate": success_rate
+    }
