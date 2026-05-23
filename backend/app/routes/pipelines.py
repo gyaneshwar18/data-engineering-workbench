@@ -394,8 +394,11 @@ def run_scheduler(
     executed = []
 
     for pipeline in active_pipelines:
+
         try:
+        
             if should_run_pipeline(pipeline):
+
                 execute_pipeline(
                     pipeline,
                     db
@@ -411,20 +414,24 @@ def run_scheduler(
                     "status": "success",
                     "schedule": pipeline.schedule_type
                 })
+
             else:
+
                 executed.append({
                     "id": pipeline.id,
                     "name": pipeline.name,
                     "status": "skipped",
                     "schedule": pipeline.schedule_type
                 })
+
         except Exception as e:
+
             executed.append({
                 "id": pipeline.id,
-            "name": pipeline.name,
-            "status": "failed",
-            "error": str(e)
-        })
+                "name": pipeline.name,
+                "status": "failed",
+                "error": str(e)
+            })
 
     return {
         "pipelines_found":
