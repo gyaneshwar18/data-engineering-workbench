@@ -22,6 +22,7 @@ export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [metrics, setMetrics] = useState(null);
   const [performance, setPerformance] = useState(null);
+  const [pipelineAnalytics, setPipelineAnalytics] = useState(null);
 
   const [loading, setLoading] = useState(true);
 
@@ -33,10 +34,16 @@ export default function Dashboard() {
 
   const fetchData = async () => {
     try {
-      const [statsRes, metricsRes, perfRes] = await Promise.all([
+      const [
+        statsRes,
+        metricsRes,
+        perfRes,
+        pipelineRes
+      ] = await Promise.all([
         axios.get(`${API}/dashboard/stats`),
         axios.get(`${API}/metrics/query-stats`),
-        axios.get(`${API}/metrics/query-performance`)
+        axios.get(`${API}/metrics/query-performance`),
+        axios.get(`${API}/metrics/pipeline-analytics`)
       ]);
 
       setStats(statsRes.data);
@@ -121,7 +128,7 @@ export default function Dashboard() {
         </ResponsiveContainer>
       </div>
       {/* 🔥 TOP SLOW QUERIES */}
-      
+
 
     </div>
   );
