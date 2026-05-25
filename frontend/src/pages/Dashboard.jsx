@@ -49,6 +49,7 @@ export default function Dashboard() {
       setStats(statsRes.data);
       setMetrics(metricsRes.data);
       setPerformance(perfRes.data);
+      setPipelineAnalytics(pipelineRes.data);
 
     } catch (err) {
       console.error("Dashboard error:", err);
