@@ -23,6 +23,7 @@ export default function Dashboard() {
   const [metrics, setMetrics] = useState(null);
   const [performance, setPerformance] = useState(null);
   const [pipelineAnalytics, setPipelineAnalytics] = useState(null);
+  const [pipelineTrends, setPipelineTrends] = useState([]);
 
   const [loading, setLoading] = useState(true);
 
@@ -38,18 +39,21 @@ export default function Dashboard() {
         statsRes,
         metricsRes,
         perfRes,
-        pipelineRes
+        pipelineRes,
+        trendRes
       ] = await Promise.all([
         axios.get(`${API}/dashboard/stats`),
         axios.get(`${API}/metrics/query-stats`),
         axios.get(`${API}/metrics/query-performance`),
-        axios.get(`${API}/metrics/pipeline-analytics`)
+        axios.get(`${API}/metrics/pipeline-analytics`),
+        axios.get(`${API}/metrics/pipeline-trends`)
       ]);
 
       setStats(statsRes.data);
       setMetrics(metricsRes.data);
       setPerformance(perfRes.data);
       setPipelineAnalytics(pipelineRes.data);
+      setPipelineTrends(trendRes.data);
 
     } catch (err) {
       console.error("Dashboard error:", err);
