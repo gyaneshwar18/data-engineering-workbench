@@ -217,3 +217,38 @@ def pipeline_analytics(db: Session = Depends(get_db)):
         "failed_runs": failed_runs,
         "success_rate": success_rate
     }
+
+@router.get("/pipeline-trends")
+def pipeline_trends(db: Session = Depends(get_db)):
+
+    results = db.execute(text("""
+        SELECT
+            DATE(started_at) as date,
+
+            SUM(
+                CASE
+                    WHEN status='success'
+                    THEN 1
+                    ELSE 0
+                END
+            ) as success,
+
+            SUM(
+                CASE
+                    WHEN status='failed'
+                    THEN 1
+                    ELSE 0
+                END
+            ) as failed
+
+        FROM pipeline_runs
+
+        GROUP BY DATE(started_at)
+
+        ORDER BY DATE(started_at)
+    """)).fetchall()
+
+    return [
+        dict(row._mapping)
+        for row in results
+    ]
