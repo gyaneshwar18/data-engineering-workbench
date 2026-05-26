@@ -139,6 +139,53 @@ export default function Dashboard() {
         </div>
       </div>
 
+      <div className="bg-gray-900 p-4 rounded">
+
+        <h3 className="mb-3">
+          Pipeline Execution Trend
+        </h3>
+
+        <ResponsiveContainer
+          width="100%"
+          height={300}
+        >
+          <LineChart data={pipelineTrends}>
+
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="#444"
+            />
+
+            <XAxis
+              dataKey="date"
+              stroke="#aaa"
+            />
+
+            <YAxis
+              stroke="#aaa"
+            />
+
+            <Tooltip />
+
+            <Line
+              type="monotone"
+              dataKey="success"
+              stroke="#22c55e"
+              name="Success"
+            />
+
+            <Line
+              type="monotone"
+              dataKey="failed"
+              stroke="#ef4444"
+              name="Failed"
+            />
+
+          </LineChart>
+        </ResponsiveContainer>
+
+      </div>
+
       {/* 🔥 MAIN SECTION */}
       <div className="grid grid-cols-12 gap-6">
 
