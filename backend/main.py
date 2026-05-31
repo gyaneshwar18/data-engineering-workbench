@@ -9,6 +9,12 @@ from app import models
 
 app = FastAPI()
 
+@app.get("/health")
+def health():
+    return {
+        "status": "healthy"
+    }
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
