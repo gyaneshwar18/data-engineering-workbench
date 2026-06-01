@@ -15,6 +15,14 @@ def health():
         "status": "healthy"
     }
 
+@app.get("/")
+def root():
+    return {
+        "message": "Data Engineering Workbench API",
+        "status": "running"
+    }
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
