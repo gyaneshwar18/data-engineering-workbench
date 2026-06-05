@@ -5,10 +5,17 @@ import PipelineLogsModal from "../components/PipelineLogsModal";
 import PipelineRunHistory from "../components/PipelineRunHistory";
 
 export default function Pipelines() {
+
   const [pipelines, setPipelines] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const [runningPipelineId, setRunningPipelineId] = useState(null);
+
   const [logsOpen, setLogsOpen] = useState(false);
   const [logsData, setLogsData] = useState(null);
+
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState(null);
 
   const API = import.meta.env.VITE_API_BASE_URL;
 
@@ -18,24 +25,74 @@ export default function Pipelines() {
 
   const fetchPipelines = async () => {
     try {
+      setLoading(true);
+      setError(null);
+
       const res = await axios.get(`${API}/pipelines`);
+
       setPipelines(res.data);
+
     } catch (err) {
-      console.error("Error fetching pipelines:", err);
+
+      console.error(err);
+
+      setError(
+        "Unable to load pipelines."
+      );
+
+    } finally {
+
+      setLoading(false);
+
     }
   };
 
   const runPipeline = async (id) => {
+
     try {
-      setLoading(true);
-      await axios.post(`${API}/pipelines/run/${id}`);
+
+      setRunningPipelineId(id);
+
+      setMessage(null);
+      setError(null);
+
+      await axios.post(
+        `${API}/pipelines/run/${id}`
+      );
+
+      setMessage(
+        "✅ Pipeline executed successfully"
+      );
+
       await fetchPipelines();
+
     } catch (err) {
-      console.error("Run error:", err);
+
+      console.error(err);
+
+      setError(
+        err?.response?.data?.detail ||
+        "❌ Pipeline execution failed"
+      );
+
     } finally {
-      setLoading(false);
+
+      setRunningPipelineId(null);
+
     }
   };
+
+  useEffect(() => {
+
+    if (!message) return;
+
+    const timer = setTimeout(() => {
+      setMessage(null);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+
+  }, [message]);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -62,20 +119,76 @@ export default function Pipelines() {
       <h1 className="text-2xl font-bold mb-6">
         🔄 Pipelines
       </h1>
+      {message && (
+        <div className="mb-4 bg-green-600 text-white p-3 rounded-lg">
+          {message}
+        </div>
+      )}
+
+      {error && (
+        <div className="mb-4 bg-red-600 text-white p-3 rounded-lg">
+          {error}
+        </div>
+      )}
 
       <button
         onClick={fetchPipelines}
-        className="mb-4 bg-blue-600 px-4 py-2 rounded"
+        disabled={loading}
+        className="mb-4 bg-blue-600 px-4 py-2 rounded disabled:bg-gray-600"
       >
-        🔄 Refresh
+        {loading
+          ? "Refreshing..."
+          : "🔄 Refresh"}
       </button>
 
+      {!loading && pipelines.length === 0 && (
+        <div className="bg-gray-900 p-10 rounded-xl text-center">
+
+          <h3 className="text-xl font-semibold mb-2">
+            No Pipelines Found
+          </h3>
+
+          <p className="text-gray-400">
+            Create your first pipeline to begin processing data.
+          </p>
+
+        </div>
+      )}
+      {loading && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          {[1, 2, 3].map((item) => (
+            <div
+              key={item}
+              className="animate-pulse bg-gray-900 p-6 rounded-xl"
+            >
+              <div className="h-6 bg-gray-700 rounded mb-3"></div>
+              <div className="h-4 bg-gray-700 rounded"></div>
+            </div>
+          ))}
+
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
         {pipelines.map((p) => (
           <div
             key={p.id}
-            className="bg-gray-900 p-4 rounded-xl border border-gray-800"
+            className="
+                            bg-gray-900
+                            border
+                            border-gray-800
+                            rounded-xl
+                            p-5
+                            flex
+                            flex-col
+                            h-full
+                            min-h-137.5
+                            shadow-lg
+                            hover:border-blue-500
+                            transition-all
+                            duration-300
+                            "
           >
 
             {/* NAME */}
@@ -98,9 +211,15 @@ export default function Pipelines() {
               <div className="flex gap-2">
                 <button
                   onClick={() => runPipeline(p.id)}
-                  className="bg-green-600 px-3 py-1 rounded text-sm"
+                  disabled={runningPipelineId === p.id}
+                  className={`px-3 py-1 rounded text-sm ${runningPipelineId === p.id
+                    ? "bg-gray-600 cursor-not-allowed"
+                    : "bg-green-600 hover:bg-green-700"
+                    }`}
                 >
-                  ▶ Run
+                  {runningPipelineId === p.id
+                    ? "Running..."
+                    : "▶ Run"}
                 </button>
 
                 <button
@@ -119,7 +238,9 @@ export default function Pipelines() {
                 Last Run: {new Date(p.last_run).toLocaleString()}
               </p>
             )}
-            <PipelineRunHistory pipelineId={p.id} />
+            <button>
+              View Run History
+            </button>
 
           </div>
         ))}
