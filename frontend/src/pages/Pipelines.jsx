@@ -14,8 +14,13 @@ export default function Pipelines() {
   const [logsOpen, setLogsOpen] = useState(false);
   const [logsData, setLogsData] = useState(null);
 
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [selectedPipelineId, setSelectedPipelineId] = useState(null);
+
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
+
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const API = import.meta.env.VITE_API_BASE_URL;
 
@@ -65,6 +70,7 @@ export default function Pipelines() {
       );
 
       await fetchPipelines();
+      setRefreshKey(prev => prev + 1);
 
     } catch (err) {
 
@@ -183,7 +189,7 @@ export default function Pipelines() {
                             flex
                             flex-col
                             h-full
-                            min-h-137.5
+                            min-h-50.5
                             shadow-lg
                             hover:border-blue-500
                             transition-all
@@ -204,7 +210,7 @@ export default function Pipelines() {
             {/* STATUS + ACTIONS */}
             <div className="mt-3 flex items-center justify-between">
 
-              <span className={`px-3 py-1 rounded text-sm ${getStatusColor(p.status)}`}>
+              <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(p.status)}`}>
                 {p.status}
               </span>
 
@@ -238,7 +244,17 @@ export default function Pipelines() {
                 Last Run: {new Date(p.last_run).toLocaleString()}
               </p>
             )}
-            <button>
+            <button
+              className="
+                        bg-purple-600
+                        hover:bg-purple-700
+                        px-3
+                        py-1
+                        rounded
+                        text-sm
+                        transition
+                      "
+            >
               View Run History
             </button>
 
