@@ -119,6 +119,11 @@ export default function Pipelines() {
     }
   };
 
+  const handleViewHistory = (pipelineId) => {
+  setSelectedPipelineId(pipelineId);
+  setHistoryOpen(true);
+};
+
   return (
     <div className="p-6 text-white">
 
