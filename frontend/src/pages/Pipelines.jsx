@@ -120,9 +120,9 @@ export default function Pipelines() {
   };
 
   const handleViewHistory = (pipelineId) => {
-  setSelectedPipelineId(pipelineId);
-  setHistoryOpen(true);
-};
+    setSelectedPipelineId(pipelineId);
+    setHistoryOpen(true);
+  };
 
   return (
     <div className="p-6 text-white">
@@ -186,82 +186,97 @@ export default function Pipelines() {
           <div
             key={p.id}
             className="
-                            bg-gray-900
-                            border
-                            border-gray-800
-                            rounded-xl
-                            p-5
-                            flex
-                            flex-col
-                            h-full
-                            min-h-50.5
-                            shadow-lg
-                            hover:border-blue-500
-                            transition-all
-                            duration-300
-                            "
+    bg-[#081226]
+    border
+    border-slate-800
+    rounded-2xl
+    p-6
+    shadow-lg
+    hover:border-blue-500
+    transition-all
+    duration-300
+    min-h-55
+  "
           >
 
-            {/* NAME */}
-            <h2 className="text-lg font-semibold">
+            <h2 className="text-xl font-semibold mb-2">
               {p.name}
             </h2>
 
-            {/* FLOW */}
-            <p className="text-gray-400 text-sm mt-1">
+            <p className="text-gray-400 text-sm mb-6">
               {p.source} → {p.destination}
             </p>
 
-            {/* STATUS + ACTIONS */}
-            <div className="mt-3 flex items-center justify-between">
+            <div className="space-y-3">
 
-              <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(p.status)}`}>
-                {p.status}
-              </span>
+              <div className="flex justify-between items-center">
 
-              <div className="flex gap-2">
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                    p.status
+                  )}`}
+                >
+                  {p.status.toUpperCase()}
+                </span>
+
+                <span className="text-xs text-gray-400">
+                  {p.last_run
+                    ? new Date(p.last_run).toLocaleString()
+                    : "Never Run"}
+                </span>
+
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 pt-4">
+
                 <button
                   onClick={() => runPipeline(p.id)}
                   disabled={runningPipelineId === p.id}
-                  className={`px-3 py-1 rounded text-sm ${runningPipelineId === p.id
-                    ? "bg-gray-600 cursor-not-allowed"
-                    : "bg-green-600 hover:bg-green-700"
-                    }`}
+                  className="
+          bg-green-600
+          hover:bg-green-700
+          rounded-lg
+          py-2
+          text-sm
+          transition
+        "
                 >
                   {runningPipelineId === p.id
                     ? "Running..."
-                    : "▶ Run"}
+                    : "Run"}
                 </button>
 
                 <button
                   onClick={() => handleViewLogs(p.id)}
-                  className="bg-blue-600 px-2 py-1 rounded text-sm"
+                  className="
+          bg-blue-600
+          hover:bg-blue-700
+          rounded-lg
+          py-2
+          text-sm
+          transition
+        "
                 >
-                  View Logs
+                  Logs
                 </button>
+
+                <button
+                  onClick={() => handleViewHistory(p.id)}
+                  className="
+          bg-purple-600
+          hover:bg-purple-700
+          rounded-lg
+          py-2
+          text-sm
+          transition
+        "
+                >
+                  History
+                </button>
+
               </div>
 
             </div>
-
-            {/* LAST RUN */}
-            {p.last_run && (
-              <p className="text-xs text-gray-500 mt-2">
-                Last Run: {new Date(p.last_run).toLocaleString()}
-              </p>
-            )}
-            <button
-              className="
-                        bg-purple-600
-                        hover:bg-purple-700
-                        px-3
-                        py-1
-                        rounded
-                        text-sm
-                        transition
-                      "
-            >
-              View Run History
-            </button>
 
           </div>
         ))}
@@ -273,6 +288,12 @@ export default function Pipelines() {
         isOpen={logsOpen}
         onClose={() => setLogsOpen(false)}
         logsData={logsData}
+      />
+
+      <PipelineRunHistoryModal
+        isOpen={historyOpen}
+        onClose={() => setHistoryOpen(false)}
+        pipelineId={selectedPipelineId}
       />
 
     </div>
