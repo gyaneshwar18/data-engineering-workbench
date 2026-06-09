@@ -13,16 +13,24 @@ export default function PipelineRunHistoryModal({
     if (!isOpen || !pipelineId) return;
 
     const fetchRuns = async () => {
-      const data = await getPipelineRuns(pipelineId);
-      setRuns(data);
+      try {
+        const data = await getPipelineRuns(pipelineId);
+        setRuns(data);
+      } catch (err) {
+        console.error(err);
+      }
     };
 
     fetchRuns();
   }, [isOpen, pipelineId]);
 
-  const viewLogs = async (runId) => {
-    const data = await getRunLogs(runId);
-    setSelectedLogs(data);
+  const handleViewLogs = async (runId) => {
+    try {
+      const data = await getRunLogs(runId);
+      setSelectedLogs(data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   if (!isOpen) return null;
@@ -30,9 +38,9 @@ export default function PipelineRunHistoryModal({
   return (
     <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
 
-      <div className="bg-slate-900 text-white w-[90%] max-w-5xl rounded-xl p-6">
+      <div className="bg-slate-900 text-white w-[90%] max-w-6xl rounded-xl p-6">
 
-        <div className="flex justify-between mb-4">
+        <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">
             Pipeline Run History
           </h2>
@@ -80,7 +88,7 @@ export default function PipelineRunHistoryModal({
 
                   <td>
                     <button
-                      onClick={() => viewLogs(run.id)}
+                      onClick={() => handleViewLogs(run.id)}
                       className="bg-blue-600 px-3 py-1 rounded"
                     >
                       Logs
