@@ -3,6 +3,8 @@ import axios from "axios";
 import { getPipelineLogs } from "../api/pipelineApi";
 import PipelineLogsModal from "../components/PipelineLogsModal";
 import PipelineRunHistory from "../components/PipelineRunHistory";
+import PipelineRunHistoryModal from "../components/PipelineRunHistoryModal";
+
 
 export default function Pipelines() {
 
