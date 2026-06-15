@@ -5,6 +5,12 @@ import PipelineLogsModal from "../components/PipelineLogsModal";
 import PipelineRunHistory from "../components/PipelineRunHistory";
 import PipelineRunHistoryModal from "../components/PipelineRunHistoryModal";
 
+import StatusBadge from "../components/ui/StatusBadge";
+import PageHeader from "../components/ui/PageHeader";
+import Card from "../components/ui/Card";
+import EmptyState from "../components/ui/EmptyState";
+import LoadingSkeleton from "../components/ui/LoadingSkeleton";
+
 
 export default function Pipelines() {
 
@@ -102,14 +108,7 @@ export default function Pipelines() {
 
   }, [message]);
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "success": return "bg-green-600";
-      case "failed": return "bg-red-600";
-      case "running": return "bg-yellow-500";
-      default: return "bg-gray-600";
-    }
-  };
+  
 
   const handleViewLogs = async (pipelineId) => {
     try {
@@ -129,9 +128,25 @@ export default function Pipelines() {
   return (
     <div className="p-6 text-white">
 
-      <h1 className="text-2xl font-bold mb-6">
-        🔄 Pipelines
-      </h1>
+      <PageHeader
+        title="Pipelines"
+        subtitle="Manage and monitor data pipelines"
+        action={
+          <button
+            onClick={fetchPipelines}
+            disabled={loading}
+            className="
+        bg-blue-600
+        hover:bg-blue-700
+        px-4
+        py-2
+        rounded-lg
+      "
+          >
+            Refresh
+          </button>
+        }
+      />
       {message && (
         <div className="mb-4 bg-green-600 text-white p-3 rounded-lg">
           {message}
@@ -155,29 +170,16 @@ export default function Pipelines() {
       </button>
 
       {!loading && pipelines.length === 0 && (
-        <div className="bg-gray-900 p-10 rounded-xl text-center">
-
-          <h3 className="text-xl font-semibold mb-2">
-            No Pipelines Found
-          </h3>
-
-          <p className="text-gray-400">
-            Create your first pipeline to begin processing data.
-          </p>
-
-        </div>
+        <EmptyState
+          title="No Pipelines Found"
+          description="Create your first pipeline to start processing data."
+        />
       )}
       {loading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-          {[1, 2, 3].map((item) => (
-            <div
-              key={item}
-              className="animate-pulse bg-gray-900 p-6 rounded-xl"
-            >
-              <div className="h-6 bg-gray-700 rounded mb-3"></div>
-              <div className="h-4 bg-gray-700 rounded"></div>
-            </div>
+          {[1, 2, 3, 4].map((item) => (
+            <LoadingSkeleton key={item} />
           ))}
 
         </div>
@@ -185,21 +187,7 @@ export default function Pipelines() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
         {pipelines.map((p) => (
-          <div
-            key={p.id}
-            className="
-    bg-[#081226]
-    border
-    border-slate-800
-    rounded-2xl
-    p-6
-    shadow-lg
-    hover:border-blue-500
-    transition-all
-    duration-300
-    min-h-55
-  "
-          >
+          <Card className="min-h-55">
 
             <h2 className="text-xl font-semibold mb-2">
               {p.name}
@@ -213,19 +201,13 @@ export default function Pipelines() {
 
               <div className="flex justify-between items-center">
 
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                    p.status
-                  )}`}
-                >
-                  {p.status.toUpperCase()}
-                </span>
+                          <StatusBadge status={p.status} />
 
-                <span className="text-xs text-gray-400">
-                  {p.last_run
-                    ? new Date(p.last_run).toLocaleString()
-                    : "Never Run"}
-                </span>
+                          <span className="text-xs text-gray-400">
+                            {p.last_run
+                              ? new Date(p.last_run).toLocaleString()
+                              : "Never Run"}
+                          </span>
 
               </div>
 
@@ -280,7 +262,7 @@ export default function Pipelines() {
 
             </div>
 
-          </div>
+          </Card>
         ))}
 
       </div>
