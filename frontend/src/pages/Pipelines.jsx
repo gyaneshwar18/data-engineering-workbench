@@ -108,7 +108,7 @@ export default function Pipelines() {
 
   }, [message]);
 
-  
+
 
   const handleViewLogs = async (pipelineId) => {
     try {
@@ -198,16 +198,31 @@ export default function Pipelines() {
             </p>
 
             <div className="space-y-3">
+              <div className="mt-4 space-y-3">
 
-              <div className="flex justify-between items-center">
+                <div className="flex justify-between">
 
-                          <StatusBadge status={p.status} />
+                  <span className="text-slate-400 text-sm">
+                    Status
+                  </span>
 
-                          <span className="text-xs text-gray-400">
-                            {p.last_run
-                              ? new Date(p.last_run).toLocaleString()
-                              : "Never Run"}
-                          </span>
+                  <StatusBadge status={p.status} />
+
+                </div>
+
+                <div className="flex justify-between">
+
+                  <span className="text-slate-400 text-sm">
+                    Last Run
+                  </span>
+
+                  <span className="text-sm text-slate-300">
+                    {p.last_run
+                      ? new Date(p.last_run).toLocaleDateString()
+                      : "Never"}
+                  </span>
+
+                </div>
 
               </div>
 
