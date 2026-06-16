@@ -187,7 +187,7 @@ export default function Pipelines() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
         {pipelines.map((p) => (
-          <Card className="min-h-55">
+          <Card className="min-h-20">
 
             <h2 className="text-xl font-semibold mb-2">
               {p.name}
@@ -248,12 +248,13 @@ export default function Pipelines() {
                 <button
                   onClick={() => handleViewLogs(p.id)}
                   className="
-          bg-blue-600
+          bg-slate-800
+            border border-slate-700
           hover:bg-blue-700
-          rounded-lg
-          py-2
-          text-sm
-          transition
+            rounded-lg
+            py-2
+            text-sm
+            transition
         "
                 >
                   Logs
@@ -262,12 +263,13 @@ export default function Pipelines() {
                 <button
                   onClick={() => handleViewHistory(p.id)}
                   className="
-          bg-purple-600
-          hover:bg-purple-700
-          rounded-lg
-          py-2
-          text-sm
-          transition
+            bg-slate-800
+              border border-slate-700
+            hover:bg-purple-700
+              rounded-lg
+              py-2
+              text-sm
+              transition
         "
                 >
                   History
