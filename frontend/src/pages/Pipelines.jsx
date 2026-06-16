@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { getPipelineLogs } from "../api/pipelineApi";
 import PipelineLogsModal from "../components/PipelineLogsModal";
-import PipelineRunHistory from "../components/PipelineRunHistory";
+
 import PipelineRunHistoryModal from "../components/PipelineRunHistoryModal";
 
 import StatusBadge from "../components/ui/StatusBadge";
@@ -28,7 +28,6 @@ export default function Pipelines() {
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
 
-  const [refreshKey, setRefreshKey] = useState(0);
 
   const API = import.meta.env.VITE_API_BASE_URL;
 
@@ -78,7 +77,7 @@ export default function Pipelines() {
       );
 
       await fetchPipelines();
-      setRefreshKey(prev => prev + 1);
+
 
     } catch (err) {
 
@@ -187,58 +186,46 @@ export default function Pipelines() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
         {pipelines.map((p) => (
-          <Card className="min-h-20">
+          <Card className="min-h-[150px]">
 
-            <h2 className="text-xl font-semibold mb-2">
+            <h2 className="text-base font-semibold text-white mb-1">
               {p.name}
             </h2>
 
-            <p className="text-gray-400 text-sm mb-6">
+            <p className="text-slate-400 text-sm mb-4">
               {p.source} → {p.destination}
             </p>
 
             <div className="space-y-3">
-              <div className="mt-4 space-y-3">
+              <div className="flex items-center justify-between mt-3">
+                <StatusBadge status={p.status} />
 
-                <div className="flex justify-between">
-
-                  <span className="text-slate-400 text-sm">
-                    Status
-                  </span>
-
-                  <StatusBadge status={p.status} />
-
-                </div>
-
-                <div className="flex justify-between">
-
-                  <span className="text-slate-400 text-sm">
-                    Last Run
-                  </span>
-
-                  <span className="text-sm text-slate-300">
-                    {p.last_run
-                      ? new Date(p.last_run).toLocaleDateString()
-                      : "Never"}
-                  </span>
-
-                </div>
-
+                <span className="text-xs text-slate-400">
+                  {p.last_run
+                    ? new Date(p.last_run).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })
+                    : "Never Run"}
+                </span>
               </div>
 
-              <div className="grid grid-cols-3 gap-2 pt-4">
+              <div className="flex gap-2 mt-4">
 
                 <button
                   onClick={() => runPipeline(p.id)}
                   disabled={runningPipelineId === p.id}
                   className="
-          bg-green-600
-          hover:bg-green-700
-          rounded-lg
-          py-2
-          text-sm
-          transition
-        "
+                                px-3
+                                h-8
+                                rounded-md
+                                bg-blue-600
+                                hover:bg-blue-700
+                                text-xs
+                                font-medium
+                                transition
+                              "
                 >
                   {runningPipelineId === p.id
                     ? "Running..."
@@ -248,14 +235,16 @@ export default function Pipelines() {
                 <button
                   onClick={() => handleViewLogs(p.id)}
                   className="
-          bg-slate-800
-            border border-slate-700
-          hover:bg-blue-700
-            rounded-lg
-            py-2
-            text-sm
-            transition
-        "
+                          px-3
+                          h-8
+                          rounded-md
+                          border
+                          border-slate-700
+                          bg-slate-900
+                          hover:bg-slate-800
+                          text-xs
+                          transition
+                        "
                 >
                   Logs
                 </button>
