@@ -6,15 +6,14 @@ export default function Card({
   return (
     <div
       className={`
-        bg-[#081226]
+        bg-slate-900/80
         border
         border-slate-800
-        rounded-2xl
-        p-6
-        shadow-lg
-        hover:border-blue-500
+        rounded-xl
+        p-5
         transition-all
-        duration-300
+        duration-200
+        hover:border-slate-700
         ${className}
       `}
     >
