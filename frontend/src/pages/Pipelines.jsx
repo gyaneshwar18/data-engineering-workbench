@@ -158,15 +158,7 @@ export default function Pipelines() {
         </div>
       )}
 
-      <button
-        onClick={fetchPipelines}
-        disabled={loading}
-        className="mb-4 bg-blue-600 px-4 py-2 rounded disabled:bg-gray-600"
-      >
-        {loading
-          ? "Refreshing..."
-          : "🔄 Refresh"}
-      </button>
+      
 
       {!loading && pipelines.length === 0 && (
         <EmptyState
@@ -218,7 +210,7 @@ export default function Pipelines() {
                   disabled={runningPipelineId === p.id}
                   className="
                                 px-3
-                                h-8
+                                h-9
                                 rounded-md
                                 bg-blue-600
                                 hover:bg-blue-700
@@ -236,7 +228,7 @@ export default function Pipelines() {
                   onClick={() => handleViewLogs(p.id)}
                   className="
                           px-3
-                          h-8
+                          h-9
                           rounded-md
                           border
                           border-slate-700
@@ -252,14 +244,16 @@ export default function Pipelines() {
                 <button
                   onClick={() => handleViewHistory(p.id)}
                   className="
-            bg-slate-800
-              border border-slate-700
-            hover:bg-purple-700
-              rounded-lg
-              py-2
-              text-sm
-              transition
-        "
+                          px-3
+                          h-9
+                          rounded-md
+                          border
+                          border-slate-700
+                          bg-slate-900
+                          hover:bg-slate-800
+                          text-xs
+                          transition
+                        "
                 >
                   History
                 </button>

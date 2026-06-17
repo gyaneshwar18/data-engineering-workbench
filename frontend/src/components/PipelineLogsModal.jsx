@@ -6,7 +6,7 @@ const PipelineLogsModal = ({ isOpen, onClose, logsData }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       
-      <div className="bg-gray-900 text-white w-200 max-h-[80vh] rounded-lg shadow-lg p-4 overflow-hidden">
+      <div className="bg-slate-950 border border-slate-800 rounded-xl text-white w-200 max-h-[80vh]  shadow-lg p-4 overflow-hidden">
         
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-lg font-bold">Pipeline Logs</h2>
@@ -19,7 +19,7 @@ const PipelineLogsModal = ({ isOpen, onClose, logsData }) => {
           <p>Finished: {logsData?.finished_at}</p>
         </div>
 
-        <div className="bg-black p-3 rounded overflow-y-auto h-[60vh] text-green-400 font-mono text-xs">
+        <div className="bg-black p-3 rounded overflow-y-auto h-[60vh] text-green-300 font-mono text-xs">
           <pre>{logsData?.logs || "No logs available"}</pre>
         </div>
 
