@@ -61,8 +61,7 @@ export default function Pipelines() {
     try {
       setRunningPipelineId(pipelineId);
 
-      setMessage(null);
-      setError(null);
+      
 
       await axios.post(
         `${API}/pipelines/run/${pipelineId}`
