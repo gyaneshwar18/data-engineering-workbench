@@ -28,8 +28,7 @@ export default function Pipelines() {
   const [selectedPipelineId, setSelectedPipelineId] =
     useState(null);
 
-  const [message, setMessage] = useState(null);
-  const [error, setError] = useState(null);
+  
 
   const API = import.meta.env.VITE_API_BASE_URL;
 
