@@ -68,10 +68,7 @@ export default function Pipelines() {
         `${API}/pipelines/run/${pipelineId}`
       );
 
-      setMessage(
-        "✅ Pipeline executed successfully"
-      );
-
+      
       await fetchPipelines();
     } catch (err) {
       console.error(err);
