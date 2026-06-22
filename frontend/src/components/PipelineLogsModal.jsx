@@ -134,7 +134,7 @@ const PipelineLogsModal = ({
             "
           >
             <X
-              size={24}
+              size={22}
               className="text-slate-400"
             />
           </button>
