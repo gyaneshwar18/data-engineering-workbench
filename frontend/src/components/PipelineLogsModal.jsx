@@ -38,7 +38,7 @@ const PipelineLogsModal = ({
       <div
         className="
           w-full
-          max-w-6xl
+          max-w-5xl
           max-h-[88vh]
 
           rounded-3xl
@@ -104,11 +104,11 @@ const PipelineLogsModal = ({
 
             <div>
 
-              <h2 className="text-3xl font-bold text-white">
+              <h2 className="text-2xl font-semibold text-white">
                 Pipeline Logs
               </h2>
 
-              <p className="text-slate-400 mt-1">
+              <p className="text-slate-400 text-sm">
                 Execution details and runtime logs
               </p>
 
