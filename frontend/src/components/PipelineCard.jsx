@@ -1,3 +1,9 @@
+import {
+    Play,
+    FileText,
+    History,
+} from "lucide-react";
+
 import StatusBadge from "./ui/StatusBadge";
 
 export default function PipelineCard({
@@ -140,57 +146,79 @@ export default function PipelineCard({
             <div className="grid grid-cols-3 gap-3 mt-6">
 
                 <button
+                    onClick={() => onRun(pipeline.id)}
+                    disabled={running}
                     className="
-                            h-12
-                            rounded-xl
-                            bg-blue-500/10
-                            border border-blue-500/20
-                            text-blue-300
-                            hover:bg-blue-500/15
-                            text-base
-                            font-medium
-                            transition-all
-                            duration-200
-                            "
+      h-12
+      cursor-pointer 
+      disabled:cursor-not-allowed
+      rounded-xl
+      bg-blue-500/10
+      border border-blue-500/20
+      text-blue-300
+      hover:bg-blue-500/15
+      text-base
+      font-medium
+      transition-all
+      duration-200
+      flex
+      items-center
+      justify-center
+      gap-2
+    "
                 >
-                    <span className="text-blue-400">▶</span> Run
+                    <Play size={16} />
+                    {running ? "Running..." : "Run"}
                 </button>
 
                 <button
                     onClick={() => onLogs(pipeline.id)}
                     className="
-            h-12
-            rounded-xl
-           bg-amber-500/10
-            border border-amber-500/20
-            text-amber-300
-            hover:bg-amber-500/15
-            text-base
-            font-medium
-            transition-all
-            duration-200
-            "
+      h-12
+      cursor-pointer 
+      disabled:cursor-not-allowed
+      rounded-xl
+      bg-amber-500/10
+      border border-amber-500/20
+      text-amber-300
+      hover:bg-amber-500/15
+      text-base
+      font-medium
+      transition-all
+      duration-200
+      flex
+      items-center
+      justify-center
+      gap-2
+    "
                 >
-                    📄 Logs
+                    <FileText size={16} />
+                    Logs
                 </button>
 
                 <button
                     onClick={() => onHistory(pipeline.id)}
                     className="
-            h-12
-            rounded-xl
-            bg-purple-500/10
-            border border-purple-500/20
-            text-purple-300
-            hover:bg-purple-500/15
-            text-base
-            font-medium
-            transition-all
-            duration-200
-            "
-
+      h-12
+      cursor-pointer
+      disabled:cursor-not-allowed
+      rounded-xl
+      bg-purple-500/10
+      border border-purple-500/20
+      text-purple-300
+      hover:bg-purple-500/15
+      text-base
+      font-medium
+      transition-all
+      duration-200
+      flex
+      items-center
+      justify-center
+      gap-2
+    "
                 >
-                    🕒 History
+                    <History size={16} />
+                    History
                 </button>
 
             </div>
