@@ -41,7 +41,7 @@ const PipelineLogsModal = ({
           max-w-5xl
           max-h-[88vh]
 
-          rounded-3xl
+          rounded-2xl
 
           bg-[#0B1120]
 
