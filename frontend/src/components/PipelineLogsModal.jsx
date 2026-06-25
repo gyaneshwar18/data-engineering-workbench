@@ -29,7 +29,7 @@ const PipelineLogsModal = ({
         items-center
         justify-center
 
-        p-8
+        p-6
 
         bg-black/60
         backdrop-blur-md
@@ -71,8 +71,8 @@ const PipelineLogsModal = ({
             items-center
             justify-between
 
-            px-8
-            py-6
+            px-6
+            py-5
 
             bg-[#0B1120]
 
@@ -104,7 +104,7 @@ const PipelineLogsModal = ({
 
             <div>
 
-              <h2 className="text-2xl font-semibold text-white">
+              <h2 className="text-lg font-semibold  text-white">
                 Pipeline Logs
               </h2>
 
@@ -142,13 +142,13 @@ const PipelineLogsModal = ({
 
         {/* Body */}
 
-        <div className="p-8 overflow-auto max-h-[calc(88vh-95px)]">
+        <div className="p-6 overflow-auto max-h-[calc(88vh-95px)]">
 
           {/* Metrics */}
 
           <div className="grid md:grid-cols-3 gap-5 mb-8">
 
-            <div className="bg-slate-900 rounded-2xl p-5 border border-slate-800">
+            <div className="bg-slate-900 rounded-2xl p-4 border border-slate-800">
 
               <p className="text-xs uppercase tracking-wider text-slate-500 mb-3">
                 Status
@@ -231,7 +231,7 @@ const PipelineLogsModal = ({
 
           <div className="flex justify-between items-center mb-5">
 
-            <h3 className="text-2xl font-semibold text-white">
+            <h3 className="text-lg font-semibold text-white">
               Terminal Output
             </h3>
 
@@ -247,15 +247,15 @@ const PipelineLogsModal = ({
                 border
                 border-slate-700
 
-                px-5
-                py-3
+                px-4
+                py-2
 
                 hover:bg-slate-800
 
                 transition
               "
             >
-              <Copy size={18} />
+              <Copy size={16} />
               Copy Logs
             </button>
 
@@ -290,9 +290,9 @@ const PipelineLogsModal = ({
                 border-slate-800
               "
             >
-              <div className="h-4 w-4 rounded-full bg-red-500"></div>
-              <div className="h-4 w-4 rounded-full bg-yellow-400"></div>
-              <div className="h-4 w-4 rounded-full bg-green-500"></div>
+              <div className="h-3 w-3 rounded-full bg-red-500"></div>
+              <div className="h-3 w-3 rounded-full bg-yellow-400"></div>
+              <div className="h-3 w-3 rounded-full bg-green-500"></div>
             </div>
 
             {/* Logs */}
@@ -301,13 +301,13 @@ const PipelineLogsModal = ({
               className="
                 overflow-y-auto
 
-                h-[420px]
+                h-[340px]
 
                 p-7
 
                 font-mono
-                text-[15px]
-                leading-8
+                text-[13px]
+                leading-6
 
                 text-emerald-400
               "
