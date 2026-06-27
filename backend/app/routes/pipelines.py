@@ -288,6 +288,86 @@ def execute_csv_pipeline(
                 )
 
 
+def execute_api_pipeline(
+    pipeline: Pipeline,
+    db: Session,
+    logs: list[str],
+):
+    if not pipeline.api_url:
+        raise Exception("API URL missing")
+
+    logs.append(f"🌐 API URL: {pipeline.api_url}")
+
+    response = requests.get(
+        pipeline.api_url,
+        timeout=30,
+    )
+
+    response.raise_for_status()
+
+    data = response.json()
+
+    if not isinstance(data, list):
+        raise Exception(
+            "API must return JSON array"
+        )
+
+    if len(data) == 0:
+        raise Exception(
+            "API returned empty data"
+        )
+
+    columns = list(data[0].keys())
+
+    logs.append(
+        f"📊 Columns: {columns}"
+    )
+
+    safe_columns = [
+        col.strip().replace(" ", "_")
+        for col in columns
+    ]
+
+    create_destination_table(
+        db=db,
+        destination=pipeline.destination,
+        safe_columns=safe_columns,
+        logs=logs,
+    )
+
+    count = 0
+
+    for row in data:
+
+        clean_row = {
+            col.strip().replace(" ", "_"):
+            str(row.get(col))
+            for col in columns
+        }
+
+        values = ", ".join(
+            f":{col}"
+            for col in safe_columns
+        )
+
+        db.execute(
+            text(
+                f"""
+                INSERT INTO {pipeline.destination}
+                VALUES ({values})
+                """
+            ),
+            clean_row,
+        )
+
+        count += 1
+
+    db.commit()
+
+    logs.append(
+        f"✅ Inserted {count} rows"
+    )
+
 def should_run_pipeline(pipeline):
 
     if not pipeline.last_scheduled_run:
