@@ -12,11 +12,281 @@ import requests
 
 router = APIRouter()
 
+def save_pipeline_run(
+    db: Session,
+    pipeline: Pipeline,
+    status: str,
+    started_at: datetime,
+    logs: str,
+):
+    run = PipelineRun(
+        pipeline_id=pipeline.id,
+        status=status,
+        started_at=started_at,
+        finished_at=datetime.utcnow(),
+        logs=logs,
+    )
+
+    db.add(run)
+    db.commit()
+
+def create_destination_table(
+    db: Session,
+    destination: str,
+    safe_columns: list[str],
+    logs: list[str],                
+):
+    col_defs = ", ".join(
+        f"{column} TEXT"
+        for column in safe_columns
+    )
+
+    logs.append("🧹 Dropping old table")
+
+    db.execute(
+        text(
+            f"DROP TABLE IF EXISTS {destination}"
+        )
+    )
+
+    logs.append("🏗 Creating table")
+
+    db.execute(
+        text(
+            f"""
+            CREATE TABLE {destination}
+            (
+                {col_defs}
+            )
+            """
+        )
+    )
+
 def execute_pipeline(
     pipeline: Pipeline,
     db: Session
 ):
-    pass
+    logs: list[str] = []
+    start_time = datetime.utcnow()
+
+    pipeline.status = "running"
+    pipeline.logs = ""
+    pipeline.error = None
+    db.commit()
+
+    try:
+        logs.append("🚀 Pipeline started")
+
+        # ==================================================
+        # CSV PIPELINE
+        # ==================================================
+        if pipeline.source == "csv":
+            execute_csv_pipeline(
+                pipeline=pipeline,
+                db=db,
+                logs=logs,
+            )
+       
+        # ==================================================
+        # API PIPELINE
+        # ==================================================
+        elif pipeline.source == "api":
+
+            if not pipeline.api_url:
+                raise Exception("API URL missing")
+
+            logs.append(f"🌐 API URL: {pipeline.api_url}")
+
+            response = requests.get(
+                pipeline.api_url,
+                timeout=30
+            )
+
+            response.raise_for_status()
+
+            data = response.json()
+
+            if not isinstance(data, list):
+                raise Exception(
+                    "API must return JSON array"
+                )
+
+            if len(data) == 0:
+                raise Exception(
+                    "API returned empty data"
+                )
+
+            columns = list(data[0].keys())
+
+            logs.append(
+                f"📊 Columns: {columns}"
+            )
+
+            safe_columns = [
+                col.strip().replace(" ", "_")
+                for col in columns
+            ]
+
+            create_destination_table(
+                db=db,
+                destination=pipeline.destination,
+                safe_columns=safe_columns,
+                logs=logs,
+            )
+
+            count = 0
+
+            for row in data:
+
+                clean_row = {
+                    col.strip().replace(" ", "_"):
+                    str(row.get(col))
+                    for col in columns
+                }
+
+                values = ", ".join(
+                    [f":{col}" for col in safe_columns]
+                )
+
+                db.execute(
+                    text(
+                        f"""
+                        INSERT INTO {pipeline.destination}
+                        VALUES ({values})
+                        """
+                    ),
+                    clean_row
+                )
+
+                count += 1
+
+            db.commit()
+
+            logs.append(
+                f"✅ Inserted {count} rows"
+            )
+
+        else:
+            raise Exception(
+                f"Unsupported source type: {pipeline.source}"
+            )
+
+        # ==================================================
+        # SUCCESS
+        # ==================================================
+        pipeline.status = "success"
+        pipeline.last_run = datetime.utcnow()
+        pipeline.logs = "\n".join(logs)
+
+        save_pipeline_run(
+            db=db,
+            pipeline=pipeline,
+            status="success",
+            started_at=start_time,
+            logs=pipeline.logs,
+        )
+
+        return {
+            "message": "Pipeline executed successfully",
+            "pipeline_id": pipeline.id,
+            "status": pipeline.status,
+        }
+
+    except Exception as e:
+
+        logs.append(f"❌ Error: {str(e)}")
+
+        pipeline.status = "failed"
+        pipeline.error = str(e)
+        pipeline.logs = "\n".join(logs)
+
+        save_pipeline_run(
+            db=db,
+            pipeline=pipeline,
+            status="failed",
+            started_at=start_time,
+            logs=pipeline.logs,
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
+
+def execute_csv_pipeline(
+    pipeline: Pipeline,
+    db: Session,
+    logs: list[str],
+):
+     if pipeline.source == "csv":
+
+            logs.append(f"📂 Input path: {pipeline.file_path}")
+
+            if not pipeline.file_path:
+                raise Exception("CSV file path missing")
+
+            base_dir = os.getcwd()
+            file_path = os.path.join(base_dir, pipeline.file_path)
+
+            logs.append(f"📂 Resolved path: {file_path}")
+
+            if not os.path.exists(file_path):
+                raise Exception(f"File not found at {file_path}")
+
+            with open(file_path, "r", encoding="utf-8") as f:
+
+                reader = csv.DictReader(f)
+
+                if not reader.fieldnames:
+                    raise Exception("CSV has no headers")
+
+                columns = reader.fieldnames
+
+                logs.append(f"📊 Columns: {columns}")
+
+                safe_columns = [
+                    col.strip().replace(" ", "_")
+                    for col in columns
+                ]
+
+                create_destination_table(
+                        db=db,
+                        destination=pipeline.destination,
+                        safe_columns=safe_columns,
+                        logs=logs,
+                )
+
+                count = 0
+
+                for row in reader:
+
+                    clean_row = {
+                        col.strip().replace(" ", "_"): value
+                        for col, value in row.items()
+                    }
+
+                    values = ", ".join(
+                        [f":{col}" for col in safe_columns]
+                    )
+
+                    db.execute(
+                        text(
+                            f"""
+                            INSERT INTO {pipeline.destination}
+                            VALUES ({values})
+                            """
+                        ),
+                        clean_row
+                    )
+
+                    count += 1
+
+                db.commit()
+
+                logs.append(
+                    f"✅ Inserted {count} rows"
+                )
+
 
 def should_run_pipeline(pipeline):
 
@@ -66,260 +336,28 @@ def get_pipelines(db: Session = Depends(get_db)):
 
 # 🔹 RUN PIPELINE (WITH FULL DEBUG LOGGING)
 @router.post("/pipelines/run/{pipeline_id}")
+def run_pipeline(
+    pipeline_id: int,
+    db: Session = Depends(get_db)
+):
 
-def run_pipeline(pipeline_id: int, db: Session = Depends(get_db)):
-
-    pipeline = db.query(Pipeline).filter(Pipeline.id == pipeline_id).first()
+    pipeline = (
+        db.query(Pipeline)
+        .filter(Pipeline.id == pipeline_id)
+        .first()
+    )
 
     if not pipeline:
-        raise HTTPException(status_code=404, detail="Pipeline not found")
-
-    logs = []
-    start_time = datetime.utcnow()
-
-    pipeline.status = "running"
-    pipeline.logs = ""
-    pipeline.error = None
-    db.commit()
-
-    try:
-        logs.append("🚀 Pipeline started")
-
-        # ==================================================
-        # CSV PIPELINE
-        # ==================================================
-        if pipeline.source == "csv":
-
-            logs.append(f"📂 Input path: {pipeline.file_path}")
-
-            if not pipeline.file_path:
-                raise Exception("CSV file path missing")
-
-            base_dir = os.getcwd()
-            file_path = os.path.join(base_dir, pipeline.file_path)
-
-            logs.append(f"📂 Resolved path: {file_path}")
-
-            if not os.path.exists(file_path):
-                raise Exception(f"File not found at {file_path}")
-
-            with open(file_path, "r", encoding="utf-8") as f:
-
-                reader = csv.DictReader(f)
-
-                if not reader.fieldnames:
-                    raise Exception("CSV has no headers")
-
-                columns = reader.fieldnames
-
-                logs.append(f"📊 Columns: {columns}")
-
-                safe_columns = [
-                    col.strip().replace(" ", "_")
-                    for col in columns
-                ]
-
-                col_defs = ", ".join(
-                    [f"{col} TEXT" for col in safe_columns]
-                )
-
-                logs.append("🧹 Dropping old table")
-
-                db.execute(
-                    text(
-                        f"DROP TABLE IF EXISTS {pipeline.destination}"
-                    )
-                )
-
-                logs.append("🏗 Creating table")
-
-                db.execute(
-                    text(
-                        f"""
-                        CREATE TABLE {pipeline.destination}
-                        (
-                            {col_defs}
-                        )
-                        """
-                    )
-                )
-
-                count = 0
-
-                for row in reader:
-
-                    clean_row = {
-                        col.strip().replace(" ", "_"): value
-                        for col, value in row.items()
-                    }
-
-                    values = ", ".join(
-                        [f":{col}" for col in safe_columns]
-                    )
-
-                    db.execute(
-                        text(
-                            f"""
-                            INSERT INTO {pipeline.destination}
-                            VALUES ({values})
-                            """
-                        ),
-                        clean_row
-                    )
-
-                    count += 1
-
-                db.commit()
-
-                logs.append(
-                    f"✅ Inserted {count} rows"
-                )
-
-        # ==================================================
-        # API PIPELINE
-        # ==================================================
-        elif pipeline.source == "api":
-
-            if not pipeline.api_url:
-                raise Exception("API URL missing")
-
-            logs.append(f"🌐 API URL: {pipeline.api_url}")
-
-            response = requests.get(
-                pipeline.api_url,
-                timeout=30
-            )
-
-            response.raise_for_status()
-
-            data = response.json()
-
-            if not isinstance(data, list):
-                raise Exception(
-                    "API must return JSON array"
-                )
-
-            if len(data) == 0:
-                raise Exception(
-                    "API returned empty data"
-                )
-
-            columns = list(data[0].keys())
-
-            logs.append(
-                f"📊 Columns: {columns}"
-            )
-
-            safe_columns = [
-                col.strip().replace(" ", "_")
-                for col in columns
-            ]
-
-            col_defs = ", ".join(
-                [f"{col} TEXT" for col in safe_columns]
-            )
-
-            logs.append(
-                "🧹 Dropping old table"
-            )
-
-            db.execute(
-                text(
-                    f"DROP TABLE IF EXISTS {pipeline.destination}"
-                )
-            )
-
-            logs.append(
-                "🏗 Creating table"
-            )
-
-            db.execute(
-                text(
-                    f"""
-                    CREATE TABLE {pipeline.destination}
-                    (
-                        {col_defs}
-                    )
-                    """
-                )
-            )
-
-            count = 0
-
-            for row in data:
-
-                clean_row = {
-                    col.strip().replace(" ", "_"):
-                    str(row.get(col))
-                    for col in columns
-                }
-
-                values = ", ".join(
-                    [f":{col}" for col in safe_columns]
-                )
-
-                db.execute(
-                    text(
-                        f"""
-                        INSERT INTO {pipeline.destination}
-                        VALUES ({values})
-                        """
-                    ),
-                    clean_row
-                )
-
-                count += 1
-
-            db.commit()
-
-            logs.append(
-                f"✅ Inserted {count} rows"
-            )
-
-        else:
-            raise Exception(
-                f"Unsupported source type: {pipeline.source}"
-            )
-
-               # ==================================================
-        # SUCCESS
-        # ==================================================
-        pipeline.status = "success"
-        pipeline.last_run = datetime.utcnow()
-        pipeline.logs = "\n".join(logs)
-
-        save_pipeline_run(
-            db=db,
-            pipeline=pipeline,
-            status="success",
-            started_at=start_time,
-            logs=pipeline.logs,
-        )
-
-        return {
-            "message": "Pipeline executed successfully"
-        }
-
-    except Exception as e:
-
-        logs.append(f"❌ Error: {str(e)}")
-
-        pipeline.status = "failed"
-        pipeline.error = str(e)
-        pipeline.logs = "\n".join(logs)
-
-        save_pipeline_run(
-            db=db,
-            pipeline=pipeline,
-            status="failed",
-            started_at=start_time,
-            logs=pipeline.logs,
-        )
-
         raise HTTPException(
-            status_code=500,
-            detail=str(e)
+            status_code=404,
+            detail="Pipeline not found"
         )
+
+    return execute_pipeline(
+        pipeline=pipeline,
+        db=db,
+    )
+
     
 # 🔹 GET RUN HISTORY
 @router.get("/pipelines/{pipeline_id}/runs")
