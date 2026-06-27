@@ -281,23 +281,20 @@ def run_pipeline(pipeline_id: int, db: Session = Depends(get_db)):
                 f"Unsupported source type: {pipeline.source}"
             )
 
-        # ==================================================
+               # ==================================================
         # SUCCESS
         # ==================================================
         pipeline.status = "success"
         pipeline.last_run = datetime.utcnow()
         pipeline.logs = "\n".join(logs)
 
-        run = PipelineRun(
-            pipeline_id=pipeline.id,
+        save_pipeline_run(
+            db=db,
+            pipeline=pipeline,
             status="success",
             started_at=start_time,
-            finished_at=datetime.utcnow(),
-            logs=pipeline.logs
+            logs=pipeline.logs,
         )
-
-        db.add(run)
-        db.commit()
 
         return {
             "message": "Pipeline executed successfully"
@@ -311,22 +308,18 @@ def run_pipeline(pipeline_id: int, db: Session = Depends(get_db)):
         pipeline.error = str(e)
         pipeline.logs = "\n".join(logs)
 
-        run = PipelineRun(
-            pipeline_id=pipeline.id,
+        save_pipeline_run(
+            db=db,
+            pipeline=pipeline,
             status="failed",
             started_at=start_time,
-            finished_at=datetime.utcnow(),
-            logs=pipeline.logs
+            logs=pipeline.logs,
         )
-
-        db.add(run)
-        db.commit()
 
         raise HTTPException(
             status_code=500,
             detail=str(e)
         )
-
     
 # 🔹 GET RUN HISTORY
 @router.get("/pipelines/{pipeline_id}/runs")
