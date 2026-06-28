@@ -141,6 +141,15 @@ def execute_pipeline(
     except Exception as e:
 
         logs.append(f"❌ Error: {str(e)}")
+        end_time = datetime.utcnow()
+
+        execution_time = (
+            end_time - start_time
+        ).total_seconds()
+
+        logs.append(
+            f"⏱ Execution Time: {execution_time:.2f} sec"
+)
 
         pipeline.status = "failed"
         pipeline.error = str(e)
