@@ -97,17 +97,31 @@ def execute_pipeline(
                 db=db,
                 logs=logs,
             )
-
+    
         else:
             raise Exception(
                 f"Unsupported source type: {pipeline.source}"
             )
 
+        
         # ==================================================
         # SUCCESS
         # ==================================================
+        logs.append("🎉 Pipeline completed successfully")
+
+        # Step 2
+        end_time = datetime.utcnow()
+
+        execution_time = (
+            end_time - start_time
+        ).total_seconds()
+
+        logs.append(
+            f"⏱ Execution Time: {execution_time:.2f} sec"
+        )
+
         pipeline.status = "success"
-        pipeline.last_run = datetime.utcnow()
+        pipeline.last_run = end_time
         pipeline.logs = "\n".join(logs)
 
         save_pipeline_run(
