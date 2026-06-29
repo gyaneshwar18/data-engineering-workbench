@@ -5,7 +5,7 @@ import MetricCard from "../components/MetricCard";
 import ProfileSnapshotCard from "../components/ProfileSnapshotCard";
 import QueryChart from "../components/QueryChart";
 import GithubHeatmap from "../components/GithubHeatmap";
-
+import DashboardHeader from "../components/dashboard/DashboardHeader";
 
 import {
   LineChart,
@@ -26,6 +26,7 @@ export default function Dashboard() {
   const [pipelineTrends, setPipelineTrends] = useState([]);
 
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   const API = import.meta.env.VITE_API_BASE_URL;
 
@@ -54,6 +55,7 @@ export default function Dashboard() {
       setPerformance(perfRes.data);
       setPipelineAnalytics(pipelineRes.data);
       setPipelineTrends(trendRes.data);
+      setLastUpdated(new Date());
 
     } catch (err) {
       console.error("Dashboard error:", err);
@@ -75,9 +77,7 @@ export default function Dashboard() {
     <div className="p-6 text-white space-y-6">
 
       {/* HEADER */}
-      <h1 className="text-2xl font-bold mb-6">
-        Data Engineering Portfolio
-      </h1>
+      <DashboardHeader onRefresh={fetchData} loading={loading} lastUpdated={lastUpdated} />
 
       {/* 🔥 KPI CARDS */}
       <div className="grid grid-cols-12 gap-6">
