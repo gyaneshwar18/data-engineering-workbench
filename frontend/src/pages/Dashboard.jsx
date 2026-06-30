@@ -6,6 +6,7 @@ import ProfileSnapshotCard from "../components/ProfileSnapshotCard";
 import QueryChart from "../components/QueryChart";
 import GithubHeatmap from "../components/GithubHeatmap";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
+import { Database } from "lucide-react";
 
 import {
   LineChart,
