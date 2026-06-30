@@ -6,7 +6,9 @@ import ProfileSnapshotCard from "../components/ProfileSnapshotCard";
 import QueryChart from "../components/QueryChart";
 import GithubHeatmap from "../components/GithubHeatmap";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
-import { Database } from "lucide-react";
+import {
+  Database,Workflow,Table,Globe,BadgeCheck,CheckCircle2,AlertTriangle,
+} from "lucide-react";
 
 import {
   LineChart,
@@ -83,61 +85,99 @@ export default function Dashboard() {
       {/* 🔥 KPI CARDS */}
       <div className="grid grid-cols-12 gap-6">
 
-        <div className="col-span-3">
-          <MetricCard label="SQL Queries" value={stats.sql_queries} />
+        <div className="col-span-12 md:col-span-6  xl:col-span-3">
+          <MetricCard
+            title="SQL Queries"
+            value={stats.sql_queries}
+            subtitle={`${stats.sql_queries} Total`}
+            icon={Database}
+            color="blue"
+          />
         </div>
 
-        <div className="col-span-3">
-          <MetricCard label="Pipelines" value={stats.pipelines} />
+        <div className="col-span-12 md:col-span-6  xl:col-span-3">
+          <MetricCard
+            title="Pipelines"
+            value={stats.pipelines}
+            subtitle={`${pipelineAnalytics.active_pipelines} Active`}
+            icon={Workflow}
+            color="green"
+          />
         </div>
 
-        <div className="col-span-3">
-          <MetricCard label="Datasets" value={stats.datasets} />
+        <div className="col-span-12 md:col-span-6  xl:col-span-3">
+          <MetricCard
+            title="Datasets"
+            value={stats.datasets}
+            subtitle="Available"
+            icon={Table}
+            color="purple"
+          />
         </div>
 
-        <div className="col-span-3">
-          <MetricCard label="API Sources" value={stats.api_sources} />
+        <div className="col-span-12 md:col-span-6  xl:col-span-3">
+          <MetricCard
+            title="API Sources"
+            value={stats.api_sources}
+            subtitle="Connected"
+            icon={Globe}
+            color="amber"
+          />
         </div>
 
       </div>
 
       {/* 🔥 PIPELINE HEALTH */}
       <div>
+
         <h2 className="text-xl font-semibold mb-4">
           Pipeline Health
         </h2>
 
         <div className="grid grid-cols-12 gap-6">
 
-          <div className="col-span-3">
+          <div className="col-span-12 md:col-span-6 xl:col-span-3">
             <MetricCard
-              label="Active Pipelines"
+              title="Active Pipelines"
               value={pipelineAnalytics.active_pipelines}
+              subtitle="Currently Running"
+              icon={Workflow}
+              color="green"
             />
           </div>
 
-          <div className="col-span-3">
+          <div className="col-span-12 md:col-span-6 xl:col-span-3">
             <MetricCard
-              label="Success Rate %"
-              value={pipelineAnalytics.success_rate}
+              title="Success Rate"
+              value={`${pipelineAnalytics.success_rate}%`}
+              subtitle="Overall Health"
+              icon={BadgeCheck}
+              color="blue"
             />
           </div>
 
-          <div className="col-span-3">
+          <div className="col-span-12 md:col-span-6 xl:col-span-3">
             <MetricCard
-              label="Successful Runs"
+              title="Successful Runs"
               value={pipelineAnalytics.successful_runs}
+              subtitle="Completed Jobs"
+              icon={CheckCircle2}
+              color="green"
             />
           </div>
 
-          <div className="col-span-3">
+          <div className="col-span-12 md:col-span-6 xl:col-span-3">
             <MetricCard
-              label="Failed Runs"
+              title="Failed Runs"
               value={pipelineAnalytics.failed_runs}
+              subtitle="Requires Attention"
+              icon={AlertTriangle}
+              color="amber"
             />
           </div>
 
         </div>
+
       </div>
 
       <div className="bg-gray-900 p-4 rounded">
