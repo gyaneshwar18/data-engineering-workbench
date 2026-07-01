@@ -6,8 +6,11 @@ import ProfileSnapshotCard from "../components/ProfileSnapshotCard";
 import QueryChart from "../components/QueryChart";
 import GithubHeatmap from "../components/GithubHeatmap";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
+import PipelineTrendChart from "../components/dashboard/PipelineTrendChart";
+import AnalyticsSection from "../components/dashboard/AnalyticsSection";
+
 import {
-  Database,Workflow,Table,Globe,BadgeCheck,CheckCircle2,AlertTriangle,
+  Database, Workflow, Table, Globe, BadgeCheck, CheckCircle2, AlertTriangle,
 } from "lucide-react";
 
 import {
@@ -180,66 +183,17 @@ export default function Dashboard() {
 
       </div>
 
-      <div className="bg-gray-900 p-4 rounded">
+      <AnalyticsSection
+        pipelineTrends={pipelineTrends}
+        performance={performance}
+        metrics={metrics}
+      />
 
-        <h3 className="mb-3">
-          Pipeline Execution Trend
-        </h3>
-
-        <ResponsiveContainer
-          width="100%"
-          height={300}
-        >
-          <LineChart data={pipelineTrends}>
-
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="#444"
-            />
-
-            <XAxis
-              dataKey="date"
-              stroke="#aaa"
-            />
-
-            <YAxis
-              stroke="#aaa"
-            />
-
-            <Tooltip />
-
-            <Line
-              type="monotone"
-              dataKey="success"
-              stroke="#22c55e"
-              name="Success"
-            />
-
-            <Line
-              type="monotone"
-              dataKey="failed"
-              stroke="#ef4444"
-              name="Failed"
-            />
-
-          </LineChart>
-        </ResponsiveContainer>
-
-      </div>
 
       {/* 🔥 MAIN SECTION */}
       <div className="grid grid-cols-12 gap-6">
 
-        {/* LEFT GRAPH */}
-        <div className="col-span-8">
-          <QueryChart
-            data={performance.queries_per_day}
-            metrics={metrics}
-          />
-        </div>
-
-        {/* RIGHT PROFILE */}
-        <div className="col-span-4">
+        <div className="col-span-12 xl:col-span-4">
           <ProfileSnapshotCard />
         </div>
 
@@ -250,21 +204,9 @@ export default function Dashboard() {
         <GithubHeatmap />
       </div>
 
-      {/* 🔥 EXECUTION TREND */}
-      <div className="bg-gray-900 p-4 rounded">
-        <h3 className="mb-3">Execution Time Trend</h3>
+     
 
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={performance.execution_trend}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-            <XAxis dataKey="date" stroke="#aaa" />
-            <YAxis stroke="#aaa" />
-            <Tooltip />
-            <Line type="monotone" dataKey="avg_time" stroke="#22c55e" />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-      {/* 🔥 TOP SLOW QUERIES */}
+      
 
 
     </div>
