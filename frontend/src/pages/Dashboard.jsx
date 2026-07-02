@@ -7,6 +7,7 @@ import QueryChart from "../components/QueryChart";
 import GithubHeatmap from "../components/GithubHeatmap";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
 import PipelineTrendChart from "../components/dashboard/PipelineTrendChart";
+import RecentActivity from "../components/dashboard/RecentActivity";
 
 
 import {
@@ -208,12 +209,7 @@ export default function Dashboard() {
 
       </div>
 
-      {/* Execution Trend */}
-
-      <ExecutionTrendChart
-        data={performance.execution_trend}
-      />
-
+      <RecentActivity />
       {/* GitHub */}
 
       <GithubHeatmap />
