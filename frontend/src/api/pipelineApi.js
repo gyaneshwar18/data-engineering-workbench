@@ -22,3 +22,11 @@ export const getRunLogs = async (runId) => {
   );
   return res.data;
 };
+
+export const getRecentActivity = async () => {
+  const res = await axios.get(
+    `${BASE_URL}/dashboard/recent-activity`
+  );
+
+  return res.data;
+};

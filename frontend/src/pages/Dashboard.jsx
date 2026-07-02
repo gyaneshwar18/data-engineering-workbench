@@ -7,7 +7,7 @@ import QueryChart from "../components/QueryChart";
 import GithubHeatmap from "../components/GithubHeatmap";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
 import PipelineTrendChart from "../components/dashboard/PipelineTrendChart";
-import AnalyticsSection from "../components/dashboard/AnalyticsSection";
+
 
 import {
   Database, Workflow, Table, Globe, BadgeCheck, CheckCircle2, AlertTriangle,
@@ -183,15 +183,24 @@ export default function Dashboard() {
 
       </div>
 
-      <AnalyticsSection
-        pipelineTrends={pipelineTrends}
-        performance={performance}
-        metrics={metrics}
+
+
+      {/* Pipeline Trend */}
+
+      <PipelineTrendChart
+        data={pipelineTrends}
       />
 
+      {/* Query Analytics + Profile */}
 
-      {/* 🔥 MAIN SECTION */}
       <div className="grid grid-cols-12 gap-6">
+
+        <div className="col-span-12 xl:col-span-8">
+          <QueryChart
+            data={performance.queries_per_day}
+            metrics={metrics}
+          />
+        </div>
 
         <div className="col-span-12 xl:col-span-4">
           <ProfileSnapshotCard />
@@ -199,14 +208,19 @@ export default function Dashboard() {
 
       </div>
 
-      {/* 🔥 GITHUB HEATMAP */}
-      <div>
-        <GithubHeatmap />
-      </div>
+      {/* Execution Trend */}
 
-     
+      <ExecutionTrendChart
+        data={performance.execution_trend}
+      />
 
-      
+      {/* GitHub */}
+
+      <GithubHeatmap />
+
+
+
+
 
 
     </div>
