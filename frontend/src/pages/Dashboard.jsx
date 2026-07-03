@@ -5,7 +5,14 @@ import MetricCard from "../components/MetricCard";
 import ProfileSnapshotCard from "../components/ProfileSnapshotCard";
 import QueryChart from "../components/QueryChart";
 import GithubHeatmap from "../components/GithubHeatmap";
+import DashboardHeader from "../components/dashboard/DashboardHeader";
+import PipelineTrendChart from "../components/dashboard/PipelineTrendChart";
+import RecentActivity from "../components/dashboard/RecentActivity";
 
+
+import {
+  Database, Workflow, Table, Globe, BadgeCheck, CheckCircle2, AlertTriangle,
+} from "lucide-react";
 
 import {
   LineChart,
@@ -26,6 +33,7 @@ export default function Dashboard() {
   const [pipelineTrends, setPipelineTrends] = useState([]);
 
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   const API = import.meta.env.VITE_API_BASE_URL;
 
@@ -54,6 +62,7 @@ export default function Dashboard() {
       setPerformance(perfRes.data);
       setPipelineAnalytics(pipelineRes.data);
       setPipelineTrends(trendRes.data);
+      setLastUpdated(new Date());
 
     } catch (err) {
       console.error("Dashboard error:", err);
@@ -75,155 +84,139 @@ export default function Dashboard() {
     <div className="p-6 text-white space-y-6">
 
       {/* HEADER */}
-      <h1 className="text-2xl font-bold mb-6">
-        Data Engineering Portfolio
-      </h1>
+      <DashboardHeader onRefresh={fetchData} loading={loading} lastUpdated={lastUpdated} />
 
       {/* 🔥 KPI CARDS */}
       <div className="grid grid-cols-12 gap-6">
 
-        <div className="col-span-3">
-          <MetricCard label="SQL Queries" value={stats.sql_queries} />
+        <div className="col-span-12 md:col-span-6  xl:col-span-3">
+          <MetricCard
+            title="SQL Queries"
+            value={stats.sql_queries}
+            subtitle={`${stats.sql_queries} Total`}
+            icon={Database}
+            color="blue"
+          />
         </div>
 
-        <div className="col-span-3">
-          <MetricCard label="Pipelines" value={stats.pipelines} />
+        <div className="col-span-12 md:col-span-6  xl:col-span-3">
+          <MetricCard
+            title="Pipelines"
+            value={stats.pipelines}
+            subtitle={`${pipelineAnalytics.active_pipelines} Active`}
+            icon={Workflow}
+            color="green"
+          />
         </div>
 
-        <div className="col-span-3">
-          <MetricCard label="Datasets" value={stats.datasets} />
+        <div className="col-span-12 md:col-span-6  xl:col-span-3">
+          <MetricCard
+            title="Datasets"
+            value={stats.datasets}
+            subtitle="Available"
+            icon={Table}
+            color="purple"
+          />
         </div>
 
-        <div className="col-span-3">
-          <MetricCard label="API Sources" value={stats.api_sources} />
+        <div className="col-span-12 md:col-span-6  xl:col-span-3">
+          <MetricCard
+            title="API Sources"
+            value={stats.api_sources}
+            subtitle="Connected"
+            icon={Globe}
+            color="amber"
+          />
         </div>
 
       </div>
 
       {/* 🔥 PIPELINE HEALTH */}
       <div>
+
         <h2 className="text-xl font-semibold mb-4">
           Pipeline Health
         </h2>
 
         <div className="grid grid-cols-12 gap-6">
 
-          <div className="col-span-3">
+          <div className="col-span-12 md:col-span-6 xl:col-span-3">
             <MetricCard
-              label="Active Pipelines"
+              title="Active Pipelines"
               value={pipelineAnalytics.active_pipelines}
+              subtitle="Currently Running"
+              icon={Workflow}
+              color="green"
             />
           </div>
 
-          <div className="col-span-3">
+          <div className="col-span-12 md:col-span-6 xl:col-span-3">
             <MetricCard
-              label="Success Rate %"
-              value={pipelineAnalytics.success_rate}
+              title="Success Rate"
+              value={`${pipelineAnalytics.success_rate}%`}
+              subtitle="Overall Health"
+              icon={BadgeCheck}
+              color="blue"
             />
           </div>
 
-          <div className="col-span-3">
+          <div className="col-span-12 md:col-span-6 xl:col-span-3">
             <MetricCard
-              label="Successful Runs"
+              title="Successful Runs"
               value={pipelineAnalytics.successful_runs}
+              subtitle="Completed Jobs"
+              icon={CheckCircle2}
+              color="green"
             />
           </div>
 
-          <div className="col-span-3">
+          <div className="col-span-12 md:col-span-6 xl:col-span-3">
             <MetricCard
-              label="Failed Runs"
+              title="Failed Runs"
               value={pipelineAnalytics.failed_runs}
+              subtitle="Requires Attention"
+              icon={AlertTriangle}
+              color="amber"
             />
           </div>
 
         </div>
-      </div>
-
-      <div className="bg-gray-900 p-4 rounded">
-
-        <h3 className="mb-3">
-          Pipeline Execution Trend
-        </h3>
-
-        <ResponsiveContainer
-          width="100%"
-          height={300}
-        >
-          <LineChart data={pipelineTrends}>
-
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="#444"
-            />
-
-            <XAxis
-              dataKey="date"
-              stroke="#aaa"
-            />
-
-            <YAxis
-              stroke="#aaa"
-            />
-
-            <Tooltip />
-
-            <Line
-              type="monotone"
-              dataKey="success"
-              stroke="#22c55e"
-              name="Success"
-            />
-
-            <Line
-              type="monotone"
-              dataKey="failed"
-              stroke="#ef4444"
-              name="Failed"
-            />
-
-          </LineChart>
-        </ResponsiveContainer>
 
       </div>
 
-      {/* 🔥 MAIN SECTION */}
+
+
+      {/* Pipeline Trend */}
+
+      <PipelineTrendChart
+        data={pipelineTrends}
+      />
+
+      {/* Query Analytics + Profile */}
+
       <div className="grid grid-cols-12 gap-6">
 
-        {/* LEFT GRAPH */}
-        <div className="col-span-8">
+        <div className="col-span-12 xl:col-span-8">
           <QueryChart
             data={performance.queries_per_day}
             metrics={metrics}
           />
         </div>
 
-        {/* RIGHT PROFILE */}
-        <div className="col-span-4">
+        <div className="col-span-12 xl:col-span-4">
           <ProfileSnapshotCard />
         </div>
 
       </div>
 
-      {/* 🔥 GITHUB HEATMAP */}
-      <div>
-        <GithubHeatmap />
-      </div>
+      <RecentActivity />
+      {/* GitHub */}
 
-      {/* 🔥 EXECUTION TREND */}
-      <div className="bg-gray-900 p-4 rounded">
-        <h3 className="mb-3">Execution Time Trend</h3>
+      <GithubHeatmap />
 
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={performance.execution_trend}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-            <XAxis dataKey="date" stroke="#aaa" />
-            <YAxis stroke="#aaa" />
-            <Tooltip />
-            <Line type="monotone" dataKey="avg_time" stroke="#22c55e" />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-      {/* 🔥 TOP SLOW QUERIES */}
+
+
+
 
 
     </div>

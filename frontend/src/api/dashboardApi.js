@@ -10,3 +10,11 @@ export const getTopSlowQueries = async () => {
 
   return res.data;
 };
+
+export const getRecentActivity = async () => {
+  const res = await axios.get(
+    `${API}/dashboard/recent-activity`
+  );
+
+  return res.data;
+};
