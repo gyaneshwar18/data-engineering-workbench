@@ -8,6 +8,7 @@ import GithubHeatmap from "../components/GithubHeatmap";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
 import PipelineTrendChart from "../components/dashboard/PipelineTrendChart";
 import RecentActivity from "../components/dashboard/RecentActivity";
+import QuickActions from "../components/dashboard/QuickActions";
 
 
 import {
@@ -192,9 +193,11 @@ export default function Dashboard() {
         data={pipelineTrends}
       />
 
-      {/* Query Analytics + Profile */}
+      {/* Analytics + Profile */}
 
       <div className="grid grid-cols-12 gap-6">
+
+        {/* Query Analytics */}
 
         <div className="col-span-12 xl:col-span-8">
           <QueryChart
@@ -203,16 +206,29 @@ export default function Dashboard() {
           />
         </div>
 
+        {/* Profile */}
+
         <div className="col-span-12 xl:col-span-4">
           <ProfileSnapshotCard />
         </div>
 
+        {/* Quick Actions */}
+
+        <div className="col-span-12 xl:col-span-4">
+          <QuickActions />
+        </div>
+
+        {/* GitHub */}
+
+        <div className="col-span-12 xl:col-span-8">
+          <GithubHeatmap />
+        </div>
+
       </div>
 
-      <RecentActivity />
-      {/* GitHub */}
+      {/* Recent Activity */}
 
-      <GithubHeatmap />
+      <RecentActivity />
 
 
 
