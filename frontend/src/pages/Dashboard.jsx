@@ -4,7 +4,7 @@ import axios from "axios";
 import MetricCard from "../components/MetricCard";
 import ProfileSnapshotCard from "../components/ProfileSnapshotCard";
 import QueryChart from "../components/QueryChart";
-import GithubHeatmap from "../components/GithubHeatmap";
+import GithubHeatmap from "../components/dashboard/GithubHeatmap";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
 import PipelineTrendChart from "../components/dashboard/PipelineTrendChart";
 import RecentActivity from "../components/dashboard/RecentActivity";

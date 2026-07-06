@@ -1,29 +1,43 @@
+import ProfileHeader from "./dashboard/ProfileHeader";
+import ProfileStats from "./dashboard/ProfileStats";
+import TechStack from "./dashboard/TechStack";
+import ProfileActions from "./dashboard/ProfileActions";
+
 export default function ProfileSnapshotCard() {
   return (
-    <div className="
-  rounded-2xl p-6
-  border border-gray-200 dark:border-gray-800
-  bg-white shadow-sm
-  dark:bg-gray-900
-">
+    <div
+      className="
+        rounded-3xl
+        border
+        border-slate-800
+        bg-slate-900/90
 
-      <h3 className="text-gray-800 font-semibold tracking-tight mb-4">
+        p-6
 
-        Profile Snapshot
-      </h3>
+        space-y-8
+      "
+    >
+      {/* Header */}
 
-      <div className="space-y-2 text-sm">
-        <p><b>Name:</b> Gyaneshwar</p>
-        <p><b>Focus:</b> Data Engineering / SQL</p>
-        <p><b>Experience:</b> SQL Support</p>
-        <p><b>Education:</b> B.Tech CSE</p>
-        <p><b>Location:</b> India</p>
-      </div>
+      <ProfileHeader />
 
-      <button className="mt-5 w-full bg-blue-600 text-white py-2 rounded-lg">
-        Download Resume
-      </button>
+      <div className="border-t border-slate-800" />
 
+      {/* Statistics */}
+
+      <ProfileStats />
+
+      <div className="border-t border-slate-800" />
+
+      {/* Tech Stack */}
+
+      <TechStack />
+
+      <div className="border-t border-slate-800" />
+
+      {/* Quick Links */}
+
+      <ProfileActions />
     </div>
   );
 }
