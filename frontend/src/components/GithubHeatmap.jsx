@@ -1,4 +1,3 @@
-import { GitHubCalendar } from "react-github-calendar";
 import { ExternalLink } from "lucide-react";
 
 const theme = {
