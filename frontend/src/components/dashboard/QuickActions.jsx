@@ -1,8 +1,8 @@
 import {
   Plus,
-  Database,
   Upload,
-  CalendarClock,
+  Database,
+  Table,
 } from "lucide-react";
 
 import ActionCard from "./ActionCard";
@@ -15,31 +15,31 @@ export default function QuickActions() {
         border
         border-slate-800
         bg-slate-900/90
-        p-6
+        overflow-hidden
       "
     >
       {/* Header */}
 
-      <div className="mb-6">
+      <div className="px-6 py-5 border-b border-slate-800">
 
-        <h2 className="text-xl font-semibold text-white">
+        <h2 className="text-lg font-semibold text-white">
           Quick Actions
         </h2>
 
-        <p className="text-slate-400 mt-1">
+        <p className="mt-1 text-sm text-slate-400">
           Frequently used operations across your platform
         </p>
 
       </div>
 
-      {/* Action Grid */}
+      {/* Actions */}
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="p-4 space-y-2">
 
         <ActionCard
           icon={Plus}
           title="New Pipeline"
-          subtitle="Create ETL pipeline"
+          subtitle="Create ETL workflow"
           to="/pipelines"
           color="green"
         />
@@ -47,7 +47,7 @@ export default function QuickActions() {
         <ActionCard
           icon={Upload}
           title="Upload Dataset"
-          subtitle="Import CSV files"
+          subtitle="Import CSV into platform"
           to="/datasets"
           color="blue"
         />
@@ -55,16 +55,16 @@ export default function QuickActions() {
         <ActionCard
           icon={Database}
           title="SQL Lab"
-          subtitle="Run SQL queries"
+          subtitle="Write and execute SQL"
           to="/sql-lab"
           color="purple"
         />
 
         <ActionCard
-          icon={CalendarClock}
-          title="Scheduler"
-          subtitle="Manage schedules"
-          to="/pipelines"
+          icon={Table}
+          title="Browse Datasets"
+          subtitle="Explore available datasets"
+          to="/datasets"
           color="amber"
         />
 

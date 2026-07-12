@@ -81,41 +81,15 @@ export default function DashboardHeader({
 
         {/* Right */}
 
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex items-center gap-5">
 
-          <div
-            className="
-              flex
-              items-center
-              gap-3
+          <div className="flex items-center gap-2 text-sm text-slate-400">
 
-              rounded-xl
+            <Clock3 size={15} />
 
-              border
-              border-slate-800
-
-              bg-slate-800/40
-
-              px-4
-              py-3
-            "
-          >
-            <Clock3
-              size={16}
-              className="text-slate-500"
-            />
-
-            <div>
-
-              <p className="text-[11px] uppercase tracking-wider text-slate-500">
-                Last Updated
-              </p>
-
-              <p className="text-sm font-medium text-slate-200">
-                {formatLastUpdated(lastUpdated)}
-              </p>
-
-            </div>
+            <span>
+              Updated {formatLastUpdated(lastUpdated)}
+            </span>
 
           </div>
 
@@ -123,45 +97,39 @@ export default function DashboardHeader({
             onClick={onRefresh}
             disabled={loading}
             className="
-              flex
-              items-center
-              gap-2
+      flex
+      items-center
+      gap-2
 
-              rounded-xl
+      rounded-xl
 
-              border
-              border-slate-700
+      border
+      border-slate-700
 
-              bg-slate-800
+      bg-slate-800
 
-              px-5
-              py-3
+      px-5
+      py-3
 
-              text-sm
-              font-medium
-              text-white
+      text-sm
+      font-medium
+      text-white
 
-              transition-all
-              duration-200
+      transition-all
 
-              hover:border-blue-500/30
-              hover:bg-slate-700
+      hover:border-blue-500/30
+      hover:bg-slate-700
 
-              disabled:cursor-not-allowed
-              disabled:opacity-50
-            "
+      disabled:opacity-50
+      disabled:cursor-not-allowed
+    "
           >
             <RefreshCw
               size={17}
-              className={
-                loading
-                  ? "animate-spin"
-                  : ""
-              }
+              className={loading ? "animate-spin" : ""}
             />
 
             Refresh Data
-
           </button>
 
         </div>

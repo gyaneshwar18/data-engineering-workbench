@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 import MetricCard from "../components/MetricCard";
-import ProfileSnapshotCard from "../components/ProfileSnapshotCard";
+
 import QueryChart from "../components/QueryChart";
 import GithubHeatmap from "../components/dashboard/GithubHeatmap";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
@@ -199,7 +199,7 @@ export default function Dashboard() {
 
         {/* Query Analytics */}
 
-        <div className="col-span-12 xl:col-span-8">
+        <div className="col-span-12">
           <QueryChart
             data={performance.queries_per_day}
             metrics={metrics}
@@ -208,9 +208,6 @@ export default function Dashboard() {
 
         {/* Profile */}
 
-        <div className="col-span-12 xl:col-span-4">
-          <ProfileSnapshotCard />
-        </div>
 
         {/* Quick Actions */}
 
