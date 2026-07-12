@@ -4,6 +4,7 @@ import {
   CheckCircle2,
   XCircle,
   LoaderCircle,
+  Activity,
   ChevronRight,
 } from "lucide-react";
 
@@ -13,44 +14,41 @@ function getStatusBadge(status) {
   switch (status?.toLowerCase()) {
     case "success":
       return {
-        text: "SUCCESS",
-        bg: "bg-emerald-500/10",
-        textColor: "text-emerald-400",
-        border: "border-emerald-500/20",
+        label: "Success",
         icon: (
           <CheckCircle2
-            size={16}
+            size={14}
             className="text-emerald-400"
           />
         ),
+        className:
+          "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400",
       };
 
     case "failed":
       return {
-        text: "FAILED",
-        bg: "bg-red-500/10",
-        textColor: "text-red-400",
-        border: "border-red-500/20",
+        label: "Failed",
         icon: (
           <XCircle
-            size={16}
+            size={14}
             className="text-red-400"
           />
         ),
+        className:
+          "bg-red-500/10 border border-red-500/20 text-red-400",
       };
 
     default:
       return {
-        text: "RUNNING",
-        bg: "bg-amber-500/10",
-        textColor: "text-amber-400",
-        border: "border-amber-500/20",
+        label: "Running",
         icon: (
           <LoaderCircle
-            size={16}
+            size={14}
             className="animate-spin text-amber-400"
           />
         ),
+        className:
+          "bg-amber-500/10 border border-amber-500/20 text-amber-400",
       };
   }
 }
@@ -67,7 +65,6 @@ function formatDuration(seconds) {
 
 function timeAgo(date) {
   const now = new Date();
-
   const started = new Date(date);
 
   const diff = Math.floor((now - started) / 1000);
@@ -85,7 +82,6 @@ function timeAgo(date) {
 
 export default function RecentActivity() {
   const [activity, setActivity] = useState([]);
-
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -95,7 +91,6 @@ export default function RecentActivity() {
   async function loadActivity() {
     try {
       const data = await getRecentActivity();
-
       setActivity(data);
     } catch (err) {
       console.error(err);
@@ -107,26 +102,49 @@ export default function RecentActivity() {
   return (
     <div
       className="
+        overflow-hidden
         rounded-3xl
         border
         border-slate-800
         bg-slate-900/90
-        shadow-sm
       "
     >
       {/* Header */}
 
-      <div className="flex items-center justify-between px-6 py-5 border-b border-slate-800">
+      <div className="flex items-center justify-between border-b border-slate-800 px-6 py-5">
 
-        <div>
+        <div className="flex items-center gap-4">
 
-          <h2 className="text-xl font-semibold text-white">
-            Recent Pipeline Activity
-          </h2>
+          <div
+            className="
+              flex
+              h-11
+              w-11
+              items-center
+              justify-center
+              rounded-xl
+              border
+              border-blue-500/20
+              bg-blue-500/10
+            "
+          >
+            <Activity
+              size={20}
+              className="text-blue-400"
+            />
+          </div>
 
-          <p className="text-sm text-slate-400 mt-1">
-            Latest pipeline executions across your platform
-          </p>
+          <div>
+
+            <h2 className="text-lg font-semibold text-white">
+              Recent Executions
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-400">
+              Latest pipeline runs across your platform
+            </p>
+
+          </div>
 
         </div>
 
@@ -134,15 +152,30 @@ export default function RecentActivity() {
           className="
             flex
             items-center
-            gap-1
+            gap-2
+
+            rounded-lg
+
+            border
+            border-slate-700
+
+            bg-slate-800/60
+
+            px-3
+            py-2
+
             text-sm
-            text-blue-400
-            hover:text-blue-300
+            text-slate-300
+
+            transition-all
+
+            hover:border-slate-600
+            hover:bg-slate-800
           "
         >
           View All
 
-          <ChevronRight size={18} />
+          <ChevronRight size={16} />
 
         </button>
 
@@ -152,9 +185,21 @@ export default function RecentActivity() {
 
       {loading && (
 
-        <div className="p-10 text-center text-slate-400">
+        <div className="space-y-3 p-6">
 
-          Loading recent activity...
+          {[1, 2, 3, 4].map((item) => (
+
+            <div
+              key={item}
+              className="
+                h-16
+                animate-pulse
+                rounded-2xl
+                bg-slate-800/50
+              "
+            />
+
+          ))}
 
         </div>
 
@@ -164,99 +209,125 @@ export default function RecentActivity() {
 
       {!loading && activity.length === 0 && (
 
-        <div className="p-10 text-center text-slate-500">
+        <div className="flex flex-col items-center justify-center px-6 py-16">
 
-          No pipeline activity found.
+          <Activity
+            size={36}
+            className="text-slate-600"
+          />
+
+          <h3 className="mt-4 text-lg font-medium text-white">
+            No Recent Activity
+          </h3>
+
+          <p className="mt-2 text-center text-sm text-slate-400">
+            Pipeline executions will appear here once
+            your workflows start running.
+          </p>
 
         </div>
 
       )}
 
-      {/* Activity */}
+      {/* Activity List */}
 
       {!loading && activity.length > 0 && (
 
-        <div>
-
-          {activity.map((item) => {
-
+        <div>          {activity.map((item) => {
             const badge = getStatusBadge(item.status);
 
             return (
-
               <div
                 key={item.id}
                 className="
-                  px-6
-                  py-5
-
+                  group
                   border-b
                   border-slate-800
+                  last:border-b-0
+
+                  px-6
+                  py-4
+
+                  transition-all
+                  duration-200
 
                   hover:bg-slate-800/40
-
-                  transition
                 "
               >
-
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-6">
 
                   {/* Left */}
 
-                  <div>
+                  <div className="min-w-0 flex-1">
 
-                    <h3 className="font-semibold text-white">
+                    <div className="flex items-center gap-3">
 
-                      {item.pipeline_name}
+                      <h3
+                        className="
+                          truncate
+                          text-[15px]
+                          font-medium
+                          text-white
+                        "
+                      >
+                        {item.pipeline_name}
+                      </h3>
 
-                    </h3>
-
-                    <div className="flex items-center gap-5 mt-2">
-
-                      <div
+                      <span
                         className={`
-                          flex
+                          inline-flex
                           items-center
-                          gap-2
-
-                          px-3
-                          py-1
+                          gap-1.5
 
                           rounded-full
 
-                          border
+                          px-2.5
+                          py-1
 
-                          ${badge.bg}
-                          ${badge.border}
+                          text-[11px]
+                          font-semibold
+
+                          ${badge.className}
                         `}
                       >
-
                         {badge.icon}
+                        {badge.label}
+                      </span>
 
-                        <span
-                          className={`
-                            text-xs
-                            font-semibold
+                    </div>
 
-                            ${badge.textColor}
-                          `}
-                        >
+                    <div
+                      className="
+                        mt-2
 
-                          {badge.text}
+                        flex
+                        flex-wrap
+                        items-center
+                        gap-5
 
+                        text-sm
+                        text-slate-400
+                      "
+                    >
+                      <div className="flex items-center gap-2">
+
+                        <Clock3 size={14} />
+
+                        <span>
+                          {formatDuration(
+                            item.duration_seconds
+                          )}
                         </span>
 
                       </div>
 
-                      <div className="flex items-center gap-2 text-sm text-slate-400">
+                      <span className="text-slate-600">
+                        •
+                      </span>
 
-                        <Clock3 size={15} />
-
-                        {formatDuration(
-                          item.duration_seconds
-                        )}
-
-                      </div>
+                      <span>
+                        {timeAgo(item.started_at)}
+                      </span>
 
                     </div>
 
@@ -264,28 +335,43 @@ export default function RecentActivity() {
 
                   {/* Right */}
 
-                  <div className="text-right">
+                  <div className="flex items-center gap-3">
 
-                    <p className="text-sm text-slate-400">
+                    <span
+                      className="
+                        rounded-lg
 
-                      {timeAgo(item.started_at)}
+                        border
+                        border-slate-700
 
-                    </p>
+                        bg-slate-800/80
 
-                    <p className="text-xs text-slate-500 mt-2">
+                        px-3
+                        py-1.5
 
-                      Run #{item.id}
+                        text-xs
+                        font-medium
+                        text-slate-300
+                      "
+                    >
+                      #{item.id}
+                    </span>
 
-                    </p>
+                    <ChevronRight
+                      size={18}
+                      className="
+                        text-slate-600
+                        transition-transform
+                        group-hover:translate-x-1
+                      "
+                    />
 
                   </div>
 
                 </div>
 
               </div>
-
             );
-
           })}
 
         </div>
