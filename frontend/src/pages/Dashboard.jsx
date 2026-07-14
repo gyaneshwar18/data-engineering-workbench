@@ -211,13 +211,13 @@ export default function Dashboard() {
 
         {/* Quick Actions */}
 
-        <div className="col-span-12 xl:col-span-4">
+        <div className="col-span-12 xl:col-span-3">
           <QuickActions />
         </div>
 
         {/* GitHub */}
 
-        <div className="col-span-12 xl:col-span-8">
+        <div className="col-span-12 xl:col-span-9">
           <GithubHeatmap />
         </div>
 

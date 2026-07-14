@@ -1,80 +1,54 @@
 import ContributionCell from "./ContributionCell";
 
-const monthLabels = [
-  "Jul",
-  "",
-  "",
-  "",
-  "Aug",
-  "",
-  "",
-  "",
-  "Sep",
-  "",
-  "",
-  "",
-  "Oct",
-  "",
-  "",
-  "",
-  "Nov",
-  "",
-  "",
-  "",
-  "Dec",
-  "",
-  "",
-  "",
-  "Jan",
-  "",
-  "",
-  "",
-  "Feb",
-  "",
-  "",
-  "",
-  "Mar",
-  "",
-  "",
-  "",
-  "Apr",
-  "",
-  "",
-  "",
-  "May",
-  "",
-  "",
-  "",
-  "Jun",
-];
-
 export default function ContributionGrid({ weeks }) {
-  return (
-    <div className="overflow-x-auto">
+  const monthLabels = [];
 
-      {/* Months */}
+  weeks.forEach((week, index) => {
+    const firstDay = week.contribution_days[0];
+
+    const month = new Date(firstDay.date).toLocaleString("default", {
+      month: "short",
+    });
+
+    if (
+      index === 0 ||
+      month !==
+        new Date(
+          weeks[index - 1].contribution_days[0].date
+        ).toLocaleString("default", {
+          month: "short",
+        })
+    ) {
+      monthLabels.push(month);
+    } else {
+      monthLabels.push("");
+    }
+  });
+
+  return (
+    <div className="w-full">
+
+      {/* Month Labels */}
 
       <div
-        className="grid mb-2 text-[11px] text-slate-500"
+        className="mb-2 grid text-[11px] text-slate-500"
         style={{
-          gridTemplateColumns: `repeat(${weeks.length}, 13px)`,
+          gridTemplateColumns: `repeat(${weeks.length}, 12px)`,
           columnGap: "2px",
         }}
       >
-        {weeks.map((_, index) => (
-          <div key={index}>
-            {monthLabels[index] || ""}
-          </div>
+        {monthLabels.map((label, index) => (
+          <div key={index}>{label}</div>
         ))}
       </div>
 
-      {/* Grid */}
+      {/* Contribution Grid */}
 
       <div
         className="grid grid-flow-col"
         style={{
-          gridTemplateRows: "repeat(7, 13px)",
-          gridAutoColumns: "13px",
+          gridTemplateRows: "repeat(7, 12px)",
+          gridAutoColumns: "12px",
           gap: "2px",
         }}
       >
@@ -87,7 +61,6 @@ export default function ContributionGrid({ weeks }) {
           ))
         )}
       </div>
-
     </div>
   );
 }

@@ -1,22 +1,25 @@
-import clsx from "clsx";
+import githubColors from "./githubColors";
 
-const colors = [
-  "bg-slate-800",
-  "bg-emerald-950",
-  "bg-emerald-800",
-  "bg-emerald-600",
-  "bg-emerald-400",
-];
-
-export default function ContributionCell({
-  level = 0,
-}) {
+export default function ContributionCell({ day }) {
   return (
     <div
-      className={clsx(
-        "w-[11px] h-[11px] rounded-sm transition-all duration-200 hover:scale-125 cursor-pointer",
-        colors[level]
-      )}
+      title={`${day.date} • ${day.contribution_count} contributions`}
+      className="
+        h-[10px]
+        w-[10px]
+        rounded-[2px]
+        transition-all
+        duration-150
+        hover:scale-110
+        hover:ring-1
+        hover:ring-slate-300/40
+        cursor-pointer
+      "
+      style={{
+        backgroundColor:
+          githubColors[day.contribution_level] ||
+          githubColors.NONE,
+      }}
     />
   );
 }
