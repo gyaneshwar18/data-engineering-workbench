@@ -1,125 +1,91 @@
 import ContributionCell from "./ContributionCell";
 
-const WEEK_COUNT = 53;
-const DAYS = 7;
-
-// Temporary random data.
-// Later we'll replace this with real GitHub data.
-const generateDummyData = () => {
-  return Array.from({ length: WEEK_COUNT }, () =>
-    Array.from({ length: DAYS }, () =>
-      Math.floor(Math.random() * 5)
-    )
-  );
-};
-
-const contributionData = generateDummyData();
-
-const months = [
+const monthLabels = [
   "Jul",
+  "",
+  "",
+  "",
   "Aug",
+  "",
+  "",
+  "",
   "Sep",
+  "",
+  "",
+  "",
   "Oct",
+  "",
+  "",
+  "",
   "Nov",
+  "",
+  "",
+  "",
   "Dec",
+  "",
+  "",
+  "",
   "Jan",
+  "",
+  "",
+  "",
   "Feb",
+  "",
+  "",
+  "",
   "Mar",
+  "",
+  "",
+  "",
   "Apr",
+  "",
+  "",
+  "",
   "May",
+  "",
+  "",
+  "",
   "Jun",
 ];
 
-const monthPositions = [
-  0,
-  4,
-  8,
-  13,
-  17,
-  22,
-  27,
-  31,
-  36,
-  41,
-  46,
-  50,
-];
-
-const weekdays = [
-  "Mon",
-  "",
-  "Wed",
-  "",
-  "Fri",
-  "",
-  "",
-];
-
-export default function ContributionGrid() {
+export default function ContributionGrid({ weeks }) {
   return (
     <div className="overflow-x-auto">
 
-      {/* Month Labels */}
+      {/* Months */}
 
-      <div className="flex ml-10 mb-2 relative h-5">
-
-        {months.map((month, index) => (
-          <span
-            key={month}
-            className="absolute text-xs text-slate-400"
-            style={{
-              left: `${monthPositions[index] * 15}px`,
-            }}
-          >
-            {month}
-          </span>
+      <div
+        className="grid mb-2 text-[11px] text-slate-500"
+        style={{
+          gridTemplateColumns: `repeat(${weeks.length}, 13px)`,
+          columnGap: "2px",
+        }}
+      >
+        {weeks.map((_, index) => (
+          <div key={index}>
+            {monthLabels[index] || ""}
+          </div>
         ))}
-
       </div>
 
-      <div className="flex">
+      {/* Grid */}
 
-        {/* Weekday Labels */}
-
-        <div className="flex flex-col justify-between mr-3">
-
-          {weekdays.map((day, index) => (
-            <span
-              key={index}
-              className="text-xs text-slate-400 h-[15px]"
-            >
-              {day}
-            </span>
-          ))}
-
-        </div>
-
-        {/* Contribution Grid */}
-
-        <div className="flex gap-[3px]">
-
-          {contributionData.map((week, weekIndex) => (
-
-            <div
-              key={weekIndex}
-              className="flex flex-col gap-[3px]"
-            >
-
-              {week.map((level, dayIndex) => (
-
-                <ContributionCell
-                  key={dayIndex}
-                  level={level}
-                />
-
-              ))}
-
-            </div>
-
-          ))}
-
-        </div>
-
+      <div
+        className="grid grid-flow-col"
+        style={{
+          gridTemplateRows: "repeat(7, 13px)",
+          gridAutoColumns: "13px",
+          gap: "2px",
+        }}
+      >
+        {weeks.map((week, weekIndex) =>
+          week.contribution_days.map((day, dayIndex) => (
+            <ContributionCell
+              key={`${weekIndex}-${dayIndex}`}
+              day={day}
+            />
+          ))
+        )}
       </div>
 
     </div>
