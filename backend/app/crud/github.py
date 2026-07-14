@@ -1,5 +1,6 @@
 import os
 import httpx
+from fastapi import HTTPException
 
 GITHUB_API = "https://api.github.com/graphql"
 
@@ -35,11 +36,15 @@ query($username:String!){
 async def get_github_contributions():
 
     username = os.getenv("GITHUB_USERNAME")
-
     token = os.getenv("GITHUB_TOKEN")
 
+# DEBUG
+   
+
     headers = {
-        "Authorization": f"Bearer {token}"
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github+json",
+        "Content-Type": "application/json",
     }
 
     payload = {
@@ -56,19 +61,21 @@ async def get_github_contributions():
             headers=headers,
             json=payload
         )
+       
 
     if response.status_code != 200:
-        raise Exception(
-        f"GitHub API Error ({response.status_code}): {response.text}"
+        raise HTTPException(
+            status_code=502,
+            detail="Unable to fetch GitHub contribution data."
         )
 
     data = response.json()
 
     if "errors" in data:
-        raise Exception(
-            f"GitHub GraphQL Error: {data['errors']}"
-    )
-
+        raise HTTPException(
+            status_code=502,
+            detail="GitHub GraphQL returned an error."
+        )
     calendar = (
         data["data"]
         ["user"]
