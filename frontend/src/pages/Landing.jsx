@@ -2,79 +2,138 @@ import { Link } from "react-router-dom";
 
 export default function Landing() {
   return (
-    <div className="
-      min-h-screen
-      bg-linear-to-br from-gray-50 to-gray-200
-      dark:from-gray-950 dark:to-gray-900
-      flex flex-col justify-center items-center
-      px-6 text-center
-    ">
+    <div
+      className="
+        min-h-screen
+        bg-gradient-to-br
+        from-gray-50
+        via-white
+        to-gray-100
+        dark:from-[#09090B]
+        dark:via-[#0f0f11]
+        dark:to-[#111113]
+        flex
+        flex-col
+        justify-center
+        items-center
+        px-6
+        text-center
+      "
+    >
+      {/* Name */}
 
-      {/* Name + Role */}
-      <h1 className="
-        text-4xl md:text-5xl font-bold
-        text-gray-900 dark:text-gray-100
-        tracking-tight
-      ">
+      <h1
+        className="
+          text-5xl
+          font-bold
+          tracking-tight
+          text-gray-900
+          dark:text-white
+        "
+      >
         Gyaneshwar Suryavanshi
       </h1>
 
-      <p className="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-xl">
-        Data Engineering & SQL Specialist building analytics platforms,
-        ETL pipelines, and dashboard-driven insights.
+      {/* Role */}
+
+      <p
+        className="
+          mt-5
+          max-w-2xl
+          text-lg
+          leading-8
+          text-gray-600
+          dark:text-slate-400
+        "
+      >
+        Data Engineering & SQL Specialist building analytics
+        platforms, ETL pipelines, and dashboard-driven insights.
       </p>
 
-      {/* Skills Strip */}
-      <div className="mt-8 flex flex-wrap justify-center gap-3 text-sm">
+      {/* Skills */}
+
+      <div className="mt-10 flex flex-wrap justify-center gap-3">
+
         {[
+          "Python",
           "SQL",
           "PostgreSQL",
-          "Python",
-          "ETL",
-          "Data Profiling",
-          "React"
-        ].map(skill => (
+          "PySpark",
+          "FastAPI",
+          "React",
+        ].map((skill) => (
           <span
             key={skill}
             className="
-              px-4 py-2 rounded-xl
-              bg-white/80 dark:bg-gray-800
-              border border-gray-200 dark:border-gray-700
+              rounded-xl
+              border
+              border-gray-200
+              dark:border-slate-700
+              bg-white
+              dark:bg-slate-900
+              px-4
+              py-2
+              text-sm
+              font-medium
+              text-gray-700
+              dark:text-slate-300
             "
           >
             {skill}
           </span>
         ))}
+
       </div>
 
-      {/* CTA Buttons */}
-      <div className="mt-10 flex gap-4 flex-wrap justify-center">
+      {/* Buttons */}
+
+      <div className="mt-12 flex flex-wrap justify-center gap-4">
 
         <Link
           to="/workbench"
           className="
-            px-6 py-3 bg-blue-600 text-white
-            rounded-2xl hover:bg-blue-700 transition
+            rounded-2xl
+            bg-blue-600
+            px-7
+            py-3
+            text-sm
+            font-semibold
+            text-white
+            transition-all
+            duration-200
+            hover:bg-blue-500
           "
         >
-          Explore Workbench →
+          Launch Workspace →
         </Link>
 
-        <a
-          href="#"
+        <Link
+          to="/profile"
           className="
-            px-6 py-3 border rounded-2xl
-            dark:border-gray-700 dark:text-gray-200
+            rounded-2xl
+            border
+            border-slate-700
+            bg-slate-900
+            px-7
+            py-3
+            text-sm
+            font-semibold
+            text-slate-200
+            transition-all
+            duration-200
+            hover:border-blue-500
+            hover:text-white
           "
         >
-          Download Resume
-        </a>
+          My Profile →
+        </Link>
 
       </div>
 
       {/* Footer */}
-      <div className="mt-16 text-sm text-gray-500">
-        © 2025 Data Engineering Portfolio
+
+      <div className="mt-20 text-sm text-slate-500">
+        Built with React • FastAPI • PostgreSQL
       </div>
 
     </div>
