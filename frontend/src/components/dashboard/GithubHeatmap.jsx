@@ -133,6 +133,63 @@ export default function GithubHeatmap() {
         </div>
 
       </div>
+      {/* Footer */}
+
+      <div className="border-t border-slate-800 px-6 py-4">
+
+        <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+
+          <div>
+
+            <p className="text-xs text-slate-500">
+              Total Contributions
+            </p>
+
+            <p className="mt-1 text-sm font-semibold text-white">
+              {data?.total_contributions ?? "--"}
+            </p>
+
+          </div>
+
+          <div>
+
+            <p className="text-xs text-slate-500">
+              Active Weeks
+            </p>
+
+            <p className="mt-1 text-sm font-semibold text-white">
+              {data?.insights?.active_weeks ?? "--"}
+            </p>
+
+          </div>
+
+          <div>
+
+            <p className="text-xs text-slate-500">
+              Longest Streak
+            </p>
+
+            <p className="mt-1 text-sm font-semibold text-white">
+              {data?.insights?.longest_streak ?? "--"} Days
+            </p>
+
+          </div>
+
+          <div>
+
+            <p className="text-xs text-slate-500">
+              Last Commit
+            </p>
+
+            <p className="mt-1 text-sm font-semibold text-white">
+              {data?.insights?.last_commit ?? "--"}
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
 
     </div>
   );

@@ -63,10 +63,16 @@ async def get_github_contributions():
         )
        
 
+    if response.status_code == 401:
+        raise HTTPException(
+            status_code=401,
+            detail="GitHub token is invalid or expired."
+        )
+
     if response.status_code != 200:
         raise HTTPException(
             status_code=502,
-            detail="Unable to fetch GitHub contribution data."
+            detail="Unable to fetch GitHub contributions."
         )
 
     data = response.json()
@@ -101,7 +107,43 @@ async def get_github_contributions():
             "contribution_days": contribution_days
         })
 
+# -------- Contribution Insights --------
+
+    active_weeks = 0
+    longest_streak = 0
+    current_streak = 0
+    last_commit = "No commits"
+
+    for week in weeks:
+        week_has_activity = False
+
+        for day in week["contribution_days"]:
+
+            if day["contribution_count"] > 0:
+                week_has_activity = True
+
+                current_streak += 1
+
+                longest_streak = max(
+                    longest_streak,
+                    current_streak,
+                )
+
+                last_commit = day["date"]
+
+            else:
+                current_streak = 0
+
+        if week_has_activity:
+            active_weeks += 1
+
     return {
-        "total_contributions": calendar["totalContributions"],
-        "weeks": weeks
-    }
+    "total_contributions": calendar["totalContributions"],
+    "weeks": weeks,
+
+    "insights": {
+        "active_weeks": active_weeks,
+        "longest_streak": longest_streak,
+        "last_commit": last_commit,
+    },
+}

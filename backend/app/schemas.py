@@ -14,6 +14,9 @@ class DashboardStatsResponse(DashboardStatsBase):
     class Config:
         orm_mode = True
 
+
+# ---------------- GitHub ----------------
+
 class ContributionDay(BaseModel):
     date: str
     contribution_count: int
@@ -24,6 +27,13 @@ class ContributionWeek(BaseModel):
     contribution_days: list[ContributionDay]
 
 
+class ContributionInsights(BaseModel):
+    active_weeks: int
+    longest_streak: int
+    last_commit: str
+
+
 class GithubContributionResponse(BaseModel):
     total_contributions: int
     weeks: list[ContributionWeek]
+    insights: ContributionInsights
