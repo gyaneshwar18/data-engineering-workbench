@@ -1,119 +1,68 @@
-import { Handle, Position } from "reactflow";
-import {
-  CheckCircle2,
-  CircleDot,
-  Circle,
-} from "lucide-react";
+import React from "react";
+import { Handle, Position } from "@xyflow/react";
+import { CheckCircle2, Clock3, Circle } from "lucide-react";
 
-const statusStyles = {
+const statusConfig = {
   completed: {
-    border: "border-emerald-500/40",
-    bg: "bg-emerald-500/10",
-    text: "text-emerald-400",
     icon: CheckCircle2,
-    label: "Completed",
+    text: "Completed",
+    color: "text-emerald-400",
+    bg: "bg-emerald-500/10",
+    border: "border-emerald-500/30",
   },
-
   current: {
-    border: "border-blue-500/40",
-    bg: "bg-blue-500/10",
-    text: "text-blue-400",
-    icon: CircleDot,
-    label: "In Progress",
+    icon: Clock3,
+    text: "Current",
+    color: "text-sky-400",
+    bg: "bg-sky-500/10",
+    border: "border-sky-500/30",
   },
-
   planned: {
-    border: "border-slate-600",
-    bg: "bg-slate-800",
-    text: "text-slate-400",
     icon: Circle,
-    label: "Planned",
+    text: "Planned",
+    color: "text-slate-400",
+    bg: "bg-slate-500/10",
+    border: "border-slate-500/30",
   },
 };
 
-export default function RoadmapNode({ data }) {
-  const style = statusStyles[data.status];
-  const Icon = style.icon;
+const RoadmapNode = ({ data }) => {
+  const config = statusConfig[data.status] || statusConfig.planned;
+  const StatusIcon = config.icon;
 
   return (
     <>
       <Handle
         type="target"
-        position={Position.Top}
-        className="!h-3 !w-3 !bg-slate-600 !border-2 !border-slate-900"
+        position={Position.Left}
+        className="!h-3 !w-3 !border-2 !border-slate-900 !bg-blue-500"
       />
 
-      <div
-        className={`
-          w-[230px]
-          rounded-2xl
-          border
-          ${style.border}
-          bg-[#111113]
-          p-5
-          shadow-sm
-          transition-all
-          duration-200
-          hover:-translate-y-1
-          hover:shadow-xl
-        `}
-      >
-        {/* Status */}
-
-        <div className="flex items-center gap-2">
-
-          <Icon
-            size={16}
-            className={style.text}
-          />
-
-          <span
-            className={`text-xs font-medium ${style.text}`}
-          >
-            {style.label}
-          </span>
-
-        </div>
-
+      <div className="group w-[230px] rounded-2xl border border-slate-700/60 bg-slate-900/70 p-5 shadow-lg backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-blue-500/20">
         {/* Title */}
+        <h3 className="text-lg font-semibold text-white">{data.title}</h3>
 
-        <h3 className="mt-4 text-lg font-semibold text-white">
-          {data.title}
-        </h3>
-
-        {/* Subtitle */}
-
-        <p className="mt-2 text-sm leading-6 text-slate-400">
-          {data.description}
-        </p>
-
-        {/* Footer */}
-
-        <div className="mt-5">
-
-          <span
-            className={`
-              inline-flex
-              rounded-full
-              px-3
-              py-1
-              text-xs
-              font-medium
-              ${style.bg}
-              ${style.text}
-            `}
-          >
-            {data.level}
-          </span>
-
+        {/* Status */}
+        <div
+          className={`mt-3 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${config.bg} ${config.border} ${config.color}`}
+        >
+          <StatusIcon className="h-3.5 w-3.5" />
+          {config.text}
         </div>
+
+        {/* Description */}
+        <p className="mt-4 text-sm leading-6 text-slate-400">
+          {data.subtitle}
+        </p>
       </div>
 
       <Handle
         type="source"
-        position={Position.Bottom}
-        className="!h-3 !w-3 !bg-slate-600 !border-2 !border-slate-900"
+        position={Position.Right}
+        className="!h-3 !w-3 !border-2 !border-slate-900 !bg-blue-500"
       />
     </>
   );
-}
+};
+
+export default RoadmapNode;

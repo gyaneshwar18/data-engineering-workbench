@@ -1,183 +1,226 @@
-import { GitBranch } from "lucide-react";
-import ReactFlow, {
+// src/components/profile/EngineeringRoadmap.jsx
+
+import React from "react";
+import {
+  Code2,
+  Cpu,
+  Cloud,
+  Rocket,
+} from "lucide-react";
+
+import {
+  ReactFlow,
   Background,
   Controls,
-  MiniMap,
-} from "reactflow";
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
 
-import "reactflow/dist/style.css";
-
+import RoadmapSection from "./roadmap/RoadmapSection";
 import RoadmapNode from "./roadmap/RoadmapNode";
-import roadmapNodes from "./roadmap/roadmapNodes";
-import roadmapEdges from "./roadmap/roadmapEdges";
+
+import {
+  foundationNodes,
+  foundationEdges,
+  engineeringNodes,
+  engineeringEdges,
+  azureNodes,
+  azureEdges,
+  productionNodes,
+  productionEdges,
+} from "./roadmap/roadmapData";
 
 const nodeTypes = {
   roadmap: RoadmapNode,
 };
 
+const flowOptions = {
+  fitView: true,
+  fitViewOptions: {
+    padding: 0.25,
+  },
+  nodesDraggable: false,
+  nodesConnectable: false,
+  elementsSelectable: false,
+  zoomOnScroll: false,
+  panOnDrag: true,
+  proOptions: { hideAttribution: true },
+};
+
 export default function EngineeringRoadmap() {
   return (
-    <section
-      className="
-        rounded-3xl
-        border
-        border-slate-800
-        bg-slate-900/90
-        p-6
-        shadow-sm
-      "
-    >
+    <div className="space-y-10">
+
       {/* Header */}
 
-      <div className="flex items-center gap-4">
+      <div>
+        <h2 className="text-3xl font-bold text-white">
+          My Learning Journey
+        </h2>
 
-        <div
-          className="
-            flex
-            h-11
-            w-11
-            items-center
-            justify-center
-            rounded-xl
-            border
-            border-blue-500/20
-            bg-blue-500/10
-          "
-        >
-          <GitBranch
-            size={20}
-            className="text-blue-400"
-          />
-        </div>
-
-        <div>
-
-          <h2 className="text-xl font-semibold text-white">
-            Engineering Roadmap
-          </h2>
-
-          <p className="mt-1 text-sm text-slate-400">
-            Structured learning journey towards becoming a Modern Data Engineer
-          </p>
-
-        </div>
-
-      </div>
-
-      {/* Legend */}
-
-      <div className="mt-6 flex flex-wrap gap-5 text-sm">
-
-        <div className="flex items-center gap-2">
-
-          <div className="h-3 w-3 rounded-full bg-emerald-500" />
-
-          <span className="text-slate-300">
-            Completed
-          </span>
-
-        </div>
-
-        <div className="flex items-center gap-2">
-
-          <div className="h-3 w-3 rounded-full bg-blue-500" />
-
-          <span className="text-slate-300">
-            In Progress
-          </span>
-
-        </div>
-
-        <div className="flex items-center gap-2">
-
-          <div className="h-3 w-3 rounded-full bg-slate-500" />
-
-          <span className="text-slate-300">
-            Planned
-          </span>
-
-        </div>
-
-      </div>
-
-      {/* React Flow */}
-
-      <div
-        className="
-          mt-8
-          h-[900px]
-          overflow-hidden
-          rounded-2xl
-          border
-          border-slate-800
-          bg-[#09090B]
-        "
-      >
-        <ReactFlow
-          nodes={roadmapNodes}
-          edges={roadmapEdges}
-          nodeTypes={nodeTypes}
-          fitView
-          fitViewOptions={{
-            padding: 0.25,
-          }}
-          nodesDraggable={false}
-          nodesConnectable={false}
-          elementsSelectable={false}
-          panOnDrag
-          zoomOnScroll
-          zoomOnPinch
-          zoomOnDoubleClick
-          proOptions={{
-            hideAttribution: true,
-          }}
-        >
-          <Background
-            color="#27272A"
-            gap={24}
-            size={1}
-          />
-
-          <MiniMap
-            pannable
-            zoomable
-            nodeStrokeColor="#3b82f6"
-            nodeColor="#18181b"
-            maskColor="rgba(0,0,0,.65)"
-            style={{
-              background: "#111113",
-              border: "1px solid #27272A",
-            }}
-          />
-
-          <Controls
-            showInteractive={false}
-            position="bottom-right"
-          />
-
-        </ReactFlow>
-      </div>
-
-      {/* Footer */}
-
-      <div
-        className="
-          mt-5
-          rounded-2xl
-          border
-          border-slate-800
-          bg-slate-950/60
-          px-5
-          py-4
-        "
-      >
-        <p className="text-sm leading-7 text-slate-400">
-          This roadmap represents my structured learning journey through
-          Modern Data Engineering, following a hands-on approach focused on
-          building production-ready data platforms, cloud-native data
-          pipelines, and scalable analytics solutions.
+        <p className="mt-2 text-slate-400">
+          Road to Modern Data Engineering • Azure Data Platform
         </p>
       </div>
-    </section>
+
+      {/* ================= FOUNDATION ================= */}
+
+      <RoadmapSection
+        icon={Code2}
+        title="Foundation"
+        subtitle="Core Programming & Database Fundamentals"
+      >
+        <div className="h-[250px] w-full">
+          <ReactFlow
+            {...flowOptions}
+            nodes={foundationNodes}
+            edges={foundationEdges}
+            nodeTypes={nodeTypes}
+          >
+            <Background
+              gap={24}
+              size={1}
+              color="#334155"
+            />
+
+            <Controls showInteractive={false} />
+          </ReactFlow>
+        </div>
+      </RoadmapSection>
+
+      {/* Arrow */}
+
+      <div className="flex justify-center">
+        <div className="rounded-full border border-slate-700 bg-slate-900 p-3">
+          <svg
+            className="h-6 w-6 text-slate-400"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 5v14m0 0l-6-6m6 6l6-6"
+            />
+          </svg>
+        </div>
+      </div>
+
+      {/* ================= DATA ENGINEERING ================= */}
+
+      <RoadmapSection
+        icon={Cpu}
+        title="Data Engineering"
+        subtitle="Building Reliable Data Pipelines"
+      >
+        <div className="h-[250px] w-full">
+          <ReactFlow
+            {...flowOptions}
+            nodes={engineeringNodes}
+            edges={engineeringEdges}
+            nodeTypes={nodeTypes}
+          >
+            <Background
+              gap={24}
+              size={1}
+              color="#334155"
+            />
+
+            <Controls showInteractive={false} />
+          </ReactFlow>
+        </div>
+      </RoadmapSection>
+      {/* Arrow */}
+
+      <div className="flex justify-center">
+        <div className="rounded-full border border-slate-700 bg-slate-900 p-3">
+          <svg
+            className="h-6 w-6 text-slate-400"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 5v14m0 0l-6-6m6 6l6-6"
+            />
+          </svg>
+        </div>
+      </div>
+
+      {/* ================= AZURE PLATFORM ================= */}
+
+      <RoadmapSection
+        icon={Cloud}
+        title="Azure Platform"
+        subtitle="Cloud-native Data Engineering Services"
+      >
+        <div className="h-[250px] w-full">
+          <ReactFlow
+            {...flowOptions}
+            nodes={azureNodes}
+            edges={azureEdges}
+            nodeTypes={nodeTypes}
+          >
+            <Background
+              gap={24}
+              size={1}
+              color="#334155"
+            />
+
+            <Controls showInteractive={false} />
+          </ReactFlow>
+        </div>
+      </RoadmapSection>
+
+      {/* Arrow */}
+
+      <div className="flex justify-center">
+        <div className="rounded-full border border-slate-700 bg-slate-900 p-3">
+          <svg
+            className="h-6 w-6 text-slate-400"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 5v14m0 0l-6-6m6 6l6-6"
+            />
+          </svg>
+        </div>
+      </div>
+
+      {/* ================= PRODUCTION ================= */}
+
+      <RoadmapSection
+        icon={Rocket}
+        title="Production Engineering"
+        subtitle="Deployment, Streaming & Enterprise Data Platform"
+      >
+        <div className="h-[250px] w-full">
+          <ReactFlow
+            {...flowOptions}
+            nodes={productionNodes}
+            edges={productionEdges}
+            nodeTypes={nodeTypes}
+          >
+            <Background
+              gap={24}
+              size={1}
+              color="#334155"
+            />
+
+            <Controls showInteractive={false} />
+          </ReactFlow>
+        </div>
+      </RoadmapSection>
+
+    </div>
   );
 }
