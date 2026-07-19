@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Profile from "./pages/Profile";
 
 import Landing from "./pages/Landing";
 import AppLayout from "./layout/AppLayout";
@@ -27,6 +28,7 @@ export default function App() {
           <Route path="sql-lab" element={<SqlLab />} />
           <Route path="pipelines" element={<Pipelines />} />
           <Route path="datasets" element={<Datasets />} />
+          <Route path="profile" element={<Profile />} />
 
         </Route>
 

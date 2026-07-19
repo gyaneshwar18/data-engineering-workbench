@@ -108,7 +108,7 @@ export default function Landing() {
         </Link>
 
         <Link
-          to="/profile"
+          to="/workbench/profile"
           className="
             rounded-2xl
             border
