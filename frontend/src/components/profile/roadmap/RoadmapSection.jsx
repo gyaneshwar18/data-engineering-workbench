@@ -1,54 +1,90 @@
-// src/components/profile/roadmap/RoadmapSection.jsx
-
 import React from "react";
+import TechnologyCard from "./TechnologyCard";
+import AnimatedConnector from "./AnimatedConnector";
 
-const RoadmapSection = ({
-  icon: Icon,
-  title,
-  subtitle,
-  children,
-  className = "",
-}) => {
+const RoadmapSection = ({ section, showVerticalConnector = false }) => {
   return (
-    <section
-      className={`
-        relative overflow-hidden
-        rounded-3xl
-        border border-slate-700/50
-        bg-slate-900/60
-        backdrop-blur-xl
-        shadow-lg
-        transition-all duration-300
-        hover:border-blue-500/40
-        hover:shadow-blue-500/10
-        ${className}
-      `}
-    >
-      {/* Background Glow */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-cyan-500/5 pointer-events-none" />
+    <>
+      <section
+        className="
+          relative
+          overflow-hidden
+          rounded-3xl
+          border border-blue-500/20
+          bg-[#0f172a]
+          backdrop-blur-xl
+          p-6
+          shadow-[0_0_30px_rgba(37,99,235,0.08)]
+        "
+      >
+        {/* Background Glow */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-transparent" />
 
-      <div className="relative p-8">
-        {/* Header */}
-        <div className="flex items-start gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500/10 border border-blue-500/20">
-            {Icon && <Icon className="h-6 w-6 text-blue-400" />}
+        {/* ================= Header ================= */}
+        <div className="relative z-10">
+          <div className="flex items-center gap-3">
+            {/* Icon */}
+            <div
+              className="
+                flex
+                h-11
+                w-11
+                items-center
+                justify-center
+                rounded-xl
+                border border-cyan-400/20
+                bg-blue-500/10
+                text-xl
+              "
+            >
+              {section.icon}
+            </div>
+
+            {/* Title */}
+            <div>
+              <h2 className="text-lg font-semibold text-white">
+                {section.title}
+              </h2>
+
+              <p className="mt-1 text-sm text-slate-400">
+                {section.subtitle}
+              </p>
+            </div>
           </div>
 
-          <div>
-            <h2 className="text-2xl font-bold text-white">{title}</h2>
-            <p className="mt-1 text-sm text-slate-400">{subtitle}</p>
-          </div>
+          {/* Accent Line */}
+          <div className="mt-5 h-px w-full bg-gradient-to-r from-blue-500 via-cyan-400/20 to-transparent" />
         </div>
 
-        {/* Accent */}
-        <div className="mt-6 h-1 w-20 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400" />
+        {/* ================= Technology Flow ================= */}
+        <div
+          className="
+            relative
+            mt-8
+            flex
+            flex-wrap
+            items-center
+            justify-center
+            gap-y-6
+          "
+        >
+          {section.technologies.map((technology, index) => (
+            <React.Fragment key={technology.id}>
+              <TechnologyCard technology={technology} />
 
-        {/* Content */}
-        <div className="mt-8 rounded-2xl border border-slate-700/40 bg-slate-950/40 p-6">
-          {children}
+              {index !== section.technologies.length - 1 && (
+                <AnimatedConnector direction="horizontal" />
+              )}
+            </React.Fragment>
+          ))}
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Vertical Connector */}
+      {showVerticalConnector && (
+        <AnimatedConnector direction="vertical" />
+      )}
+    </>
   );
 };
 

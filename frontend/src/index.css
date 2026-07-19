@@ -5,3 +5,166 @@
 }
 
 
+@keyframes roadmapFlow {
+  0% {
+    transform: translate(0px, -50%);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(86px, -50%);
+    opacity: 0;
+  }
+}
+
+@keyframes roadmapFlow {
+  0% {
+    transform: translateX(0px);
+  }
+
+  100% {
+    transform: translateX(112px);
+  }
+}
+
+.connector {
+    position: relative;
+    width: 70px;
+    height: 2px;
+    background: rgba(148,163,184,.35);
+    overflow: hidden;
+    border-radius: 999px;
+}
+
+.connector::after{
+    content:"";
+    position:absolute;
+    left:-18px;
+    top:-3px;
+    width:10px;
+    height:10px;
+    border-radius:999px;
+
+    background:#22d3ee;
+
+    box-shadow:
+        0 0 10px #22d3ee,
+        0 0 18px #22d3ee;
+
+    animation: flow 2s linear infinite;
+}
+
+@keyframes flow{
+
+0%{
+transform:translateX(0);
+}
+
+100%{
+transform:translateX(88px);
+}
+
+}
+
+/* ---------- Animated Roadmap Connectors ---------- */
+
+@keyframes flowHorizontal {
+    0% {
+        left: -12px;
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    100% {
+        left: calc(100% + 12px);
+        opacity: 0;
+    }
+}
+
+@keyframes flowVertical {
+    0% {
+        top: -12px;
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    100% {
+        top: calc(100% + 12px);
+        opacity: 0;
+    }
+}
+
+.animate-flow-horizontal {
+    animation: flowHorizontal 2.2s linear infinite;
+}
+
+.animate-flow-vertical {
+    animation: flowVertical 2.2s linear infinite;
+}
+
+
+/* ==========================
+   Roadmap Connector Animation
+========================== */
+
+@keyframes roadmap-dot-horizontal {
+  0% {
+    transform: translateX(-6px);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(46px);
+    opacity: 0;
+  }
+}
+
+.animate-roadmap-dot-horizontal {
+  animation: roadmap-dot-horizontal 2.2s linear infinite;
+}
+
+@keyframes roadmap-dot-vertical {
+  0% {
+    transform: translate(-50%, -6px);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(-50%, 64px);
+    opacity: 0;
+  }
+}
+
+.animate-roadmap-dot-vertical {
+  animation: roadmap-dot-vertical 2.2s linear infinite;
+}

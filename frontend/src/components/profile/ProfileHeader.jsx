@@ -97,7 +97,7 @@ export default function ProfileHeader() {
                 <Building2 size={16} />
 
                 <span>
-                  React Developer Intern
+                  Software Engineer
                 </span>
 
               </div>

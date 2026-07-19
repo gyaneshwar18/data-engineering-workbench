@@ -111,7 +111,7 @@ export default function TechStack() {
             rounded-xl
             border
             border-cyan-500/20
-            bg-cyan-500/10
+            bg-blue-500/10
           "
         >
           <Code2
@@ -168,7 +168,7 @@ export default function TechStack() {
                     items-center
                     justify-center
                     rounded-xl
-                    bg-cyan-500/10
+                    bg-blue-500/10
                     border
                     border-cyan-500/20
                   "
