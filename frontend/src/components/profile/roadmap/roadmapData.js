@@ -61,7 +61,7 @@ const roadmapData = [
         name: "Spark",
         description: "Distributed Data",
         logo: "/logos/spark.svg",
-        status: "Inprogress",
+        status: "Current",
       },
       {
         id: "delta",

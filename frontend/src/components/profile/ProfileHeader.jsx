@@ -88,7 +88,7 @@ export default function ProfileHeader() {
       w-4
       rounded-full
       border-2
-      border-slate-900
+      border-slate-900 
       bg-emerald-400
       shadow-[0_0_10px_#4ade80]
     "
