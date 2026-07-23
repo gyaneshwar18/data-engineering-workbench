@@ -22,6 +22,9 @@ const experiences = [
   },
 ];
 
+
+
+
 export default function ExperienceSection() {
   return (
     <section
@@ -205,22 +208,22 @@ export default function ExperienceSection() {
                     <span
                       key={tech}
                       className="
-                        rounded-full
-                        border
-                        border-cyan-500/20
-                        bg-cyan-500/10
-                        px-3
-                        py-1
-                        text-xs
-                        font-medium
-                        text-cyan-300
-                        shadow-[0_0_10px_rgba(6,182,212,0.12)]
-                        transition-all
-                        duration-300
-                        hover:border-cyan-400/50
-                        hover:bg-cyan-500/15
-                        hover:shadow-[0_0_18px_rgba(6,182,212,0.22)]
-                      "
+                          rounded-full
+                          border
+                          border-emerald-500/20
+                          bg-emerald-500/10
+                          px-3
+                          py-1
+                          text-xs
+                          font-medium
+                          text-emerald-300
+                          shadow-[0_0_10px_rgba(16,185,129,0.10)]
+                          transition-all
+                          duration-300
+                          hover:border-emerald-400/35
+                          hover:bg-emerald-500/15
+                          hover:shadow-[0_0_18px_rgba(16,185,129,0.18)]
+                          "
                     >
                       {tech}
                     </span>

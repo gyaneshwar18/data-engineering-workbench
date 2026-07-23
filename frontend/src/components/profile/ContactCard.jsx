@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 
 export default function ContactCard() {
-  const email = "suryavanshigayneshwar@gmail.com";
+  const email = "suryavanshigyaneshwar@gmail.com";
 
   const copyEmail = async () => {
     try {
