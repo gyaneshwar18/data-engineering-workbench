@@ -1,10 +1,12 @@
 import { motion } from "framer-motion";
 import { Github, ArrowRight } from "lucide-react";
 
-import workbenchLogo from "../assets/logos/workbench.svg";
-import airflowLogo from "../assets/logos/airflow.svg";
-import databricksLogo from "../assets/logos/databricks.svg";
-import azureLogo from "../assets/logos/azure.svg";
+const logos = {
+  "Data Engineering Workbench": "/logos/workbench.svg",
+  "End-to-End Data Pipeline": "/logos/airflow.svg",
+  "Lakehouse Analytics Platform": "/logos/databricks.svg",
+  "Azure Data Platform": "/logos/azure.svg",
+};
 
 export default function ProjectCard({
   title,
@@ -12,14 +14,7 @@ export default function ProjectCard({
   tech,
   status,
 }) {
-  const logos = {
-    "Data Engineering Workbench": workbenchLogo,
-    "End-to-End Data Pipeline": airflowLogo,
-    "Lakehouse Analytics Platform": databricksLogo,
-    "Azure Data Platform": azureLogo,
-  };
-
-  const logo = logos[title] || workbenchLogo;
+  const logo = logos[title] || "/logos/workbench.svg";
 
   const badgeStyles = {
     Completed:
@@ -43,6 +38,7 @@ export default function ProjectCard({
         from-slate-900
         to-slate-950
         p-7
+        min-h-[420px]
         transition-all
         duration-300
         hover:border-cyan-500/30
@@ -80,7 +76,7 @@ export default function ProjectCard({
 
           <div>
 
-            <h3 className="text-3xl font-bold leading-tight text-white">
+            <h3 className="text-[2rem] font-bold tracking-tight text-white leading-[1.15]">
               {title}
             </h3>
 
