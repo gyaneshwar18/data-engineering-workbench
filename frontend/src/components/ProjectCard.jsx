@@ -128,3 +128,50 @@ export default function ProjectCard({
       </div>
 
       <div className="mt-8 border-t border-slate-700/60 pt-6">
+
+              <a
+          href="#"
+          className="
+            inline-flex
+            items-center
+            gap-3
+            text-base
+            font-medium
+            text-cyan-400
+            transition-all
+            duration-300
+            hover:gap-4
+            hover:text-cyan-300
+          "
+        >
+          <div
+            className="
+              flex
+              h-10
+              w-10
+              items-center
+              justify-center
+              rounded-full
+              bg-slate-800
+              border
+              border-slate-700
+              transition-colors
+              duration-300
+              group-hover:border-cyan-500/30
+            "
+          >
+            <Github size={18} />
+          </div>
+
+          <span>Source Code</span>
+
+          <ArrowRight
+            size={18}
+            className="transition-transform duration-300 group-hover:translate-x-1"
+          />
+        </a>
+
+      </div>
+    </motion.div>
+  );
+}
