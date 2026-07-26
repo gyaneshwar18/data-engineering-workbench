@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, Float, Text, DateTime, Boolean
 from app.database import Base
 from datetime import datetime
 
-
+#test
 class QueryHistory(Base):
     __tablename__ = "query_history"
 

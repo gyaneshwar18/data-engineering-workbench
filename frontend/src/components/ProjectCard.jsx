@@ -1,102 +1,187 @@
 import { motion } from "framer-motion";
-import { Github, ArrowUpRight } from "lucide-react";
+import {
+  DatabaseZap,
+  Workflow,
+  Warehouse,
+  Cloud,
+  Github,
+  ArrowUpRight,
+} from "lucide-react";
 
 export default function ProjectCard({
   title,
   problem,
   tech,
-  impact,
-  status = "Production"
+  status,
 }) {
-  return (
+  const icons = {
+    "Data Engineering Workbench": DatabaseZap,
+    "End-to-End Data Pipeline": Workflow,
+    "Lakehouse Analytics Platform": Warehouse,
+    "Azure Data Platform": Cloud,
+  };
 
+  const Icon = icons[title] || DatabaseZap;
+
+  const statusStyles = {
+    Production:
+      "border-emerald-500/20 bg-emerald-500/10 text-emerald-400",
+
+    Development:
+      "border-violet-500/20 bg-violet-500/10 text-violet-400",
+
+    Research:
+      "border-amber-500/20 bg-amber-500/10 text-amber-400",
+  };
+
+  return (
     <motion.div
-      whileHover={{ y: -8 }}
-      transition={{ type: "spring", stiffness: 260 }}
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.25 }}
       className="
-        bg-white/90 backdrop-blur
-        rounded-2xl p-6
-        border border-gray-100
-        shadow-sm hover:shadow-lg
-        transition
-        dark:bg-gray-900/80 dark:border-gray-800
+        group
+        rounded-xl
+        border
+        border-slate-700/60
+        bg-gradient-to-br
+        from-slate-900
+        to-slate-950
+        p-5
+        transition-all
+        duration-300
+        hover:border-cyan-500/25
+        hover:shadow-xl
       "
     >
-
       {/* Header */}
-      <div className="flex justify-between items-start mb-3">
 
-        <h3 className="
-          text-lg font-semibold
-          text-gray-800 dark:text-gray-100
-          tracking-tight
-        ">
-          {title}
-        </h3>
+      <div className="flex items-start justify-between">
 
-        <span className="
-          text-xs px-3 py-1 rounded-full
-          bg-green-100 text-green-700
-          dark:bg-green-900/40 dark:text-green-300
-        ">
-          {status}
-        </span>
+        <div className="flex items-center gap-3">
+
+          <div
+            className="
+              flex
+              h-10
+              w-10
+              items-center
+              justify-center
+              rounded-lg
+              border
+              border-slate-700
+              bg-slate-800
+              transition-colors
+              group-hover:border-cyan-500/30
+            "
+          >
+            <Icon
+              size={18}
+              className="text-cyan-400"
+            />
+          </div>
+
+          <div>
+
+            <h3 className="font-semibold text-white">
+              {title}
+            </h3>
+
+            <div
+              className={`
+                mt-1
+                inline-flex
+                items-center
+                gap-2
+                rounded-full
+                border
+                px-2.5
+                py-1
+                text-[11px]
+                font-medium
+                ${
+                  statusStyles[status]
+                }
+              `}
+            >
+              <span className="h-2 w-2 rounded-full bg-current" />
+
+              {status}
+            </div>
+
+          </div>
+
+        </div>
 
       </div>
 
-      {/* Problem */}
-      <p className="text-sm text-gray-600 dark:text-gray-400 mb-5 leading-relaxed">
+      {/* Description */}
+
+      <p className="mt-5 text-sm leading-6 text-slate-400 line-clamp-3">
         {problem}
       </p>
 
-      {/* Tech Stack */}
-      <div className="flex flex-wrap gap-2 mb-5">
-        {tech.map(t => (
+      {/* Tech */}
+
+      <div className="mt-5 flex flex-wrap gap-2">
+        {tech.slice(0, 5).map((item) => (
           <span
-            key={t}
+            key={item}
             className="
-              text-xs px-3 py-1 rounded-lg
-              bg-gray-100 text-gray-700
-              dark:bg-gray-800 dark:text-gray-300
+              rounded-md
+              border
+              border-slate-700
+              bg-slate-800/60
+              px-2.5
+              py-1
+              text-[11px]
+              font-medium
+              text-slate-300
+              transition-colors
+              hover:border-cyan-500/25
+              hover:text-white
             "
           >
-            {t}
+            {item}
           </span>
         ))}
       </div>
 
-      {/* Impact Strip */}
-      <div className="
-        mb-5 p-3 rounded-xl
-        bg-linear-to-r from-blue-50 to-indigo-50
-        dark:from-blue-900/30 dark:to-indigo-900/30
-        text-sm font-medium
-        text-blue-700 dark:text-blue-300
-      ">
-        🚀 Impact: {impact}
-      </div>
+      {/* Footer */}
 
-      {/* Actions */}
-      <div className="flex gap-3">
+      <div className="mt-6 flex items-center justify-between">
 
-        <button className="
-          flex items-center gap-2
-          px-4 py-2 text-sm
-          bg-blue-600 text-white
-          rounded-xl hover:bg-blue-700
-          transition
-        ">
-          Case Study <ArrowUpRight size={16}/>
+        <button
+          className="
+            flex
+            items-center
+            gap-1
+            text-sm
+            font-medium
+            text-slate-300
+            transition-colors
+            hover:text-cyan-400
+          "
+        >
+          <Github size={16} />
+
+          GitHub
         </button>
 
-        <button className="
-          flex items-center gap-2
-          px-4 py-2 text-sm
-          border rounded-xl
-          dark:border-gray-700 dark:text-gray-200
-        ">
-          <Github size={16}/>
-          Code
+        <button
+          className="
+            flex
+            items-center
+            gap-1
+            text-sm
+            font-medium
+            text-cyan-400
+            transition-all
+            hover:gap-2
+          "
+        >
+          Live Demo
+
+          <ArrowUpRight size={16} />
         </button>
 
       </div>

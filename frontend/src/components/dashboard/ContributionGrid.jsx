@@ -3,23 +3,33 @@ import ContributionCell from "./ContributionCell";
 export default function ContributionGrid({ weeks }) {
   const monthLabels = [];
 
-  weeks.forEach((week, index) => {
-    const firstDay = week.contribution_days[0];
 
-    const month = new Date(firstDay.date).toLocaleString("default", {
+
+  let previousLabelIndex = -10;
+
+  weeks.forEach((week, index) => {
+    const month = new Date(
+      week.contribution_days[0].date
+    ).toLocaleString("default", {
       month: "short",
     });
 
-    if (
-      index === 0 ||
-      month !==
-        new Date(
+    const previousMonth =
+      index > 0
+        ? new Date(
           weeks[index - 1].contribution_days[0].date
         ).toLocaleString("default", {
           month: "short",
         })
+        : null;
+
+    if (
+      index === 0 ||
+      (month !== previousMonth &&
+        index - previousLabelIndex >= 4)
     ) {
       monthLabels.push(month);
+      previousLabelIndex = index;
     } else {
       monthLabels.push("");
     }
