@@ -36,7 +36,7 @@ export default function Projects() {
   return (
     <section
       id="projects"
-      className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 py-28"
+      className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 pt-8 pb-20"
     >
       {/* Background Glow */}
 
@@ -53,19 +53,18 @@ export default function Projects() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="mb-14 text-center"
+          className="mb-8"
         >
           <span className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-400">
             Portfolio
           </span>
 
-          <h2 className="mt-4 text-5xl font-bold tracking-tight text-white">
+          <h2 className="mt-2 text-[34px] font-bold tracking-tight text-white">
             Featured Engineering Projects
           </h2>
 
-          <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-slate-400">
-            Production-ready data engineering projects demonstrating modern
-            cloud platforms, scalable data pipelines, and analytics solutions.
+          <p className="mt-2 max-w-xl text-[17px] text-slate-400">
+            Building scalable data platforms for modern analytics.
           </p>
         </motion.div>
 

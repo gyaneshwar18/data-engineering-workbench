@@ -70,20 +70,20 @@ export default function ProjectCard({
             <img
               src={logo}
               alt={title}
-              className="h-9 w-9 object-contain"
+              className="h-11 w-11 object-contain"
             />
           </div>
 
           <div>
 
-            <h3 className="text-[2rem] font-bold tracking-tight text-white leading-[1.15]">
+            <h3 className="text-2xl font-semibold leading-tight tracking-tight text-white">
               {title}
             </h3>
 
             <div
               className={`mt-4 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium ${badgeStyles[status]}`}
             >
-              <span className="h-2.5 w-2.5 rounded-full bg-current"></span>
+              <span className="h-2 w-2 rounded-full bg-current"></span>
 
               {status}
             </div>
