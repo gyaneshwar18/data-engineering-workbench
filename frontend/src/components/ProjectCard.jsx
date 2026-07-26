@@ -1,12 +1,10 @@
 import { motion } from "framer-motion";
-import {
-  DatabaseZap,
-  Workflow,
-  Warehouse,
-  Cloud,
-  Github,
-  ArrowUpRight,
-} from "lucide-react";
+import { Github, ArrowRight } from "lucide-react";
+
+import workbenchLogo from "../assets/logos/workbench.svg";
+import airflowLogo from "../assets/logos/airflow.svg";
+import databricksLogo from "../assets/logos/databricks.svg";
+import azureLogo from "../assets/logos/azure.svg";
 
 export default function ProjectCard({
   title,
@@ -14,96 +12,82 @@ export default function ProjectCard({
   tech,
   status,
 }) {
-  const icons = {
-    "Data Engineering Workbench": DatabaseZap,
-    "End-to-End Data Pipeline": Workflow,
-    "Lakehouse Analytics Platform": Warehouse,
-    "Azure Data Platform": Cloud,
+  const logos = {
+    "Data Engineering Workbench": workbenchLogo,
+    "End-to-End Data Pipeline": airflowLogo,
+    "Lakehouse Analytics Platform": databricksLogo,
+    "Azure Data Platform": azureLogo,
   };
 
-  const Icon = icons[title] || DatabaseZap;
+  const logo = logos[title] || workbenchLogo;
 
-  const statusStyles = {
-    Production:
-      "border-emerald-500/20 bg-emerald-500/10 text-emerald-400",
+  const badgeStyles = {
+    Completed:
+      "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
 
-    Development:
-      "border-violet-500/20 bg-violet-500/10 text-violet-400",
-
-    Research:
-      "border-amber-500/20 bg-amber-500/10 text-amber-400",
+    "In Progress":
+      "bg-sky-500/10 text-sky-400 border border-sky-500/20",
   };
 
   return (
     <motion.div
-      whileHover={{ y: -4 }}
+      whileHover={{ y: -6 }}
       transition={{ duration: 0.25 }}
       className="
         group
-        rounded-xl
+        overflow-hidden
+        rounded-2xl
         border
         border-slate-700/60
         bg-gradient-to-br
         from-slate-900
         to-slate-950
-        p-5
+        p-7
         transition-all
         duration-300
-        hover:border-cyan-500/25
-        hover:shadow-xl
+        hover:border-cyan-500/30
       "
     >
-      {/* Header */}
+      {/* HEADER */}
 
       <div className="flex items-start justify-between">
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-start gap-5">
 
           <div
             className="
               flex
-              h-10
-              w-10
+              h-16
+              w-16
+              shrink-0
               items-center
               justify-center
-              rounded-lg
+              rounded-xl
               border
               border-slate-700
-              bg-slate-800
-              transition-colors
+              bg-slate-800/70
+              transition-all
+              duration-300
               group-hover:border-cyan-500/30
             "
           >
-            <Icon
-              size={18}
-              className="text-cyan-400"
+            <img
+              src={logo}
+              alt={title}
+              className="h-9 w-9 object-contain"
             />
           </div>
 
           <div>
 
-            <h3 className="font-semibold text-white">
+            <h3 className="text-3xl font-bold leading-tight text-white">
               {title}
             </h3>
 
             <div
-              className={`
-                mt-1
-                inline-flex
-                items-center
-                gap-2
-                rounded-full
-                border
-                px-2.5
-                py-1
-                text-[11px]
-                font-medium
-                ${
-                  statusStyles[status]
-                }
-              `}
+              className={`mt-4 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium ${badgeStyles[status]}`}
             >
-              <span className="h-2 w-2 rounded-full bg-current" />
+              <span className="h-2.5 w-2.5 rounded-full bg-current"></span>
 
               {status}
             </div>
@@ -114,31 +98,28 @@ export default function ProjectCard({
 
       </div>
 
-      {/* Description */}
+      {/* DESCRIPTION */}
 
-      <p className="mt-5 text-sm leading-6 text-slate-400 line-clamp-3">
+      <p className="mt-8 text-[17px] leading-8 text-slate-400">
         {problem}
       </p>
 
-      {/* Tech */}
+      {/* TECH STACK */}
 
-      <div className="mt-5 flex flex-wrap gap-2">
+      <div className="mt-7 flex flex-wrap gap-3">
         {tech.slice(0, 5).map((item) => (
           <span
             key={item}
             className="
-              rounded-md
-              border
-              border-slate-700
-              bg-slate-800/60
-              px-2.5
-              py-1
-              text-[11px]
-              font-medium
+              rounded-lg
+              bg-slate-800
+              px-4
+              py-2
+              text-sm
               text-slate-300
               transition-colors
-              hover:border-cyan-500/25
-              hover:text-white
+              duration-300
+              group-hover:bg-slate-700
             "
           >
             {item}
@@ -146,46 +127,4 @@ export default function ProjectCard({
         ))}
       </div>
 
-      {/* Footer */}
-
-      <div className="mt-6 flex items-center justify-between">
-
-        <button
-          className="
-            flex
-            items-center
-            gap-1
-            text-sm
-            font-medium
-            text-slate-300
-            transition-colors
-            hover:text-cyan-400
-          "
-        >
-          <Github size={16} />
-
-          GitHub
-        </button>
-
-        <button
-          className="
-            flex
-            items-center
-            gap-1
-            text-sm
-            font-medium
-            text-cyan-400
-            transition-all
-            hover:gap-2
-          "
-        >
-          Live Demo
-
-          <ArrowUpRight size={16} />
-        </button>
-
-      </div>
-
-    </motion.div>
-  );
-}
+      <div className="mt-8 border-t border-slate-700/60 pt-6">
