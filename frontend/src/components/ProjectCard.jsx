@@ -26,7 +26,7 @@ export default function ProjectCard({
 
   return (
     <motion.div
-      whileHover={{ y: -6 }}
+      whileHover={{ y: -5 }}
       transition={{ duration: 0.25 }}
       className="
         group
@@ -37,8 +37,8 @@ export default function ProjectCard({
         bg-gradient-to-br
         from-slate-900
         to-slate-950
-        p-7
-        min-h-[420px]
+        p-6
+        min-h-[340px]
         transition-all
         duration-300
         hover:border-cyan-500/30
@@ -47,14 +47,13 @@ export default function ProjectCard({
       {/* HEADER */}
 
       <div className="flex items-start justify-between">
-
-        <div className="flex items-start gap-5">
+        <div className="flex items-start gap-4">
 
           <div
             className="
               flex
-              h-16
-              w-16
+              h-14
+              w-14
               shrink-0
               items-center
               justify-center
@@ -70,48 +69,45 @@ export default function ProjectCard({
             <img
               src={logo}
               alt={title}
-              className="h-11 w-11 object-contain"
+              className="h-9 w-9 object-contain"
             />
           </div>
 
           <div>
-
-            <h3 className="text-2xl font-semibold leading-tight tracking-tight text-white">
+            <h3 className="text-xl font-semibold leading-tight tracking-tight text-white">
               {title}
             </h3>
 
             <div
-              className={`mt-4 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium ${badgeStyles[status]}`}
+              className={`mt-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium ${badgeStyles[status]}`}
             >
-              <span className="h-2 w-2 rounded-full bg-current"></span>
+              <span className="h-1.5 w-1.5 rounded-full bg-current"></span>
 
               {status}
             </div>
-
           </div>
 
         </div>
-
       </div>
 
       {/* DESCRIPTION */}
 
-      <p className="mt-8 text-[17px] leading-8 text-slate-400">
+      <p className="mt-6 text-[15px] leading-7 text-slate-400">
         {problem}
       </p>
 
       {/* TECH STACK */}
 
-      <div className="mt-7 flex flex-wrap gap-3">
+      <div className="mt-6 flex flex-wrap gap-2">
         {tech.slice(0, 5).map((item) => (
           <span
             key={item}
             className="
               rounded-lg
               bg-slate-800
-              px-4
-              py-2
-              text-sm
+              px-3
+              py-1.5
+              text-xs
               text-slate-300
               transition-colors
               duration-300
@@ -123,28 +119,29 @@ export default function ProjectCard({
         ))}
       </div>
 
-      <div className="mt-8 border-t border-slate-700/60 pt-6">
+      {/* FOOTER */}
 
-              <a
+      <div className="mt-7 border-t border-slate-700/60 pt-5">
+        <a
           href="#"
           className="
             inline-flex
             items-center
-            gap-3
-            text-base
+            gap-2
+            text-sm
             font-medium
             text-cyan-400
             transition-all
             duration-300
-            hover:gap-4
+            hover:gap-3
             hover:text-cyan-300
           "
         >
           <div
             className="
               flex
-              h-10
-              w-10
+              h-9
+              w-9
               items-center
               justify-center
               rounded-full
@@ -156,17 +153,16 @@ export default function ProjectCard({
               group-hover:border-cyan-500/30
             "
           >
-            <Github size={18} />
+            <Github size={16} />
           </div>
 
           <span>Source Code</span>
 
           <ArrowRight
-            size={18}
+            size={16}
             className="transition-transform duration-300 group-hover:translate-x-1"
           />
         </a>
-
       </div>
     </motion.div>
   );
