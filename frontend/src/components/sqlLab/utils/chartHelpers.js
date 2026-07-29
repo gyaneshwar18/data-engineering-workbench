@@ -1,5 +1,5 @@
 const isNumber = (value) => {
-  return typeof value === "number" && !Number.isNaN(value);
+  return value !== null && value !== "" && !Number.isNaN(Number(value));
 };
 
 const findNumericColumns = (columns, rows) => {

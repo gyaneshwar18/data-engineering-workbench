@@ -1,70 +1,117 @@
+import { useEffect, useRef } from "react";
 import Editor from "@monaco-editor/react";
+import { Database } from "lucide-react";
+
+import { registerSqlCompletionProvider } from "../utils/sqlCompletionProvider";
 
 const SqlEditor = ({
-  value = "",
-  onChange = () => {},
+  value,
+  onChange,
+  tables = [],
+  columns = {},
 }) => {
-  const handleEditorChange = (value) => {
-    onChange(value || "");
+  const providerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      providerRef.current?.dispose();
+    };
+  }, []);
+
+  const handleEditorDidMount = (editor, monaco) => {
+    providerRef.current?.dispose();
+
+    providerRef.current = registerSqlCompletionProvider({
+      tables,
+      columns,
+    });
+
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Space, () => {
+      editor.trigger("keyboard", "editor.action.triggerSuggest", {});
+    });
+
+    editor.focus();
   };
 
+  useEffect(() => {
+    providerRef.current?.dispose();
+
+    providerRef.current = registerSqlCompletionProvider({
+      tables,
+      columns,
+    });
+
+    return () => {
+      providerRef.current?.dispose();
+    };
+  }, [tables, columns]);
+
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-700/50 bg-slate-900/70 backdrop-blur-xl">
+    <div className="overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-xl">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-700/50 px-5 py-4">
-        <div>
-          <h2 className="text-sm font-semibold text-white">
-            SQL Editor
-          </h2>
+      <div className="flex items-center justify-between border-b border-slate-700 px-6 py-4">
+        <div className="flex items-center gap-3">
+          <div className="rounded-lg bg-cyan-500/10 p-2">
+            <Database className="h-5 w-5 text-cyan-400" />
+          </div>
 
-          <p className="mt-1 text-xs text-slate-500">
-            Write and execute SQL queries against your datasets.
-          </p>
+          <div>
+            <h2 className="font-semibold text-white">
+              SQL Editor
+            </h2>
+
+            <p className="text-sm text-slate-400">
+              Write and execute PostgreSQL queries
+            </p>
+          </div>
         </div>
 
-        <div className="rounded-lg border border-cyan-500/20 bg-cyan-500/10 px-3 py-1">
-          <span className="text-xs font-medium text-cyan-400">
-            PostgreSQL
-          </span>
-        </div>
+        <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400">
+          PostgreSQL
+        </span>
       </div>
 
-      {/* Monaco Editor */}
+      {/* Editor */}
       <Editor
         height="420px"
         defaultLanguage="sql"
         value={value}
-        onChange={handleEditorChange}
+        onChange={(v) => onChange(v || "")}
+        onMount={handleEditorDidMount}
         theme="vs-dark"
         options={{
+          automaticLayout: true,
           minimap: {
             enabled: false,
           },
+
           fontSize: 15,
-          fontLigatures: true,
+          fontFamily:
+            "'JetBrains Mono','Fira Code','Consolas',monospace",
+
           wordWrap: "on",
-          automaticLayout: true,
           scrollBeyondLastLine: false,
-          padding: {
-            top: 18,
-            bottom: 18,
-          },
+
           tabSize: 2,
-          insertSpaces: true,
+
           formatOnPaste: true,
           formatOnType: true,
+
           suggestOnTriggerCharacters: true,
           quickSuggestions: true,
-          smoothScrolling: true,
-          cursorBlinking: "smooth",
-          roundedSelection: true,
-          renderLineHighlight: "all",
-          contextmenu: true,
-          lineNumbers: "on",
+          snippetSuggestions: "top",
+
           folding: true,
-          bracketPairColorization: {
-            enabled: true,
-          },
+
+          lineNumbers: "on",
+
+          renderWhitespace: "selection",
+
+          smoothScrolling: true,
+
+          cursorBlinking: "smooth",
+
+          roundedSelection: true,
         }}
       />
     </div>

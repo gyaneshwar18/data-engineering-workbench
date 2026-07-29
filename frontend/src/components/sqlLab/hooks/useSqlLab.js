@@ -1,75 +1,102 @@
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import sqlLabService from "../../../services/sqlLabService";
 
-const DEFAULT_PROBLEMS = [
+const sampleProblems = [
   {
     id: 1,
-    title: "Top Customers by Revenue",
-    category: "Aggregation",
-    difficulty: "Medium",
-    sql: `SELECT customer_id,
-       SUM(amount) AS total
-FROM orders
-GROUP BY customer_id
-ORDER BY total DESC
-LIMIT 5;`,
+    title: "Select All Employees",
+    difficulty: "Easy",
+    category: "SELECT",
+    query: "SELECT * FROM employees LIMIT 10;",
   },
   {
     id: 2,
-    title: "Rank Employees by Salary",
-    category: "Window Function",
-    difficulty: "Hard",
-    sql: `SELECT name,
-       salary,
-       RANK() OVER (ORDER BY salary DESC) AS rnk
-FROM employees;`,
+    title: "Department Wise Salary",
+    difficulty: "Medium",
+    category: "GROUP BY",
+    query: `SELECT department,
+AVG(salary) AS average_salary
+FROM employees
+GROUP BY department;`,
+  },
+  {
+    id: 3,
+    title: "Top 5 Highest Salaries",
+    difficulty: "Easy",
+    category: "ORDER BY",
+    query: `SELECT *
+FROM employees
+ORDER BY salary DESC
+LIMIT 5;`,
   },
 ];
 
 const useSqlLab = () => {
-  // ===========================
-  // State
-  // ===========================
+  /* ---------------------------------- */
+  /* State                              */
+  /* ---------------------------------- */
 
-  const [problems] = useState(DEFAULT_PROBLEMS);
+  const [problems] = useState(sampleProblems);
 
   const [selectedProblem, setSelectedProblem] = useState(
-    DEFAULT_PROBLEMS[0]
+    sampleProblems[0]
   );
 
   const [sqlQuery, setSqlQuery] = useState(
-    DEFAULT_PROBLEMS[0].sql
+    sampleProblems[0].query
   );
+
+  const [loading, setLoading] = useState(false);
+
+  const [chartType, setChartType] = useState("bar");
 
   const [result, setResult] = useState({
     columns: [],
     rows: [],
   });
 
-  const [loading, setLoading] = useState(false);
-
-  const [chartType, setChartType] = useState("auto");
-
-  const [uploadedTable, setUploadedTable] = useState("");
-
   const [tables, setTables] = useState([]);
 
   const [columns, setColumns] = useState({});
 
-  // ===========================
-  // Metadata
-  // ===========================
+  const [uploadedTable, setUploadedTable] = useState("");
+
+  const [queryHistory, setQueryHistory] = useState([]);
+
+  const [savedQueries, setSavedQueries] = useState([]);
+
+  /* ---------------------------------- */
+  /* Dialog State                       */
+  /* ---------------------------------- */
+
+  const [uploadOpen, setUploadOpen] =
+    useState(false);
+
+  const [tableExplorerOpen, setTableExplorerOpen] =
+    useState(false);
+
+  const [historyOpen, setHistoryOpen] =
+    useState(false);
+
+  const [savedQueriesOpen, setSavedQueriesOpen] =
+    useState(false);
+
+  /* ---------------------------------- */
+  /* Load Metadata                      */
+  /* ---------------------------------- */
 
   const loadMetadata = useCallback(async () => {
     try {
       const metadata =
         await sqlLabService.fetchMetadata();
 
-      setTables(metadata.tables);
-
-      setColumns(metadata.columns);
+      setTables(metadata.tables || []);
+      setColumns(metadata.columns || {});
     } catch (error) {
-      console.error("Metadata Error", error);
+      console.error(
+        "Failed to load metadata",
+        error
+      );
     }
   }, []);
 
@@ -77,142 +104,275 @@ const useSqlLab = () => {
     loadMetadata();
   }, [loadMetadata]);
 
-  // ===========================
-  // Problem Selection
-  // ===========================
+  /* ---------------------------------- */
+  /* Problem Selection                  */
+  /* ---------------------------------- */
 
   const selectProblem = (problem) => {
     setSelectedProblem(problem);
-    setSqlQuery(problem.sql);
-
-    setResult({
-      columns: [],
-      rows: [],
-    });
+    setSqlQuery(problem.query);
   };
 
-  // ===========================
-  // Execute Query
-  // ===========================
+  /* ---------------------------------- */
+  /* Run Query                          */
+  /* ---------------------------------- */
 
   const runQuery = async () => {
     if (!sqlQuery.trim()) return;
 
-    setLoading(true);
-
     try {
+      setLoading(true);
+
       const response =
         await sqlLabService.runQuery(sqlQuery);
 
-      setResult(response);
+      setResult({
+        columns: response.columns || [],
+        rows: response.rows || [],
+      });
+
+      setQueryHistory((previous) => [
+        {
+          id: Date.now(),
+          query: sqlQuery,
+          date: new Date().toLocaleDateString(),
+          time: new Date().toLocaleTimeString(),
+        },
+        ...previous,
+      ]);
     } catch (error) {
       console.error(error);
-
-      alert(
-        error.response?.data?.detail ??
-          "Query execution failed."
-      );
     } finally {
       setLoading(false);
     }
   };
 
-  // ===========================
-  // Save Query
-  // ===========================
+  /* ---------------------------------- */
+  /* Save Query                         */
+  /* ---------------------------------- */
 
   const saveQuery = async () => {
+    if (!sqlQuery.trim()) return;
+
     try {
       await sqlLabService.saveQuery(sqlQuery);
 
-      alert("Query saved successfully.");
-    } catch {
-      alert("Unable to save query.");
+      setSavedQueries((previous) => [
+        {
+          id: Date.now(),
+          query: sqlQuery,
+          saved_at:
+            new Date().toLocaleString(),
+        },
+        ...previous,
+      ]);
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  // ===========================
-  // Upload Dataset
-  // ===========================
+  /* ---------------------------------- */
+  /* Upload Dataset                     */
+  /* ---------------------------------- */
 
   const uploadDataset = async (file) => {
     if (!file) return;
 
     try {
-      await sqlLabService.uploadCSV(file);
+      setLoading(true);
+
+      const response =
+        await sqlLabService.uploadCSV(file);
 
       setUploadedTable(
-        file.name.replace(".csv", "").toLowerCase()
+        response.table_name || ""
       );
 
       await loadMetadata();
     } catch (error) {
       console.error(error);
-
-      alert(
-        error.response?.data?.detail ??
-          "Upload failed."
-      );
+    } finally {
+      setLoading(false);
     }
   };
 
-  // ===========================
-  // Export CSV
-  // ===========================
+  /* ---------------------------------- */
+  /* Export CSV                         */
+  /* ---------------------------------- */
 
   const exportCSV = () => {
     if (!result.rows.length) return;
 
     const headers = result.columns.join(",");
 
-    const data = result.rows.map((row) =>
+    const csvRows = result.rows.map((row) =>
       result.columns
         .map((column) => row[column])
         .join(",")
     );
 
-    const csv = [headers, ...data].join("\n");
+    const csv = [headers, ...csvRows].join("\n");
 
     const blob = new Blob([csv], {
-      type: "text/csv",
+      type: "text/csv;charset=utf-8;",
     });
 
-    const url = URL.createObjectURL(blob);
+    const url =
+      window.URL.createObjectURL(blob);
 
-    const link = document.createElement("a");
+    const link =
+      document.createElement("a");
 
     link.href = url;
-
     link.download = "query_result.csv";
+
+    document.body.appendChild(link);
 
     link.click();
 
-    URL.revokeObjectURL(url);
+    document.body.removeChild(link);
+
+    window.URL.revokeObjectURL(url);
   };
 
+    /* ---------------------------------- */
+  /* Dialog Controls                    */
+  /* ---------------------------------- */
+
+  const openUpload = () => setUploadOpen(true);
+  const closeUpload = () => setUploadOpen(false);
+
+  const openExplorer = () =>
+    setTableExplorerOpen(true);
+  const closeExplorer = () =>
+    setTableExplorerOpen(false);
+
+  const openHistory = () => setHistoryOpen(true);
+  const closeHistory = () => setHistoryOpen(false);
+
+  const openSavedQueries = () =>
+    setSavedQueriesOpen(true);
+  const closeSavedQueries = () =>
+    setSavedQueriesOpen(false);
+
+  /* ---------------------------------- */
+  /* History Actions                    */
+  /* ---------------------------------- */
+
+  const runHistoryQuery = async (query) => {
+    setSqlQuery(query);
+
+    try {
+      setLoading(true);
+
+      const response =
+        await sqlLabService.runQuery(query);
+
+      setResult({
+        columns: response.columns || [],
+        rows: response.rows || [],
+      });
+
+      setHistoryOpen(false);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ---------------------------------- */
+  /* Saved Query Actions                */
+  /* ---------------------------------- */
+
+  const runSavedQuery = async (query) => {
+    setSqlQuery(query);
+
+    try {
+      setLoading(true);
+
+      const response =
+        await sqlLabService.runQuery(query);
+
+      setResult({
+        columns: response.columns || [],
+        rows: response.rows || [],
+      });
+
+      setSavedQueriesOpen(false);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteSavedQuery = (id) => {
+    setSavedQueries((previous) =>
+      previous.filter((item) => item.id !== id)
+    );
+  };
+
+  /* ---------------------------------- */
+  /* Return                             */
+  /* ---------------------------------- */
+
   return {
-    // Data
+    /* Problems */
     problems,
     selectedProblem,
+
+    /* Editor */
     sqlQuery,
+    setSqlQuery,
+
+    /* Results */
     result,
     loading,
-    chartType,
-    uploadedTable,
-    tables,
-    columns,
 
-    // Setters
-    setSqlQuery,
+    /* Charts */
+    chartType,
     setChartType,
 
-    // Actions
+    /* Metadata */
+    tables,
+    columns,
+    uploadedTable,
+
+    /* History */
+    queryHistory,
+    savedQueries,
+
+    /* Dialog State */
+    uploadOpen,
+    tableExplorerOpen,
+    historyOpen,
+    savedQueriesOpen,
+
+    /* Dialog Actions */
+    openUpload,
+    closeUpload,
+
+    openExplorer,
+    closeExplorer,
+
+    openHistory,
+    closeHistory,
+
+    openSavedQueries,
+    closeSavedQueries,
+
+    /* SQL Actions */
     selectProblem,
     runQuery,
     saveQuery,
     uploadDataset,
     exportCSV,
-    loadMetadata,
+
+    /* Query Actions */
+    runHistoryQuery,
+    runSavedQuery,
+    deleteSavedQuery,
   };
 };
 

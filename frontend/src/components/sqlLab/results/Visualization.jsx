@@ -28,7 +28,7 @@ import {
   getPieData,
   chartTypes,
   COLORS,
-} from "../utils/chartHelper";
+} from "../utils/chartHelpers";
 
 const icons = {
   bar: BarChart3,
