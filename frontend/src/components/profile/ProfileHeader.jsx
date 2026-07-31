@@ -230,7 +230,7 @@ export default function ProfileHeader() {
               rounded-xl
               border
               border-slate-700
-              bg-slate-800/60
+              bg-slate-800/60                         
               px-5
               py-3
               text-sm
