@@ -1,20 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
 import {
   getDatasets,
-  getDatasetPreview,
-  getDatasetSchema,
-  getDatasetStats,
-  exportDataset
 } from "../api/datasetApi";
 
-export default function Datasets() {
+import {
+  DatasetHeader,
+  DatasetToolbar,
+  DatasetList,
+  DatasetDetails,
+} from "../components/datasets";
 
+import UploadDatasetDialog from "../components/datasets/dialogs/UploadDatasetDialog";
+
+export default function Datasets() {
   const [datasets, setDatasets] = useState([]);
   const [selectedTable, setSelectedTable] = useState(null);
-  const [preview, setPreview] = useState([]);
-  const [schema, setSchema] = useState([]);
+
   const [search, setSearch] = useState("");
-  const [stats, setStats] = useState(null);
+  const [type, setType] = useState("all");
+  const [source, setSource] = useState("all");
+  const [sort, setSort] = useState("recent");
+
+  const [loading, setLoading] = useState(true);
+  const [uploadOpen, setUploadOpen] = useState(false);
 
   useEffect(() => {
     loadDatasets();
@@ -22,211 +31,165 @@ export default function Datasets() {
 
   const loadDatasets = async () => {
     try {
+      setLoading(true);
+
       const data = await getDatasets();
-      setDatasets(data);
-    } catch (err) {
-      console.error(err);
+
+      setDatasets(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to load datasets:", error);
+      setDatasets([]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSelectTable = async (tableName) => {
-    setSelectedTable(tableName);
+  const filteredDatasets = useMemo(() => {
+    let data = [...datasets];
 
-    const previewData =
-      await getDatasetPreview(tableName);
+    // Search
+    if (search.trim()) {
+      const query = search.toLowerCase().trim();
 
-    const schemaData =
-      await getDatasetSchema(tableName);
+      data = data.filter((dataset) =>
+        dataset.table_name?.toLowerCase().includes(query)
+      );
+    }
 
-    const statsData =
-      await getDatasetStats(tableName);
+    /*
+     * Type and source filters are kept in the UI architecture,
+     * but the current /datasets API only returns table_name.
+     *
+     * Therefore we intentionally don't fake CSV/API metadata here.
+     */
 
-    setPreview(previewData);
-    setSchema(schemaData);
-    setStats(statsData);
+    if (sort === "name") {
+      data.sort((a, b) =>
+        a.table_name.localeCompare(b.table_name)
+      );
+    }
+
+    return data;
+  }, [datasets, search, sort]);
+
+  const handleSelectDataset = (dataset) => {
+    setSelectedTable(dataset.table_name);
   };
 
-  const filteredDatasets = datasets.filter((d) =>
-    d.table_name.toLowerCase().includes(
-      search.toLowerCase()
-    )
-  );
+  const handleBack = () => {
+    setSelectedTable(null);
+  };
+
+  const handleUpload = () => {
+    /*
+     * Upload endpoint does not currently exist in datasetApi.js.
+     * Keep the dialog ready for when the backend endpoint is added.
+     */
+    alert(
+      "Dataset upload is not connected yet. The backend upload endpoint needs to be added first."
+    );
+  };
 
   return (
-    <div className="p-6 text-white">
+    <div className="min-h-full">
+      <div className="mx-auto max-w-[1600px] space-y-6 px-6 py-8">
 
-      <h1 className="text-2xl font-bold mb-6">
-        Dataset Explorer
-      </h1>
+        {/* -------------------------------------------------------------- */}
+        {/* Dataset Detail                                                 */}
+        {/* -------------------------------------------------------------- */}
 
-      <div className="grid grid-cols-12 gap-6">
-
-        {/* LEFT PANEL */}
-        <div className="col-span-3 bg-gray-900 p-4 rounded">
-
-          <h2 className="font-semibold mb-4">
-            Datasets
-          </h2>
-          <input
-            type="text"
-            placeholder="Search datasets..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full p-2 mb-4 rounded bg-gray-800 text-white"
+        {selectedTable ? (
+          <DatasetDetails
+            tableName={selectedTable}
+            onBack={handleBack}
           />
-          {filteredDatasets.map((d) => (
-            <div
-              key={d.table_name}
-              onClick={() =>
-                handleSelectTable(d.table_name)
-              }
-              className="cursor-pointer p-2 rounded hover:bg-gray-800"
-            >
-              {d.table_name}
-            </div>
-          ))}
+        ) : (
+          <>
+            {/* Header */}
+            <DatasetHeader
+              onUpload={() => setUploadOpen(true)}
+            />
 
-        </div>
+            {/* Toolbar */}
+            <DatasetToolbar
+              search={search}
+              onSearchChange={setSearch}
+              type={type}
+              onTypeChange={setType}
+              source={source}
+              onSourceChange={setSource}
+              sort={sort}
+              onSortChange={setSort}
+            />
 
-        {/* RIGHT PANEL */}
-        <div className="col-span-9">
-
-          {selectedTable && (
-            <>
-              <div className="flex justify-between items-center mb-4">
-
-                <h2 className="text-xl">
-                  {selectedTable}
-                </h2>
-
-                <button
-                  onClick={() => exportDataset(selectedTable)}
-                  className="bg-green-600 px-4 py-2 rounded"
-                >
-                  Export CSV
-                </button>
-
-              </div>
-
-
-              {stats && (
-                <div className="bg-gray-900 p-4 rounded mb-4">
-
-                  <h3 className="font-semibold mb-3">
-                    Dataset Statistics
-                  </h3>
-
-                  <div className="grid grid-cols-2 gap-4">
-
-                    <div>
-                      <p className="text-gray-400">Rows</p>
-                      <p className="text-xl font-bold">
-                        {stats.row_count}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-gray-400">Columns</p>
-                      <p className="text-xl font-bold">
-                        {stats.column_count}
-                      </p>
-                    </div>
-
-                  </div>
-
-                </div>
-              )}
-
-              {/* SCHEMA */}
-              <div className="bg-gray-900 p-4 rounded mb-4">
-
-                <h3 className="font-semibold mb-3">
-                  Schema
-                </h3>
-
-                <table className="w-full">
-
-                  <thead>
-                    <tr>
-                      <th>Column</th>
-                      <th>Type</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {schema.map((col, idx) => (
-                      <tr key={idx}>
-                        <td>{col.column_name}</td>
-                        <td>{col.data_type}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-
-                </table>
-
-              </div>
-
-              {/* PREVIEW */}
-              <div className="bg-gray-900 p-4 rounded">
-
-                <h3 className="font-semibold mb-3">
-                  Preview
-                </h3>
-
-                <div className="overflow-auto">
-
-                  {preview.length > 0 && (
-
-                    <table className="w-full border-collapse">
-
-                      <thead>
-                        <tr>
-
-                          {Object.keys(preview[0]).map((key) => (
-                            <th
-                              key={key}
-                              className="border border-gray-700 p-2 text-left"
-                            >
-                              {key}
-                            </th>
-                          ))}
-
-                        </tr>
-                      </thead>
-
-                      <tbody>
-
-                        {preview.map((row, index) => (
-                          <tr key={index}>
-
-                            {Object.values(row).map((value, idx) => (
-                              <td
-                                key={idx}
-                                className="border border-gray-700 p-2"
-                              >
-                                {String(value)}
-                              </td>
-                            ))}
-
-                          </tr>
-                        ))}
-
-                      </tbody>
-
-                    </table>
-
-                  )}
-
-                </div>
-
-              </div>
-            </>
-          )}
-
-        </div>
-
+            {/* Loading */}
+            {loading ? (
+              <DatasetListSkeleton />
+            ) : (
+              <DatasetList
+                datasets={filteredDatasets}
+                onSelect={handleSelectDataset}
+              />
+            )}
+          </>
+        )}
       </div>
 
+      {/* Upload Dialog */}
+      <UploadDatasetDialog
+        open={uploadOpen}
+        onClose={() => setUploadOpen(false)}
+        onUpload={handleUpload}
+      />
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------------- */
+/* Loading Skeleton                                                       */
+/* ---------------------------------------------------------------------- */
+
+function DatasetListSkeleton() {
+  return (
+    <div className="overflow-hidden rounded-xl border border-slate-800/80 bg-slate-950/40">
+      {/* Header */}
+      <div className="border-b border-slate-800/80 px-5 py-4">
+        <div className="h-4 w-24 animate-pulse rounded bg-slate-800" />
+      </div>
+
+      {/* Column header */}
+      <div className="grid grid-cols-[minmax(260px,2fr)_140px_100px_100px_48px] items-center border-b border-slate-800/80 px-5 py-3">
+        <div className="h-3 w-16 animate-pulse rounded bg-slate-800" />
+        <div className="h-3 w-14 animate-pulse rounded bg-slate-800" />
+        <div className="h-3 w-10 animate-pulse rounded bg-slate-800" />
+        <div className="h-3 w-14 animate-pulse rounded bg-slate-800" />
+        <div />
+      </div>
+
+      {/* Rows */}
+      {[1, 2, 3, 4, 5].map((item) => (
+        <div
+          key={item}
+          className="grid grid-cols-[minmax(260px,2fr)_140px_100px_100px_48px] items-center border-b border-slate-800/70 px-5 py-5"
+        >
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 animate-pulse rounded-lg bg-slate-800" />
+
+            <div className="space-y-2">
+              <div className="h-3 w-32 animate-pulse rounded bg-slate-800" />
+              <div className="h-2.5 w-24 animate-pulse rounded bg-slate-800" />
+            </div>
+          </div>
+
+          <div className="h-6 w-16 animate-pulse rounded-md bg-slate-800" />
+
+          <div className="h-3 w-8 animate-pulse rounded bg-slate-800" />
+
+          <div className="h-3 w-8 animate-pulse rounded bg-slate-800" />
+
+          <div />
+        </div>
+      ))}
     </div>
   );
 }
