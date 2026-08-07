@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-import MetricCard from "../components/MetricCard";
-
+import MetricCard from "../components/ui/MetricCard";
 import QueryChart from "../components/QueryChart";
 import GithubHeatmap from "../components/dashboard/GithubHeatmap";
 import DashboardHeader from "../components/dashboard/DashboardHeader";

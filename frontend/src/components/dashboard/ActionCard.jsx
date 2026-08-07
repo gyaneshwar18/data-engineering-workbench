@@ -29,50 +29,43 @@ export default function ActionCard({
   title,
   subtitle,
   to,
+  onClick,
   color = "blue",
 }) {
   const theme = colorMap[color];
 
-  return (
-    <Link
-      to={to}
-      className="
-        group
-        flex
-        items-center
-        justify-between
+  const className = `
+    group
+    flex
+    w-full
+    items-center
+    justify-between
+    rounded-xl
+    border
+    border-slate-800
+    bg-slate-900/40
+    px-4
+    py-3
+    text-left
+    transition-all
+    duration-200
+    hover:border-slate-700
+    hover:bg-slate-800/40
+  `;
 
-        rounded-xl
-
-        border
-        border-slate-800
-
-        bg-slate-900/40
-
-        px-4
-        py-3
-
-        transition-all
-        duration-200
-
-        hover:border-slate-700
-        hover:bg-slate-800/40
-      "
-    >
+  const content = (
+    <>
       <div className="flex items-center gap-3">
-
         <div
           className={`
             flex
             h-9
             w-9
+            shrink-0
             items-center
             justify-center
-
             rounded-xl
-
             border
-
             ${theme.bg}
             ${theme.border}
           `}
@@ -84,7 +77,6 @@ export default function ActionCard({
         </div>
 
         <div>
-
           <h3 className="text-sm font-semibold text-white">
             {title}
           </h3>
@@ -92,20 +84,40 @@ export default function ActionCard({
           <p className="mt-0.5 text-xs text-slate-400">
             {subtitle}
           </p>
-
         </div>
-
       </div>
 
       <ChevronRight
         size={18}
         className="
+          shrink-0
           text-slate-600
           transition-transform
           duration-200
           group-hover:translate-x-1
         "
       />
+    </>
+  );
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className={className}
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <Link
+      to={to}
+      className={className}
+    >
+      {content}
     </Link>
   );
 }

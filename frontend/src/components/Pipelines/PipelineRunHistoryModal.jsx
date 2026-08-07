@@ -11,7 +11,7 @@ import {
 import {
   getPipelineRuns,
   getRunLogs,
-} from "../api/pipelineApi";
+} from "../../api/pipelineApi";
 
 export default function PipelineRunHistoryModal({
   isOpen,

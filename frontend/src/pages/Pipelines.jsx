@@ -3,9 +3,9 @@ import axios from "axios";
 
 import { getPipelineLogs } from "../api/pipelineApi";
 
-import PipelineCard from "../components/PipelineCard";
-import PipelineLogsModal from "../components/PipelineLogsModal";
-import PipelineRunHistoryModal from "../components/PipelineRunHistoryModal";
+import PipelineCard from "../components/Pipelines/PipelineCard";
+import PipelineLogsModal from "../components/Pipelines/PipelineLogsModal";
+import PipelineRunHistoryModal from "../components/Pipelines/PipelineRunHistoryModal";
 
 import MetricsBar from "../components/ui/MetricsBar";
 import PageHeader from "../components/ui/PageHeader";

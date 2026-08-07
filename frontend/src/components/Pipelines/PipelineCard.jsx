@@ -5,7 +5,7 @@ import {
   Loader2,
 } from "lucide-react";
 
-import StatusBadge from "./ui/StatusBadge";
+import StatusBadge from "../ui/StatusBadge";
 
 export default function PipelineCard({
   pipeline,
