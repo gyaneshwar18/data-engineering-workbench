@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-import { getPipelineLogs } from "../api/pipelineApi";
+import {
+  createPipeline,
+  getPipelineLogs,
+} from "../api/pipelineApi";
 
 import PipelineCard from "../components/Pipelines/PipelineCard";
 import PipelineLogsModal from "../components/Pipelines/PipelineLogsModal";
 import PipelineRunHistoryModal from "../components/Pipelines/PipelineRunHistoryModal";
+import CreatePipelineDialog from "../components/Pipelines/CreatePipelineDialog";
 
 import MetricsBar from "../components/ui/MetricsBar";
 import PageHeader from "../components/ui/PageHeader";
@@ -16,13 +20,23 @@ export default function Pipelines() {
   const [pipelines, setPipelines] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [runningPipelineId, setRunningPipelineId] = useState(null);
+  const [runningPipelineId, setRunningPipelineId] =
+    useState(null);
+
+  const [creatingPipeline, setCreatingPipeline] =
+    useState(false);
+
+  const [createOpen, setCreateOpen] =
+    useState(false);
 
   const [logsOpen, setLogsOpen] = useState(false);
   const [logsData, setLogsData] = useState(null);
 
-  const [historyOpen, setHistoryOpen] = useState(false);
-  const [selectedPipelineId, setSelectedPipelineId] = useState(null);
+  const [historyOpen, setHistoryOpen] =
+    useState(false);
+
+  const [selectedPipelineId, setSelectedPipelineId] =
+    useState(null);
 
   const [error, setError] = useState(null);
 
@@ -37,7 +51,9 @@ export default function Pipelines() {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get(`${API}/pipelines`);
+      const res = await axios.get(
+        `${API}/pipelines`
+      );
 
       setPipelines(res.data);
     } catch (err) {
@@ -49,11 +65,44 @@ export default function Pipelines() {
     }
   };
 
+  /* ---------------------------------------------------------------------- */
+  /* Create Pipeline                                                        */
+  /* ---------------------------------------------------------------------- */
+
+  const handleCreatePipeline = async (pipelineData) => {
+    try {
+      setCreatingPipeline(true);
+      setError(null);
+
+      await createPipeline(pipelineData);
+
+      setCreateOpen(false);
+
+      await fetchPipelines();
+    } catch (err) {
+      console.error(err);
+
+      setError(
+        err?.response?.data?.detail ||
+          "Unable to create pipeline."
+      );
+    } finally {
+      setCreatingPipeline(false);
+    }
+  };
+
+  /* ---------------------------------------------------------------------- */
+  /* Run Pipeline                                                           */
+  /* ---------------------------------------------------------------------- */
+
   const runPipeline = async (pipelineId) => {
     try {
       setRunningPipelineId(pipelineId);
+      setError(null);
 
-      await axios.post(`${API}/pipelines/run/${pipelineId}`);
+      await axios.post(
+        `${API}/pipelines/run/${pipelineId}`
+      );
 
       await fetchPipelines();
     } catch (err) {
@@ -68,26 +117,47 @@ export default function Pipelines() {
     }
   };
 
+  /* ---------------------------------------------------------------------- */
+  /* Logs                                                                   */
+  /* ---------------------------------------------------------------------- */
+
   const handleViewLogs = async (pipelineId) => {
     try {
-      const data = await getPipelineLogs(pipelineId);
+      setError(null);
+
+      const data =
+        await getPipelineLogs(pipelineId);
 
       setLogsData(data);
       setLogsOpen(true);
     } catch (error) {
       console.error(error);
 
-      setError("Unable to load pipeline logs.");
+      setError(
+        "Unable to load pipeline logs."
+      );
     }
   };
+
+  /* ---------------------------------------------------------------------- */
+  /* History                                                                */
+  /* ---------------------------------------------------------------------- */
 
   const handleViewHistory = (pipelineId) => {
     setSelectedPipelineId(pipelineId);
     setHistoryOpen(true);
   };
 
-  const getPipelineWithDisplayStatus = (pipeline) => {
-    if (runningPipelineId === pipeline.id) {
+  /* ---------------------------------------------------------------------- */
+  /* Display Status                                                         */
+  /* ---------------------------------------------------------------------- */
+
+  const getPipelineWithDisplayStatus = (
+    pipeline
+  ) => {
+    if (
+      runningPipelineId === pipeline.id
+    ) {
       return {
         ...pipeline,
         status: "running",
@@ -99,32 +169,64 @@ export default function Pipelines() {
 
   return (
     <div className="px-6 py-5 text-white">
+      <div className="mx-auto max-w-[1400px]">
 
-      <div className="max-w-[1400px] mx-auto">
+        {/* Header */}
 
         <PageHeader
           title="Pipelines"
           subtitle="Manage and monitor your data pipelines"
           action={
-            <button
-              onClick={fetchPipelines}
-              disabled={loading}
-              className="
-                border
-                border-slate-700
-                px-3
-                py-2
-                rounded-xl
-                hover:bg-slate-800
-                disabled:opacity-50
-                disabled:cursor-not-allowed
-                transition
-              "
-            >
-              ↻ Refresh
-            </button>
+            <div className="flex items-center gap-3">
+
+              {/* Refresh */}
+
+              <button
+                onClick={fetchPipelines}
+                disabled={loading}
+                className="
+                  rounded-xl
+                  border
+                  border-slate-700
+                  px-3
+                  py-2
+                  text-sm
+                  hover:bg-slate-800
+                  disabled:cursor-not-allowed
+                  disabled:opacity-50
+                  transition
+                "
+              >
+                ↻ Refresh
+              </button>
+
+              {/* Create */}
+
+              <button
+                onClick={() => {
+                  setError(null);
+                  setCreateOpen(true);
+                }}
+                className="
+                  rounded-xl
+                  bg-blue-600
+                  px-4
+                  py-2
+                  text-sm
+                  font-medium
+                  text-white
+                  hover:bg-blue-500
+                  transition
+                "
+              >
+                + Create Pipeline
+              </button>
+
+            </div>
           }
         />
+
+        {/* Error */}
 
         {error && (
           <div
@@ -136,6 +238,7 @@ export default function Pipelines() {
               bg-red-500/10
               px-4
               py-3
+              text-sm
               text-red-400
             "
           >
@@ -143,56 +246,108 @@ export default function Pipelines() {
           </div>
         )}
 
-        {!loading && pipelines.length > 0 && (
-          <div className="mb-6">
-            <MetricsBar pipelines={pipelines} />
-          </div>
-        )}
+        {/* Metrics */}
 
-        {!loading && pipelines.length === 0 && (
-          <EmptyState
-            title="No Pipelines Found"
-            description="Create your first pipeline to start processing data."
-          />
-        )}
+        {!loading &&
+          pipelines.length > 0 && (
+            <div className="mb-6">
+              <MetricsBar
+                pipelines={pipelines}
+              />
+            </div>
+          )}
+
+        {/* Empty */}
+
+        {!loading &&
+          pipelines.length === 0 && (
+            <EmptyState
+              title="No Pipelines Found"
+              description="Create your first pipeline to start processing data."
+            />
+          )}
+
+        {/* Loading */}
 
         {loading && (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
-            {[1, 2, 3, 4].map((item) => (
-              <LoadingSkeleton key={item} />
-            ))}
+          <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+            {[1, 2, 3, 4].map(
+              (item) => (
+                <LoadingSkeleton
+                  key={item}
+                />
+              )
+            )}
           </div>
         )}
 
-        {!loading && pipelines.length > 0 && (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
-            {pipelines.map((pipeline) => (
-              <PipelineCard
-                key={pipeline.id}
-                pipeline={getPipelineWithDisplayStatus(pipeline)}
-                running={runningPipelineId === pipeline.id}
-                onRun={runPipeline}
-                onLogs={handleViewLogs}
-                onHistory={handleViewHistory}
-              />
-            ))}
-          </div>
-        )}
+        {/* Pipeline Cards */}
+
+        {!loading &&
+          pipelines.length > 0 && (
+            <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+              {pipelines.map(
+                (pipeline) => (
+                  <PipelineCard
+                    key={pipeline.id}
+                    pipeline={getPipelineWithDisplayStatus(
+                      pipeline
+                    )}
+                    running={
+                      runningPipelineId ===
+                      pipeline.id
+                    }
+                    onRun={runPipeline}
+                    onLogs={
+                      handleViewLogs
+                    }
+                    onHistory={
+                      handleViewHistory
+                    }
+                  />
+                )
+              )}
+            </div>
+          )}
+
+        {/* Create Pipeline Dialog */}
+
+        <CreatePipelineDialog
+          isOpen={createOpen}
+          onClose={() =>
+            setCreateOpen(false)
+          }
+          onCreate={
+            handleCreatePipeline
+          }
+          creating={
+            creatingPipeline
+          }
+        />
+
+        {/* Logs */}
 
         <PipelineLogsModal
           isOpen={logsOpen}
-          onClose={() => setLogsOpen(false)}
+          onClose={() =>
+            setLogsOpen(false)
+          }
           logsData={logsData}
         />
 
+        {/* History */}
+
         <PipelineRunHistoryModal
           isOpen={historyOpen}
-          onClose={() => setHistoryOpen(false)}
-          pipelineId={selectedPipelineId}
+          onClose={() =>
+            setHistoryOpen(false)
+          }
+          pipelineId={
+            selectedPipelineId
+          }
         />
 
       </div>
-
     </div>
   );
 }
