@@ -9,6 +9,10 @@ import {
   Clock3,
 } from "lucide-react";
 
+import apiIcon from "../../assets/datasets/api.svg";
+import csvIcon from "../../assets/datasets/csv.svg";
+import tableIcon from "../../assets/datasets/table.svg";
+
 import StatusBadge from "../ui/StatusBadge";
 
 export default function PipelineCard({
@@ -21,15 +25,16 @@ export default function PipelineCard({
   const source = pipeline.source?.toLowerCase();
 
   const getSourceIcon = () => {
-    if (source === "api") {
-      return <Globe size={21} />;
-    }
+    switch (pipeline.source?.toLowerCase()) {
+      case "api":
+        return apiIcon;
 
-    if (source === "csv") {
-      return <FileSpreadsheet size={21} />;
-    }
+      case "csv":
+        return csvIcon;
 
-    return <Database size={21} />;
+      default:
+        return tableIcon;
+    }
   };
 
   const getSourceLabel = () => {
@@ -66,14 +71,13 @@ export default function PipelineCard({
         transition-all
         duration-300
 
-        ${
-          running
-            ? `
+        ${running
+          ? `
               border-blue-500/50
               bg-slate-900
               shadow-[0_0_30px_rgba(59,130,246,0.12)]
             `
-            : `
+          : `
               border-slate-800
               bg-slate-900/90
               hover:border-slate-700
@@ -94,25 +98,28 @@ export default function PipelineCard({
 
           <div
             className={`
-              flex
-              h-12
-              w-12
-              shrink-0
-              items-center
-              justify-center
-              rounded-xl
-              border
+                    flex
+                    h-12
+                    w-12
+                    shrink-0
+                    items-center
+                    justify-center
+                    rounded-xl
+                    border
 
-              ${
-                source === "api"
-                  ? "border-blue-500/20 bg-blue-500/10 text-blue-400"
-                  : source === "csv"
-                  ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-400"
-                  : "border-slate-700 bg-slate-800 text-slate-400"
-              }
-            `}
+                ${source === "api"
+                            ? "border-blue-500/20 bg-blue-500/10"
+                            : source === "csv"
+                              ? "border-emerald-500/20 bg-emerald-500/10"
+                              : "border-slate-700 bg-slate-800"
+                          }
+              `}
           >
-            {getSourceIcon()}
+            <img
+              src={getSourceIcon()}
+              alt={`${pipeline.source} source`}
+              className="h-6 w-6 object-contain"
+            />
           </div>
 
           {/* Name */}
@@ -123,7 +130,7 @@ export default function PipelineCard({
               {pipeline.name}
             </h2>
 
-            
+
           </div>
 
         </div>
@@ -167,8 +174,8 @@ export default function PipelineCard({
             {source === "api"
               ? "API Source"
               : source === "csv"
-              ? "CSV File"
-              : pipeline.source || "-"}
+                ? "CSV File"
+                : pipeline.source || "-"}
           </p>
 
         </div>
