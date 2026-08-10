@@ -168,7 +168,7 @@ export default function Pipelines() {
   };
 
   return (
-    <div className="px-6 py-5 text-white">
+    <div className="px-6 py-3 text-white">
       <div className="mx-auto max-w-[1400px]">
 
         {/* Header */}
