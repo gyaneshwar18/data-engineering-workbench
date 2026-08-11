@@ -97,28 +97,35 @@ export default function PipelineCard({
           {/* Source Icon */}
 
           <div
-            className={`
-                    flex
-                    h-12
-                    w-12
-                    shrink-0
-                    items-center
-                    justify-center
-                    rounded-xl
-                    border
+            className="
+    flex
+    h-12
+    w-12
+    shrink-0
+    items-center
+    justify-center
 
-                ${source === "api"
-                            ? "border-blue-500/20 bg-blue-500/10"
-                            : source === "csv"
-                              ? "border-emerald-500/20 bg-emerald-500/10"
-                              : "border-slate-700 bg-slate-800"
-                          }
-              `}
+    rounded-xl
+
+    border
+    border-slate-700/80
+
+    bg-slate-800/70
+
+    shadow-inner
+  "
           >
             <img
               src={getSourceIcon()}
               alt={`${pipeline.source} source`}
-              className="h-6 w-6 object-contain"
+              className={`
+      object-contain
+
+      ${source === "api"
+                  ? "h-20 w-20"
+                  : "h-[30px] w-[30px]"
+                }
+    `}
             />
           </div>
 
