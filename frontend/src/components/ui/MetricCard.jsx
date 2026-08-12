@@ -7,24 +7,27 @@ const colorMap = {
     icon: "text-blue-400",
     accent: "text-blue-400",
   },
+
   green: {
     bg: "bg-emerald-500/10",
     border: "border-emerald-500/20",
     icon: "text-emerald-400",
     accent: "text-emerald-400",
   },
+
   purple: {
     bg: "bg-violet-500/10",
     border: "border-violet-500/20",
     icon: "text-violet-400",
     accent: "text-violet-400",
   },
+
   amber: {
     bg: "bg-amber-500/10",
     border: "border-amber-500/20",
     icon: "text-amber-400",
     accent: "text-amber-400",
-  }
+  },
 };
 
 export default function MetricCard({
@@ -32,6 +35,7 @@ export default function MetricCard({
   value,
   subtitle = "",
   icon: Icon,
+  iconSrc,
   color = "blue",
 }) {
   const theme = colorMap[color];
@@ -74,7 +78,17 @@ export default function MetricCard({
             {title}
           </p>
 
-          <h2 className="mt-4 text-[2rem] xl:text-3xl font-semibold tracking-tight text-white leading-tight">
+          <h2
+            className="
+              mt-4
+              text-[2rem]
+              xl:text-3xl
+              font-semibold
+              tracking-tight
+              text-white
+              leading-tight
+            "
+          >
             {value}
           </h2>
 
@@ -98,13 +112,13 @@ export default function MetricCard({
         <div
           className={`
             flex
-            h-10
-            w-10
+            h-14
+            w-14
             shrink-0
             items-center
             justify-center
 
-            rounded-xl
+            rounded-2xl
 
             border
 
@@ -112,12 +126,26 @@ export default function MetricCard({
             ${theme.border}
           `}
         >
-          {Icon && (
-            <Icon
-              size={18}
-              className={theme.icon}
+
+          {iconSrc ? (
+            <img
+              src={iconSrc}
+              alt=""
+              className="
+                h-8
+                w-8
+                object-contain
+              "
             />
+          ) : (
+            Icon && (
+              <Icon
+                size={22}
+                className={theme.icon}
+              />
+            )
           )}
+
         </div>
 
       </div>
