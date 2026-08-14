@@ -10,7 +10,15 @@ import RecentActivity from "../components/dashboard/RecentActivity";
 import QuickActions from "../components/dashboard/QuickActions";
 
 
-
+import {
+  Database,
+  Workflow,
+  Table,
+  Globe,
+  BadgeCheck,
+  CheckCircle2,
+  AlertTriangle,
+} from "lucide-react";
 
 import {
   LineChart,
@@ -92,7 +100,7 @@ export default function Dashboard() {
             title="SQL Queries"
             value={stats.sql_queries}
             subtitle={`${stats.sql_queries} Total`}
-            iconSrc="/logos/sql.svg"
+            icon={Database}
             color="blue"
           />
         </div>

@@ -35,7 +35,6 @@ export default function MetricCard({
   value,
   subtitle = "",
   icon: Icon,
-  iconSrc,
   color = "blue",
 }) {
   const theme = colorMap[color];
@@ -78,17 +77,7 @@ export default function MetricCard({
             {title}
           </p>
 
-          <h2
-            className="
-              mt-4
-              text-[2rem]
-              xl:text-3xl
-              font-semibold
-              tracking-tight
-              text-white
-              leading-tight
-            "
-          >
+          <h2 className="mt-4 text-[2rem] xl:text-3xl font-semibold tracking-tight text-white leading-tight">
             {value}
           </h2>
 
@@ -112,13 +101,13 @@ export default function MetricCard({
         <div
           className={`
             flex
-            h-14
-            w-14
+            h-10
+            w-10
             shrink-0
             items-center
             justify-center
 
-            rounded-2xl
+            rounded-xl
 
             border
 
@@ -126,26 +115,12 @@ export default function MetricCard({
             ${theme.border}
           `}
         >
-
-          {iconSrc ? (
-            <img
-              src={iconSrc}
-              alt=""
-              className="
-                h-8
-                w-8
-                object-contain
-              "
+          {Icon && (
+            <Icon
+              size={18}
+              className={theme.icon}
             />
-          ) : (
-            Icon && (
-              <Icon
-                size={22}
-                className={theme.icon}
-              />
-            )
           )}
-
         </div>
 
       </div>
