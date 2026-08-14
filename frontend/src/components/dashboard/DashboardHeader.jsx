@@ -59,9 +59,10 @@ export default function DashboardHeader({
               bg-blue-500/10
             "
           >
-            <LayoutDashboard
-              size={26}
-              className="text-blue-400"
+            <img
+              src="/logos/workbench.svg"
+              alt="Data Engineering Workbench"
+              className="h-8 w-8 object-contain"
             />
           </div>
 
