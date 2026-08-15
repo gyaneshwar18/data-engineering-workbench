@@ -60,7 +60,7 @@ export default function DashboardHeader({
             "
           >
             <img
-              src="/logos/workbench.svg"
+              src="/logos/dashboard.svg"
               alt="Data Engineering Workbench"
               className="h-8 w-8 object-contain"
             />
