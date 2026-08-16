@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPipeline } from "../../api/pipelineApi";
 
 import {
   Plus,
@@ -12,16 +13,30 @@ import CreatePipelineDialog from "../Pipelines/CreatePipelineDialog";
 
 export default function QuickActions() {
   const [createOpen, setCreateOpen] = useState(false);
+  const [creating, setCreating] = useState(false);
   const [created, setCreated] = useState(false);
 
-  const handleCreatePipeline = () => {
-    setCreated(false);
-    setCreateOpen(true);
-  };
+  const API = import.meta.env.VITE_API_BASE_URL;
 
-  const handlePipelineCreated = () => {
-    setCreateOpen(false);
-    setCreated(true);
+  const handleCreate = async (pipelineData) => {
+    try {
+      setCreating(true);
+
+      await createPipeline(pipelineData);
+
+      setCreateOpen(false);
+      setCreated(true);
+
+    } catch (error) {
+      console.error("Create pipeline error:", error);
+
+      alert(
+        error?.response?.data?.detail ||
+        "Failed to create pipeline."
+      );
+    } finally {
+      setCreating(false);
+    }
   };
 
   return (
@@ -57,7 +72,10 @@ export default function QuickActions() {
           title="New Pipeline"
           subtitle="Create ETL workflow"
           color="green"
-          onClick={handleCreatePipeline}
+          onClick={() => {
+            setCreated(false);
+            setCreateOpen(true);
+          }}
         />
 
         <ActionCard
@@ -106,6 +124,7 @@ export default function QuickActions() {
           </p>
 
           <button
+            type="button"
             onClick={() => {
               window.location.href = "/workbench/pipelines";
             }}
@@ -128,7 +147,8 @@ export default function QuickActions() {
       <CreatePipelineDialog
         isOpen={createOpen}
         onClose={() => setCreateOpen(false)}
-        onCreated={handlePipelineCreated}
+        onCreate={handleCreate}
+        creating={creating}
       />
 
     </div>
