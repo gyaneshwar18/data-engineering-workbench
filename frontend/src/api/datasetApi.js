@@ -11,6 +11,7 @@ export const getDatasetPreview = async (tableName) => {
   const res = await axios.get(
     `${API}/datasets/${tableName}`
   );
+
   return res.data;
 };
 
@@ -18,6 +19,7 @@ export const getDatasetSchema = async (tableName) => {
   const res = await axios.get(
     `${API}/datasets/${tableName}/schema`
   );
+
   return res.data;
 };
 
@@ -34,4 +36,19 @@ export const exportDataset = async (tableName) => {
     `${API}/datasets/${tableName}/export`,
     "_blank"
   );
+};
+
+
+// 🔥 UPLOAD DATASET
+export const uploadDataset = async (file) => {
+  const formData = new FormData();
+
+  formData.append("file", file);
+
+  const res = await axios.post(
+    `${API}/datasets/upload`,
+    formData
+  );
+
+  return res.data;
 };
