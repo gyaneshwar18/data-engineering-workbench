@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { createPipeline } from "../../api/pipelineApi";
 
+
+
 import {
   Plus,
   Upload,
@@ -10,6 +12,30 @@ import {
 
 import ActionCard from "./ActionCard";
 import CreatePipelineDialog from "../Pipelines/CreatePipelineDialog";
+
+const [uploadOpen, setUploadOpen] = useState(false);
+const [uploading, setUploading] = useState(false);
+const [datasetUploaded, setDatasetUploaded] = useState(false);
+const handleDatasetUpload = async (file) => {
+  try {
+    setUploading(true);
+
+    await uploadDataset(file);
+
+    setUploadOpen(false);
+    setDatasetUploaded(true);
+
+  } catch (error) {
+    console.error("Dataset upload failed:", error);
+
+    alert(
+      error?.response?.data?.detail ||
+      "Failed to upload dataset."
+    );
+  } finally {
+    setUploading(false);
+  }
+};
 
 export default function QuickActions() {
   const [createOpen, setCreateOpen] = useState(false);
@@ -82,8 +108,11 @@ export default function QuickActions() {
           icon={Upload}
           title="Upload Dataset"
           subtitle="Import CSV into platform"
-          to="/workbench/datasets"
           color="blue"
+          onClick={() => {
+            setDatasetUploaded(false);
+            setUploadOpen(true);
+          }}
         />
 
         <ActionCard
@@ -149,6 +178,13 @@ export default function QuickActions() {
         onClose={() => setCreateOpen(false)}
         onCreate={handleCreate}
         creating={creating}
+      />
+
+      <UploadDatasetDialog
+        open={uploadOpen}
+        onClose={() => setUploadOpen(false)}
+        onUpload={handleDatasetUpload}
+        uploading={uploading}
       />
 
     </div>

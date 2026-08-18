@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import {
   getDatasets,
+  uploadDataset,
 } from "../api/datasetApi";
 
 import {
@@ -80,14 +81,24 @@ export default function Datasets() {
     setSelectedTable(null);
   };
 
-  const handleUpload = () => {
-    /*
-     * Upload endpoint does not currently exist in datasetApi.js.
-     * Keep the dialog ready for when the backend endpoint is added.
-     */
-    alert(
-      "Dataset upload is not connected yet. The backend upload endpoint needs to be added first."
-    );
+  const handleUpload = async (file) => {
+    try {
+      setUploadOpen(false);
+
+      const result = await uploadDataset(file);
+
+      console.log("Dataset uploaded:", result);
+
+      await loadDatasets();
+
+    } catch (error) {
+      console.error("Dataset upload failed:", error);
+
+      alert(
+        error?.response?.data?.detail ||
+        "Failed to upload dataset."
+      );
+    }
   };
 
   return (
