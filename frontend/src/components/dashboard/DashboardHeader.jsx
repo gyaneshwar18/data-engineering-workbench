@@ -40,31 +40,13 @@ export default function DashboardHeader({
       <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
 
         {/* Left */}
-
         <div className="flex items-center gap-5">
 
-          <div
-            className="
-              flex
-              h-14
-              w-14
-              items-center
-              justify-center
-
-              rounded-2xl
-
-              border
-              border-blue-500/20
-
-              bg-blue-500/10
-            "
-          >
-            <img
-              src="/logos/dashboard.svg"
-              alt="Data Engineering Workbench"
-              className="h-8 w-8 object-contain"
-            />
-          </div>
+          <img
+            src="/logos/dashboard.svg"
+            alt="Data Engineering Workbench"
+            className="h-12 w-12 object-contain"
+          />
 
           <div>
 

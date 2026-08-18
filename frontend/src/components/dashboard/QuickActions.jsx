@@ -1,7 +1,7 @@
 import { useState } from "react";
+
 import { createPipeline } from "../../api/pipelineApi";
-
-
+import { uploadDataset } from "../../api/datasetApi";
 
 import {
   Plus,
@@ -12,37 +12,28 @@ import {
 
 import ActionCard from "./ActionCard";
 import CreatePipelineDialog from "../Pipelines/CreatePipelineDialog";
-
-const [uploadOpen, setUploadOpen] = useState(false);
-const [uploading, setUploading] = useState(false);
-const [datasetUploaded, setDatasetUploaded] = useState(false);
-const handleDatasetUpload = async (file) => {
-  try {
-    setUploading(true);
-
-    await uploadDataset(file);
-
-    setUploadOpen(false);
-    setDatasetUploaded(true);
-
-  } catch (error) {
-    console.error("Dataset upload failed:", error);
-
-    alert(
-      error?.response?.data?.detail ||
-      "Failed to upload dataset."
-    );
-  } finally {
-    setUploading(false);
-  }
-};
+import UploadDatasetDialog from "../datasets/dialogs/UploadDatasetDialog";
 
 export default function QuickActions() {
+  // ------------------------------------------------------------
+  // Create Pipeline State
+  // ------------------------------------------------------------
+
   const [createOpen, setCreateOpen] = useState(false);
   const [creating, setCreating] = useState(false);
   const [created, setCreated] = useState(false);
 
-  const API = import.meta.env.VITE_API_BASE_URL;
+  // ------------------------------------------------------------
+  // Upload Dataset State
+  // ------------------------------------------------------------
+
+  const [uploadOpen, setUploadOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [datasetUploaded, setDatasetUploaded] = useState(false);
+
+  // ------------------------------------------------------------
+  // Create Pipeline
+  // ------------------------------------------------------------
 
   const handleCreate = async (pipelineData) => {
     try {
@@ -60,8 +51,35 @@ export default function QuickActions() {
         error?.response?.data?.detail ||
         "Failed to create pipeline."
       );
+
     } finally {
       setCreating(false);
+    }
+  };
+
+  // ------------------------------------------------------------
+  // Upload Dataset
+  // ------------------------------------------------------------
+
+  const handleDatasetUpload = async (file) => {
+    try {
+      setUploading(true);
+
+      await uploadDataset(file);
+
+      setUploadOpen(false);
+      setDatasetUploaded(true);
+
+    } catch (error) {
+      console.error("Dataset upload failed:", error);
+
+      alert(
+        error?.response?.data?.detail ||
+        "Failed to upload dataset."
+      );
+
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -75,6 +93,7 @@ export default function QuickActions() {
         overflow-hidden
       "
     >
+
       {/* Header */}
 
       <div className="px-6 py-5 border-b border-slate-800">
@@ -89,9 +108,12 @@ export default function QuickActions() {
 
       </div>
 
+
       {/* Actions */}
 
       <div className="p-4 space-y-2">
+
+        {/* New Pipeline */}
 
         <ActionCard
           icon={Plus}
@@ -104,6 +126,9 @@ export default function QuickActions() {
           }}
         />
 
+
+        {/* Upload Dataset */}
+
         <ActionCard
           icon={Upload}
           title="Upload Dataset"
@@ -115,6 +140,9 @@ export default function QuickActions() {
           }}
         />
 
+
+        {/* SQL Lab */}
+
         <ActionCard
           icon={Database}
           title="SQL Lab"
@@ -122,6 +150,9 @@ export default function QuickActions() {
           to="/workbench/sql-lab"
           color="purple"
         />
+
+
+        {/* Browse Datasets */}
 
         <ActionCard
           icon={Table}
@@ -133,7 +164,10 @@ export default function QuickActions() {
 
       </div>
 
-      {/* Success Message */}
+
+      {/* -------------------------------------------------------- */}
+      {/* Pipeline Success Message */}
+      {/* -------------------------------------------------------- */}
 
       {created && (
         <div
@@ -148,6 +182,7 @@ export default function QuickActions() {
             py-3
           "
         >
+
           <p className="text-sm font-medium text-emerald-400">
             Pipeline created successfully.
           </p>
@@ -155,7 +190,8 @@ export default function QuickActions() {
           <button
             type="button"
             onClick={() => {
-              window.location.href = "/workbench/pipelines";
+              window.location.href =
+                "/workbench/pipelines";
             }}
             className="
               mt-1
@@ -168,10 +204,58 @@ export default function QuickActions() {
           >
             View Pipelines →
           </button>
+
         </div>
       )}
 
+
+      {/* -------------------------------------------------------- */}
+      {/* Dataset Success Message */}
+      {/* -------------------------------------------------------- */}
+
+      {datasetUploaded && (
+        <div
+          className="
+            mx-4
+            mb-4
+            rounded-xl
+            border
+            border-blue-500/20
+            bg-blue-500/10
+            px-4
+            py-3
+          "
+        >
+
+          <p className="text-sm font-medium text-blue-400">
+            Dataset uploaded successfully.
+          </p>
+
+          <button
+            type="button"
+            onClick={() => {
+              window.location.href =
+                "/workbench/datasets";
+            }}
+            className="
+              mt-1
+              text-xs
+              font-medium
+              text-blue-300
+              hover:text-blue-200
+              transition
+            "
+          >
+            View Datasets →
+          </button>
+
+        </div>
+      )}
+
+
+      {/* -------------------------------------------------------- */}
       {/* Create Pipeline Dialog */}
+      {/* -------------------------------------------------------- */}
 
       <CreatePipelineDialog
         isOpen={createOpen}
@@ -179,6 +263,11 @@ export default function QuickActions() {
         onCreate={handleCreate}
         creating={creating}
       />
+
+
+      {/* -------------------------------------------------------- */}
+      {/* Upload Dataset Dialog */}
+      {/* -------------------------------------------------------- */}
 
       <UploadDatasetDialog
         open={uploadOpen}
