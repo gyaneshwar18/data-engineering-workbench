@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import {
   SqlLabHeader,
@@ -76,38 +76,152 @@ const SqlLab = () => {
     deleteSavedQuery,
   } = useSqlLab();
 
-  const [search, setSearch] = useState("");
+  // ------------------------------------------------------------
+  // Filter State
+  // ------------------------------------------------------------
 
-  const filteredProblems = problems.filter((problem) =>
-    problem.title.toLowerCase().includes(search.toLowerCase())
-  );
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("all");
+  const [difficulty, setDifficulty] = useState("all");
+
+  // ------------------------------------------------------------
+  // Filter Problems
+  // ------------------------------------------------------------
+
+  const filteredProblems = useMemo(() => {
+    const query = search.trim().toLowerCase();
+
+    return problems.filter((problem) => {
+      // Search
+      const matchesSearch =
+        !query ||
+        problem.title?.toLowerCase().includes(query) ||
+        problem.category?.toLowerCase().includes(query) ||
+        problem.description?.toLowerCase().includes(query);
+
+      // Category
+      const matchesCategory =
+        category === "all" ||
+        problem.category?.toLowerCase() ===
+          category.toLowerCase();
+
+      // Difficulty
+      const matchesDifficulty =
+        difficulty === "all" ||
+        problem.difficulty?.toLowerCase() ===
+          difficulty.toLowerCase();
+
+      return (
+        matchesSearch &&
+        matchesCategory &&
+        matchesDifficulty
+      );
+    });
+  }, [problems, search, category, difficulty]);
+
+  // ------------------------------------------------------------
+  // Reset Filters
+  // ------------------------------------------------------------
+
+  const handleResetFilters = () => {
+    setSearch("");
+    setCategory("all");
+    setDifficulty("all");
+  };
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950">
-        <div className="mx-auto max-w-[1800px] space-y-6 px-6 py-8">
+      <div
+        className="
+          min-h-screen
+          bg-gradient-to-br
+          from-slate-900
+          via-slate-900
+          to-slate-950
+        "
+      >
+        <div
+          className="
+            mx-auto
+            max-w-[1800px]
+            space-y-5
+            px-6
+            py-6
+          "
+        >
+
+          {/* ================================================== */}
           {/* Header */}
+          {/* ================================================== */}
+
           <SqlLabHeader />
 
+
+          {/* ================================================== */}
           {/* Filters */}
+          {/* ================================================== */}
+
           <FilterToolbar
             search={search}
             onSearchChange={setSearch}
+
+            category={category}
+            onCategoryChange={setCategory}
+
+            difficulty={difficulty}
+            onDifficultyChange={setDifficulty}
+
+            onReset={handleResetFilters}
+
+            problemCount={filteredProblems.length}
           />
 
-          {/* Main Workspace */}
-          <div className="grid grid-cols-12 gap-6">
-            {/* Sidebar */}
-            <div className="col-span-3">
+
+          {/* ================================================== */}
+          {/* Main SQL Workspace */}
+          {/* ================================================== */}
+
+          <div
+            className="
+              grid
+              grid-cols-12
+              gap-5
+              items-start
+            "
+          >
+
+            {/* ------------------------------------------------ */}
+            {/* SQL Problems */}
+            {/* ------------------------------------------------ */}
+
+            <div
+              className="
+                col-span-12
+                lg:col-span-3
+                min-w-0
+              "
+            >
               <ProblemsSidebar
                 problems={filteredProblems}
-                selectedId={selectedProblem.id}
+                selectedId={selectedProblem?.id}
                 onSelect={selectProblem}
               />
             </div>
 
-            {/* Right */}
-            <div className="col-span-9 space-y-5">
+
+            {/* ------------------------------------------------ */}
+            {/* SQL Editor */}
+            {/* ------------------------------------------------ */}
+
+            <div
+              className="
+                col-span-12
+                lg:col-span-9
+                min-w-0
+                space-y-4
+              "
+            >
+
               <SqlEditor
                 value={sqlQuery}
                 onChange={setSqlQuery}
@@ -119,10 +233,16 @@ const SqlLab = () => {
                 onSave={saveQuery}
                 onExport={exportCSV}
               />
+
             </div>
+
           </div>
 
-          {/* Workspace */}
+
+          {/* ================================================== */}
+          {/* Workspace Tools */}
+          {/* ================================================== */}
+
           <WorkspaceToolbar
             onUpload={openUpload}
             onTableExplorer={openExplorer}
@@ -130,23 +250,36 @@ const SqlLab = () => {
             onSavedQueries={openSavedQueries}
           />
 
-          {/* Result */}
+
+          {/* ================================================== */}
+          {/* Query Results */}
+          {/* ================================================== */}
+
           <ResultTable
-            columns={result.columns}
-            rows={result.rows}
+            columns={result?.columns || []}
+            rows={result?.rows || []}
           />
 
+
+          {/* ================================================== */}
           {/* Visualization */}
+          {/* ================================================== */}
+
           <Visualization
-            columns={result.columns}
-            rows={result.rows}
+            columns={result?.columns || []}
+            rows={result?.rows || []}
             chartType={chartType}
             onChartTypeChange={setChartType}
           />
+
         </div>
       </div>
 
-      {/* Upload Dialog */}
+
+      {/* ====================================================== */}
+      {/* Upload Dataset Dialog */}
+      {/* ====================================================== */}
+
       <UploadDatasetDialog
         open={uploadOpen}
         uploading={loading}
@@ -155,7 +288,11 @@ const SqlLab = () => {
         onUpload={uploadDataset}
       />
 
+
+      {/* ====================================================== */}
       {/* Table Explorer */}
+      {/* ====================================================== */}
+
       <TableExplorerDialog
         open={tableExplorerOpen}
         tables={tables}
@@ -167,7 +304,11 @@ const SqlLab = () => {
         }}
       />
 
+
+      {/* ====================================================== */}
       {/* Query History */}
+      {/* ====================================================== */}
+
       <QueryHistoryDialog
         open={historyOpen}
         history={queryHistory}
@@ -175,7 +316,11 @@ const SqlLab = () => {
         onRunAgain={runHistoryQuery}
       />
 
+
+      {/* ====================================================== */}
       {/* Saved Queries */}
+      {/* ====================================================== */}
+
       <SavedQueriesDialog
         open={savedQueriesOpen}
         queries={savedQueries}
