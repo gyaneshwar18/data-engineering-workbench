@@ -2,130 +2,65 @@ import { useEffect, useRef } from "react";
 import Editor from "@monaco-editor/react";
 import { Database } from "lucide-react";
 
-import {
-  registerSqlCompletionProvider,
-} from "../utils/sqlCompletionProvider";
+import { registerSqlCompletionProvider } from "../utils/sqlCompletionProvider";
 
 const SqlEditor = ({
   value,
   onChange,
   tables = [],
-  columns = {},
 }) => {
+  const monacoRef = useRef(null);
   const providerRef = useRef(null);
 
-  useEffect(() => {
-    return () => {
-      providerRef.current?.dispose();
-    };
-  }, []);
+  /* -------------------------------------------------- */
+  /* Register Monaco instance                           */
+  /* -------------------------------------------------- */
 
-  const registerCompletion = () => {
+  const handleEditorDidMount = (editor, monaco) => {
+    monacoRef.current = monaco;
+
     providerRef.current?.dispose();
 
     providerRef.current =
       registerSqlCompletionProvider({
+        monaco,
         tables,
-        columns,
       });
-  };
-
-  const handleEditorDidMount = (editor, monaco) => {
-    monaco.editor.defineTheme("workbench-sql", {
-      base: "vs-dark",
-      inherit: true,
-
-      rules: [
-        {
-          token: "keyword",
-          foreground: "569CD6",
-        },
-        {
-          token: "keyword.sql",
-          foreground: "569CD6",
-        },
-        {
-          token: "string",
-          foreground: "CE9178",
-        },
-        {
-          token: "number",
-          foreground: "B5CEA8",
-        },
-        {
-          token: "comment",
-          foreground: "6A9955",
-        },
-        {
-          token: "type",
-          foreground: "4EC9B0",
-        },
-        {
-          token: "identifier",
-          foreground: "D4D4D4",
-        },
-      ],
-
-      colors: {
-        "editor.background": "#05070B",
-        "editor.foreground": "#D4D4D4",
-
-        "editorLineNumber.foreground": "#475569",
-        "editorLineNumber.activeForeground": "#94A3B8",
-
-        "editorCursor.foreground": "#22D3EE",
-
-        "editor.lineHighlightBackground": "#0B1018",
-        "editor.lineHighlightBorder": "#00000000",
-
-        "editor.selectionBackground": "#164E63",
-        "editor.inactiveSelectionBackground": "#0F3442",
-
-        "editorGutter.background": "#05070B",
-
-        "editorIndentGuide.background": "#111827",
-        "editorIndentGuide.activeBackground": "#1E293B",
-
-        "editorSuggestWidget.background": "#0B1120",
-        "editorSuggestWidget.border": "#1E293B",
-        "editorSuggestWidget.foreground": "#CBD5E1",
-
-        "editorSuggestWidget.selectedBackground": "#172554",
-
-        "editorHoverWidget.background": "#0B1120",
-        "editorHoverWidget.border": "#1E293B",
-
-        "scrollbarSlider.background": "#33415580",
-        "scrollbarSlider.hoverBackground": "#475569A0",
-        "scrollbarSlider.activeBackground": "#64748BA0",
-      },
-    });
-
-    monaco.editor.setTheme("workbench-sql");
-
-    registerCompletion();
-
-    editor.addCommand(
-      monaco.KeyMod.CtrlCmd |
-      monaco.KeyCode.Space,
-      () => {
-        editor.trigger(
-          "keyboard",
-          "editor.action.triggerSuggest",
-          {}
-        );
-      }
-    );
 
     editor.focus();
   };
+
+  /* -------------------------------------------------- */
+  /* Update table suggestions                           */
+  /* -------------------------------------------------- */
+
   useEffect(() => {
-    registerCompletion();
+    if (!monacoRef.current) return;
+
+    providerRef.current?.dispose();
+
+    providerRef.current =
+      registerSqlCompletionProvider({
+        monaco: monacoRef.current,
+        tables,
+      });
 
     return () => {
       providerRef.current?.dispose();
+      providerRef.current = null;
     };
-  }, [tables, columns]);
+  }, [tables]);
+
+  /* -------------------------------------------------- */
+  /* Cleanup                                            */
+  /* -------------------------------------------------- */
+
+  useEffect(() => {
+    return () => {
+      providerRef.current?.dispose();
+      providerRef.current = null;
+    };
+  }, []);
 
   return (
     <div
@@ -134,13 +69,14 @@ const SqlEditor = ({
         rounded-2xl
         border
         border-slate-800
-        bg-[#0b1120]
+        bg-black 
+        shadow-xl
       "
     >
 
-      {/* ================================================== */}
-      {/* HEADER */}
-      {/* ================================================== */}
+      {/* ------------------------------------------------ */}
+      {/* Editor Header                                   */}
+      {/* ------------------------------------------------ */}
 
       <div
         className="
@@ -149,8 +85,8 @@ const SqlEditor = ({
           justify-between
           border-b
           border-slate-800
-          bg-[#0b1120]
-          px-5
+          bg-slate-950
+          px-6
           py-4
         "
       >
@@ -171,30 +107,17 @@ const SqlEditor = ({
             "
           >
             <Database
-              size={18}
-              className="text-cyan-400"
+              className="h-5 w-5 text-cyan-400"
             />
           </div>
 
           <div>
 
-            <h2
-              className="
-                text-sm
-                font-semibold
-                text-white
-              "
-            >
+            <h2 className="text-sm font-semibold text-white">
               SQL Editor
             </h2>
 
-            <p
-              className="
-                mt-0.5
-                text-xs
-                text-slate-500
-              "
-            >
+            <p className="text-xs text-slate-500">
               Write and execute PostgreSQL queries
             </p>
 
@@ -202,192 +125,85 @@ const SqlEditor = ({
 
         </div>
 
-
-        {/* PostgreSQL */}
-
-        <div
+        <span
           className="
-            flex
-            items-center
-            gap-2
-            rounded-lg
+            rounded-full
             border
             border-emerald-500/20
             bg-emerald-500/10
             px-3
-            py-1.5
+            py-1
+            text-xs
+            font-medium
+            text-emerald-400
           "
         >
-
-          <span
-            className="
-              h-1.5
-              w-1.5
-              rounded-full
-              bg-emerald-400
-            "
-          />
-
-          <span
-            className="
-              text-xs
-              font-medium
-              text-emerald-400
-            "
-          >
-            PostgreSQL
-          </span>
-
-        </div>
+          PostgreSQL
+        </span>
 
       </div>
 
+      {/* ------------------------------------------------ */}
+      {/* Monaco Editor                                   */}
+      {/* ------------------------------------------------ */}
 
-      {/* ================================================== */}
-      {/* EDITOR */}
-      {/* ================================================== */}
-
-      <div className="bg-[#05070b]">
+      <div className="bg-black">
 
         <Editor
-          height="460px"
-          defaultLanguage="sql"
-          value={value || ""}
+          height="420px"
+          language="sql"
+          value={value}
           onChange={(v) => onChange(v || "")}
           onMount={handleEditorDidMount}
           theme="vs-dark"
 
           options={{
-
-            /* -------------------------------------------- */
-            /* Layout */
-            /* -------------------------------------------- */
-
             automaticLayout: true,
-
-            padding: {
-              top: 18,
-              bottom: 18,
-            },
 
             minimap: {
               enabled: false,
             },
 
-            scrollBeyondLastLine: false,
-
-            scrollbar: {
-              vertical: "auto",
-              horizontal: "auto",
-
-              verticalScrollbarSize: 8,
-              horizontalScrollbarSize: 8,
-
-              useShadows: false,
-            },
-
-
-            /* -------------------------------------------- */
-            /* Typography */
-            /* -------------------------------------------- */
-
             fontSize: 15,
 
             fontFamily:
-              "'JetBrains Mono', 'Fira Code', Consolas, monospace",
+              "'JetBrains Mono', 'Fira Code', 'Consolas', monospace",
 
             fontLigatures: true,
-
-            lineHeight: 25,
-
-            letterSpacing: 0,
-
-
-            /* -------------------------------------------- */
-            /* Editing */
-            /* -------------------------------------------- */
-
-            wordWrap: "on",
-
-            tabSize: 2,
-
-            insertSpaces: true,
-
-            detectIndentation: false,
-
-            autoIndent: "full",
-
-            formatOnPaste: true,
-
-            formatOnType: false,
-
-
-            /* -------------------------------------------- */
-            /* Suggestions */
-            /* -------------------------------------------- */
-
-            suggestOnTriggerCharacters: true,
-
-            quickSuggestions: {
-              other: true,
-              comments: false,
-              strings: false,
-            },
-
-            snippetSuggestions: "top",
-
-            suggestSelection: "first",
-
-            parameterHints: {
-              enabled: true,
-            },
-
-            acceptSuggestionOnEnter: "on",
-
-            tabCompletion: "on",
-
-
-            /* -------------------------------------------- */
-            /* Lines / Gutter */
-            /* -------------------------------------------- */
 
             lineNumbers: "on",
 
             lineNumbersMinChars: 3,
 
-            renderLineHighlight: "line",
-
-            renderWhitespace: "none",
-
-            showFoldingControls: "mouseover",
+            glyphMargin: false,
 
             folding: true,
 
-            foldingStrategy: "auto",
+            foldingHighlight: true,
 
+            wordWrap: "on",
 
-            /* -------------------------------------------- */
-            /* Cursor */
-            /* -------------------------------------------- */
+            scrollBeyondLastLine: false,
+
+            smoothScrolling: true,
 
             cursorBlinking: "smooth",
 
             cursorSmoothCaretAnimation: "on",
 
-            cursorStyle: "line",
+            renderWhitespace: "selection",
 
-            cursorWidth: 2,
-
-            smoothScrolling: true,
+            renderLineHighlight: "line",
 
             roundedSelection: false,
 
+            tabSize: 2,
 
-            /* -------------------------------------------- */
-            /* Brackets */
-            /* -------------------------------------------- */
+            insertSpaces: true,
 
-            matchBrackets: "always",
+            automaticClosingBrackets: "always",
+
+            automaticClosingQuotes: "always",
 
             bracketPairColorization: {
               enabled: true,
@@ -398,35 +214,59 @@ const SqlEditor = ({
               bracketPairs: true,
             },
 
-
-            /* -------------------------------------------- */
-            /* Clean UI */
-            /* -------------------------------------------- */
+            padding: {
+              top: 12,
+              bottom: 12,
+            },
 
             overviewRulerBorder: false,
 
             hideCursorInOverviewRuler: true,
 
-            contextmenu: true,
-
-            links: true,
-
-            hover: {
-              enabled: true,
+            scrollbar: {
+              verticalScrollbarSize: 8,
+              horizontalScrollbarSize: 8,
+              useShadows: false,
             },
 
-            stickyScroll: {
+            suggest: {
+              showKeywords: false,
+              showFunctions: false,
+              showSnippets: false,
+              showMethods: false,
+              showFields: false,
+              showVariables: false,
+              showClasses: true,
+              showConstants: false,
+              showConstructors: false,
+              showEnums: false,
+              showInterfaces: false,
+              showModules: false,
+              showProperties: false,
+              showReferences: false,
+              showStructs: false,
+              showUnits: false,
+              showValues: false,
+              showWords: false,
+            },
+
+            quickSuggestions: false,
+
+            suggestOnTriggerCharacters: true,
+
+            parameterHints: {
               enabled: false,
             },
 
-            occurrencesHighlight: "singleFile",
+            formatOnPaste: false,
 
-            selectionHighlight: true,
+            formatOnType: false,
 
-            wordBasedSuggestions: "currentDocument",
+            wordBasedSuggestions: "off",
 
-            ariaLabel:
-              "PostgreSQL SQL Editor",
+            contextmenu: true,
+
+            selectOnLineNumbers: true,
           }}
         />
 

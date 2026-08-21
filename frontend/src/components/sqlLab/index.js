@@ -19,5 +19,5 @@ export { default as QueryHistoryDialog } from "./dialogs/QueryHistoryDialog";
 export { default as SavedQueriesDialog } from "./dialogs/SavedQueriesDialog";
 
 // Cards
-export { default as ProblemCard } from "./cards/ProblemCard";
+
 export { default as WorkspaceCard } from "./cards/WorkspaceCard";
