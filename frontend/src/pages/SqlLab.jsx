@@ -1,9 +1,5 @@
-import { useMemo, useState } from "react";
-
 import {
   SqlLabHeader,
-  FilterToolbar,
-  ProblemsSidebar,
   SqlEditor,
   EditorToolbar,
   WorkspaceToolbar,
@@ -19,10 +15,6 @@ import useSqlLab from "../components/sqlLab/hooks/useSqlLab";
 
 const SqlLab = () => {
   const {
-    // Problems
-    problems,
-    selectedProblem,
-
     // Editor
     sqlQuery,
     setSqlQuery,
@@ -64,7 +56,6 @@ const SqlLab = () => {
     closeSavedQueries,
 
     // SQL Actions
-    selectProblem,
     runQuery,
     saveQuery,
     uploadDataset,
@@ -75,59 +66,6 @@ const SqlLab = () => {
     runSavedQuery,
     deleteSavedQuery,
   } = useSqlLab();
-
-  // ------------------------------------------------------------
-  // Filter State
-  // ------------------------------------------------------------
-
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("all");
-  const [difficulty, setDifficulty] = useState("all");
-
-  // ------------------------------------------------------------
-  // Filter Problems
-  // ------------------------------------------------------------
-
-  const filteredProblems = useMemo(() => {
-    const query = search.trim().toLowerCase();
-
-    return problems.filter((problem) => {
-      // Search
-      const matchesSearch =
-        !query ||
-        problem.title?.toLowerCase().includes(query) ||
-        problem.category?.toLowerCase().includes(query) ||
-        problem.description?.toLowerCase().includes(query);
-
-      // Category
-      const matchesCategory =
-        category === "all" ||
-        problem.category?.toLowerCase() ===
-          category.toLowerCase();
-
-      // Difficulty
-      const matchesDifficulty =
-        difficulty === "all" ||
-        problem.difficulty?.toLowerCase() ===
-          difficulty.toLowerCase();
-
-      return (
-        matchesSearch &&
-        matchesCategory &&
-        matchesDifficulty
-      );
-    });
-  }, [problems, search, category, difficulty]);
-
-  // ------------------------------------------------------------
-  // Reset Filters
-  // ------------------------------------------------------------
-
-  const handleResetFilters = () => {
-    setSearch("");
-    setCategory("all");
-    setDifficulty("all");
-  };
 
   return (
     <>
@@ -151,96 +89,45 @@ const SqlLab = () => {
         >
 
           {/* ================================================== */}
-          {/* Header */}
+          {/* SQL LAB HEADER */}
           {/* ================================================== */}
 
           <SqlLabHeader />
 
 
           {/* ================================================== */}
-          {/* Filters */}
+          {/* SQL EDITOR */}
           {/* ================================================== */}
 
-          <FilterToolbar
-            search={search}
-            onSearchChange={setSearch}
+          <div className="space-y-4">
 
-            category={category}
-            onCategoryChange={setCategory}
+            <SqlEditor
+              value={sqlQuery}
+              onChange={setSqlQuery}
+            />
 
-            difficulty={difficulty}
-            onDifficultyChange={setDifficulty}
-
-            onReset={handleResetFilters}
-
-            problemCount={filteredProblems.length}
-          />
-
-
-          {/* ================================================== */}
-          {/* Main SQL Workspace */}
-          {/* ================================================== */}
-
-          <div
-            className="
-              grid
-              grid-cols-12
-              gap-5
-              items-start
-            "
-          >
-
-            {/* ------------------------------------------------ */}
-            {/* SQL Problems */}
-            {/* ------------------------------------------------ */}
-
-            <div
-              className="
-                col-span-12
-                lg:col-span-3
-                min-w-0
-              "
-            >
-              <ProblemsSidebar
-                problems={filteredProblems}
-                selectedId={selectedProblem?.id}
-                onSelect={selectProblem}
-              />
-            </div>
-
-
-            {/* ------------------------------------------------ */}
-            {/* SQL Editor */}
-            {/* ------------------------------------------------ */}
-
-            <div
-              className="
-                col-span-12
-                lg:col-span-9
-                min-w-0
-                space-y-4
-              "
-            >
-
-              <SqlEditor
-                value={sqlQuery}
-                onChange={setSqlQuery}
-              />
-
-              <EditorToolbar
-                loading={loading}
-                onRun={runQuery}
-                onSave={saveQuery}
-                onExport={exportCSV}
-              />
-
-            </div>
+            <EditorToolbar
+              loading={loading}
+              onRun={runQuery}
+              onSave={saveQuery}
+              onExport={exportCSV}
+            />
 
           </div>
 
 
           {/* ================================================== */}
-          {/* Workspace Tools */}
+          {/* QUERY RESULTS */}
+          {/* ================================================== */}
+
+          <ResultTable
+            columns={result?.columns || []}
+            rows={result?.rows || []}
+          />
+
+
+          {/* ================================================== */}
+          {/* WORKSPACE TOOLS */}
           {/* ================================================== */}
 
           <WorkspaceToolbar
@@ -252,17 +139,7 @@ const SqlLab = () => {
 
 
           {/* ================================================== */}
-          {/* Query Results */}
-          {/* ================================================== */}
-
-          <ResultTable
-            columns={result?.columns || []}
-            rows={result?.rows || []}
-          />
-
-
-          {/* ================================================== */}
-          {/* Visualization */}
+          {/* VISUALIZATION */}
           {/* ================================================== */}
 
           <Visualization
@@ -277,7 +154,7 @@ const SqlLab = () => {
 
 
       {/* ====================================================== */}
-      {/* Upload Dataset Dialog */}
+      {/* UPLOAD DATASET */}
       {/* ====================================================== */}
 
       <UploadDatasetDialog
@@ -290,7 +167,7 @@ const SqlLab = () => {
 
 
       {/* ====================================================== */}
-      {/* Table Explorer */}
+      {/* TABLE EXPLORER */}
       {/* ====================================================== */}
 
       <TableExplorerDialog
@@ -306,7 +183,7 @@ const SqlLab = () => {
 
 
       {/* ====================================================== */}
-      {/* Query History */}
+      {/* QUERY HISTORY */}
       {/* ====================================================== */}
 
       <QueryHistoryDialog
@@ -318,7 +195,7 @@ const SqlLab = () => {
 
 
       {/* ====================================================== */}
-      {/* Saved Queries */}
+      {/* SAVED QUERIES */}
       {/* ====================================================== */}
 
       <SavedQueriesDialog
@@ -328,6 +205,7 @@ const SqlLab = () => {
         onSelect={runSavedQuery}
         onDelete={deleteSavedQuery}
       />
+
     </>
   );
 };
