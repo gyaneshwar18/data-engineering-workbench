@@ -22,23 +22,19 @@ const EditorToolbar = ({
 
         rounded-xl
         border
-        border-slate-800
+        border-slate-700/50
 
-        bg-[#0b1120]
+        bg-slate-900/70
+        backdrop-blur-xl
 
         px-4
         py-3
       "
     >
-
-      {/* ================================================== */}
       {/* Actions */}
-      {/* ================================================== */}
-
       <div className="flex items-center gap-2">
 
         {/* Run Query */}
-
         <button
           type="button"
           onClick={onRun}
@@ -70,9 +66,7 @@ const EditorToolbar = ({
         >
           {loading ? (
             <>
-              <Loader2
-                className="h-4 w-4 animate-spin"
-              />
+              <Loader2 className="h-4 w-4 animate-spin" />
               Running...
             </>
           ) : (
@@ -86,9 +80,7 @@ const EditorToolbar = ({
           )}
         </button>
 
-
         {/* Save Query */}
-
         <button
           type="button"
           onClick={onSave}
@@ -101,9 +93,9 @@ const EditorToolbar = ({
             rounded-lg
 
             border
-            border-slate-700
+            border-slate-700/70
 
-            bg-slate-900
+            bg-slate-800/70
 
             px-4
             py-2
@@ -124,13 +116,10 @@ const EditorToolbar = ({
           "
         >
           <Save className="h-4 w-4" />
-
           Save Query
         </button>
 
-
         {/* Export CSV */}
-
         <button
           type="button"
           onClick={onExport}
@@ -143,9 +132,9 @@ const EditorToolbar = ({
             rounded-lg
 
             border
-            border-slate-700
+            border-slate-700/70
 
-            bg-slate-900
+            bg-slate-800/70
 
             px-4
             py-2
@@ -166,17 +155,11 @@ const EditorToolbar = ({
           "
         >
           <Download className="h-4 w-4" />
-
           Export CSV
         </button>
-
       </div>
 
-
-      {/* ================================================== */}
       {/* Execution Status */}
-      {/* ================================================== */}
-
       <div
         className="
           flex
@@ -184,17 +167,15 @@ const EditorToolbar = ({
           gap-2
 
           rounded-lg
-
           border
-          border-slate-800
+          border-slate-700/50
 
-          bg-slate-950
+          bg-slate-800/60
 
           px-3
           py-2
         "
       >
-
         <span
           className={`
             h-2
@@ -211,7 +192,7 @@ const EditorToolbar = ({
 
         <span
           className="
-            text-xs
+            text-sm
             font-medium
             text-slate-400
           "
@@ -220,9 +201,7 @@ const EditorToolbar = ({
             ? "Executing Query..."
             : "Ready"}
         </span>
-
       </div>
-
     </div>
   );
 };

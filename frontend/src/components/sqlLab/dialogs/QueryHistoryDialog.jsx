@@ -3,6 +3,8 @@ import {
   Play,
   Calendar,
   Clock,
+  CheckCircle2,
+  XCircle,
   X,
 } from "lucide-react";
 
@@ -17,6 +19,7 @@ const QueryHistoryDialog = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
       <div className="flex h-[80vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl">
+
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-700 px-6 py-5">
           <div className="flex items-center gap-3">
@@ -29,7 +32,7 @@ const QueryHistoryDialog = ({
                 Query History
               </h2>
 
-              <p className="text-sm text-slate-400">
+              <p className="mt-1 text-sm text-slate-400">
                 Review and rerun previously executed SQL queries.
               </p>
             </div>
@@ -59,40 +62,81 @@ const QueryHistoryDialog = ({
             </div>
           ) : (
             <div className="space-y-5">
-              {history.map((item) => (
-                <div
-                  key={item.id}
-                  className="rounded-2xl border border-slate-700 bg-slate-800/40 p-5 transition hover:border-cyan-500/40"
-                >
-                  {/* SQL */}
-                  <pre className="overflow-x-auto rounded-xl bg-slate-950 p-4 text-sm text-emerald-400">
-                    <code>{item.query}</code>
-                  </pre>
+              {history.map((item) => {
+                const isSuccess = item.status === "success";
 
-                  {/* Footer */}
-                  <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex flex-wrap items-center gap-5 text-xs text-slate-500">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4" />
-                        {item.date || "--"}
+                return (
+                  <div
+                    key={item.id}
+                    className="rounded-2xl border border-slate-700 bg-slate-800/40 p-5 transition hover:border-cyan-500/40"
+                  >
+                    {/* SQL */}
+                    <pre className="overflow-x-auto rounded-xl bg-slate-950 p-4 text-sm leading-6 text-emerald-400">
+                      <code>{item.query}</code>
+                    </pre>
+
+                    {/* Metadata + Action */}
+                    <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
+
+                      <div className="flex flex-wrap items-center gap-5 text-xs text-slate-500">
+
+                        {/* Date */}
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
+
+                          {item.created_at
+                            ? new Date(
+                                item.created_at
+                              ).toLocaleDateString()
+                            : "--"}
+                        </div>
+
+                        {/* Execution Time */}
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4" />
+
+                          {item.execution_time !== undefined &&
+                          item.execution_time !== null
+                            ? `${Number(
+                                item.execution_time
+                              ).toFixed(3)}s`
+                            : "--"}
+                        </div>
+
+                        {/* Status */}
+                        <div
+                          className={`flex items-center gap-2 ${
+                            isSuccess
+                              ? "text-emerald-400"
+                              : "text-red-400"
+                          }`}
+                        >
+                          {isSuccess ? (
+                            <CheckCircle2 className="h-4 w-4" />
+                          ) : (
+                            <XCircle className="h-4 w-4" />
+                          )}
+
+                          {isSuccess
+                            ? "Success"
+                            : "Failed"}
+                        </div>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4" />
-                        {item.time || "--"}
-                      </div>
+                      {/* Run Again */}
+                      <button
+                        onClick={() =>
+                          onRunAgain(item.query)
+                        }
+                        className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400"
+                      >
+                        <Play className="h-4 w-4" />
+                        Run Again
+                      </button>
                     </div>
-
-                    <button
-                      onClick={() => onRunAgain(item.query)}
-                      className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400"
-                    >
-                      <Play className="h-4 w-4" />
-                      Run Again
-                    </button>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

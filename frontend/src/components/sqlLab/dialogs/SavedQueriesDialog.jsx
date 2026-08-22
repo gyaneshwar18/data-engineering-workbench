@@ -3,6 +3,7 @@ import {
   Play,
   Trash2,
   Calendar,
+  Pin,
   X,
 } from "lucide-react";
 
@@ -12,12 +13,14 @@ const SavedQueriesDialog = ({
   onClose = () => {},
   onSelect = () => {},
   onDelete = () => {},
+  onTogglePin = () => {},
 }) => {
   if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
       <div className="flex h-[80vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl">
+
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-700 px-6 py-5">
           <div className="flex items-center gap-3">
@@ -30,7 +33,7 @@ const SavedQueriesDialog = ({
                 Saved Queries
               </h2>
 
-              <p className="text-sm text-slate-400">
+              <p className="mt-1 text-sm text-slate-400">
                 Manage your reusable SQL queries.
               </p>
             </div>
@@ -66,28 +69,71 @@ const SavedQueriesDialog = ({
                   className="rounded-2xl border border-slate-700 bg-slate-800/40 p-5 transition hover:border-cyan-500/40"
                 >
                   {/* SQL */}
-                  <pre className="overflow-x-auto rounded-xl bg-slate-950 p-4 text-sm text-emerald-400">
+                  <pre className="overflow-x-auto rounded-xl bg-slate-950 p-4 text-sm leading-6 text-emerald-400">
                     <code>{query.query}</code>
                   </pre>
 
                   {/* Footer */}
                   <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex items-center gap-2 text-xs text-slate-500">
-                      <Calendar className="h-4 w-4" />
-                      {query.saved_at || "--"}
+
+                    {/* Metadata */}
+                    <div className="flex flex-wrap items-center gap-5 text-xs text-slate-500">
+
+                      {/* Date */}
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4" />
+
+                        {query.created_at
+                          ? new Date(
+                              query.created_at
+                            ).toLocaleString()
+                          : "--"}
+                      </div>
+
+                      {/* Pin */}
+                      <button
+                        onClick={() =>
+                          onTogglePin(query.id)
+                        }
+                        className={`inline-flex items-center gap-2 transition ${
+                          query.is_pinned
+                            ? "text-cyan-400"
+                            : "text-slate-500 hover:text-slate-300"
+                        }`}
+                      >
+                        <Pin
+                          className={`h-4 w-4 ${
+                            query.is_pinned
+                              ? "fill-current"
+                              : ""
+                          }`}
+                        />
+
+                        {query.is_pinned
+                          ? "Pinned"
+                          : "Pin"}
+                      </button>
                     </div>
 
+                    {/* Actions */}
                     <div className="flex gap-3">
+
+                      {/* Use Query */}
                       <button
-                        onClick={() => onSelect(query.query)}
+                        onClick={() =>
+                          onSelect(query.query)
+                        }
                         className="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400"
                       >
                         <Play className="h-4 w-4" />
                         Use Query
                       </button>
 
+                      {/* Delete */}
                       <button
-                        onClick={() => onDelete(query.id)}
+                        onClick={() =>
+                          onDelete(query.id)
+                        }
                         className="inline-flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-400 transition hover:bg-red-500/20"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -110,6 +156,7 @@ const SavedQueriesDialog = ({
             Close
           </button>
         </div>
+
       </div>
     </div>
   );

@@ -1,148 +1,492 @@
-import axios from "axios";
+import { useCallback, useEffect, useState } from "react";
+import sqlLabService from "../../../services/sqlLabService";
 
-const API = import.meta.env.VITE_API_BASE_URL;
+const useSqlLab = () => {
+  /* =========================================================
+     Editor
+  ========================================================= */
 
-const sqlLabService = {
-  // =========================================================
-  // Metadata
-  // =========================================================
+  const [sqlQuery, setSqlQuery] = useState("");
 
-  async fetchTables() {
-    const { data } = await axios.get(
-      `${API}/sql-lab/tables`
-    );
+  const [loading, setLoading] = useState(false);
 
-    return data;
-  },
+  /* =========================================================
+     Query Results
+  ========================================================= */
 
-  async fetchSchema(tableName) {
-    const { data } = await axios.get(
-      `${API}/sql-lab/schema/${tableName}`
-    );
+  const [result, setResult] = useState({
+    columns: [],
+    rows: [],
+  });
 
-    return data;
-  },
+  /* =========================================================
+     Visualization
+  ========================================================= */
 
-  async fetchMetadata() {
-    const tables = await this.fetchTables();
+  const [chartType, setChartType] = useState("bar");
 
-    const allColumns = {};
+  /* =========================================================
+     Database Metadata
+  ========================================================= */
 
-    await Promise.all(
-      tables.map(async (table) => {
-        const columns = await this.fetchSchema(table);
+  const [tables, setTables] = useState([]);
 
-        allColumns[table] = columns.map(
-          (column) => column.column
-        );
-      })
-    );
+  const [columns, setColumns] = useState({});
 
-    return {
-      tables,
-      columns: allColumns,
+  const [uploadedTable, setUploadedTable] = useState("");
+
+  /* =========================================================
+     Query History
+  ========================================================= */
+
+  const [queryHistory, setQueryHistory] = useState([]);
+
+  /* =========================================================
+     Saved Queries
+  ========================================================= */
+
+  const [savedQueries, setSavedQueries] = useState([]);
+
+  /* =========================================================
+     Dialog State
+  ========================================================= */
+
+  const [uploadOpen, setUploadOpen] = useState(false);
+
+  const [tableExplorerOpen, setTableExplorerOpen] =
+    useState(false);
+
+  const [historyOpen, setHistoryOpen] =
+    useState(false);
+
+  const [savedQueriesOpen, setSavedQueriesOpen] =
+    useState(false);
+
+  /* =========================================================
+     Load Metadata
+  ========================================================= */
+
+  const loadMetadata = useCallback(async () => {
+    try {
+      const metadata =
+        await sqlLabService.fetchMetadata();
+
+      setTables(metadata.tables || []);
+      setColumns(metadata.columns || {});
+    } catch (error) {
+      console.error(
+        "Failed to load SQL Lab metadata:",
+        error
+      );
+    }
+  }, []);
+
+  /* =========================================================
+     Load History
+  ========================================================= */
+
+  const loadHistory = useCallback(async () => {
+    try {
+      const history =
+        await sqlLabService.fetchHistory();
+
+      setQueryHistory(history || []);
+    } catch (error) {
+      console.error(
+        "Failed to load query history:",
+        error
+      );
+    }
+  }, []);
+
+  /* =========================================================
+     Load Saved Queries
+  ========================================================= */
+
+  const loadSavedQueries = useCallback(async () => {
+    try {
+      const queries =
+        await sqlLabService.fetchSavedQueries();
+
+      setSavedQueries(queries || []);
+    } catch (error) {
+      console.error(
+        "Failed to load saved queries:",
+        error
+      );
+    }
+  }, []);
+
+  /* =========================================================
+     Initial Load
+  ========================================================= */
+
+  useEffect(() => {
+    loadMetadata();
+    loadHistory();
+    loadSavedQueries();
+  }, [
+    loadMetadata,
+    loadHistory,
+    loadSavedQueries,
+  ]);
+
+  /* =========================================================
+     Run Query
+  ========================================================= */
+
+  const runQuery = async () => {
+    const query = sqlQuery.trim();
+
+    if (!query || loading) return;
+
+    try {
+      setLoading(true);
+
+      const response =
+        await sqlLabService.runQuery(query);
+
+      setResult({
+        columns: response.columns || [],
+        rows: response.rows || [],
+      });
+
+      // Backend already records history.
+      // Refresh it instead of creating duplicate local history.
+      await loadHistory();
+    } catch (error) {
+      console.error(
+        "SQL query failed:",
+        error
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* =========================================================
+     Save Query
+  ========================================================= */
+
+  const saveQuery = async () => {
+    const query = sqlQuery.trim();
+
+    if (!query || loading) return;
+
+    try {
+      await sqlLabService.saveQuery(query);
+
+      // Refresh from PostgreSQL.
+      await loadSavedQueries();
+    } catch (error) {
+      console.error(
+        "Failed to save query:",
+        error
+      );
+    }
+  };
+
+  /* =========================================================
+     Upload Dataset
+  ========================================================= */
+
+  const uploadDataset = async (file) => {
+    if (!file || loading) return;
+
+    try {
+      setLoading(true);
+
+      const response =
+        await sqlLabService.uploadCSV(file);
+
+      setUploadedTable(
+        response.table_name || ""
+      );
+
+      // New table is now available.
+      await loadMetadata();
+
+      // Close dialog after successful upload.
+      setUploadOpen(false);
+    } catch (error) {
+      console.error(
+        "Dataset upload failed:",
+        error
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* =========================================================
+     Export CSV
+  ========================================================= */
+
+  const exportCSV = () => {
+    if (!result.columns.length || !result.rows.length) {
+      return;
+    }
+
+    const escapeCSV = (value) => {
+      if (
+        value === null ||
+        value === undefined
+      ) {
+        return "";
+      }
+
+      const stringValue = String(value);
+
+      if (
+        stringValue.includes(",") ||
+        stringValue.includes('"') ||
+        stringValue.includes("\n")
+      ) {
+        return `"${stringValue.replaceAll(
+          '"',
+          '""'
+        )}"`;
+      }
+
+      return stringValue;
     };
-  },
 
-  // =========================================================
-  // Query Execution
-  // =========================================================
+    const headers = result.columns
+      .map(escapeCSV)
+      .join(",");
 
-  async runQuery(query) {
-    const { data } = await axios.post(
-      `${API}/sql-lab/run`,
-      {
-        query,
-      }
+    const csvRows = result.rows.map((row) =>
+      result.columns
+        .map((column) =>
+          escapeCSV(row[column])
+        )
+        .join(",")
     );
 
-    return data;
-  },
+    const csv = [
+      headers,
+      ...csvRows,
+    ].join("\n");
 
-  // =========================================================
-  // Query History
-  // =========================================================
+    const blob = new Blob([csv], {
+      type: "text/csv;charset=utf-8;",
+    });
 
-  async fetchHistory() {
-    const { data } = await axios.get(
-      `${API}/sql-lab/history`
-    );
+    const url =
+      window.URL.createObjectURL(blob);
 
-    return data;
-  },
+    const link =
+      document.createElement("a");
 
-  // =========================================================
-  // Saved Queries
-  // =========================================================
+    link.href = url;
+    link.download = "query_result.csv";
 
-  async saveQuery(query) {
-    const { data } = await axios.post(
-      `${API}/sql-lab/save`,
-      {
-        query,
-      }
-    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-    return data;
-  },
+    window.URL.revokeObjectURL(url);
+  };
 
-  async fetchSavedQueries() {
-    const { data } = await axios.get(
-      `${API}/sql-lab/saved`
-    );
+  /* =========================================================
+     Dialog Controls
+  ========================================================= */
 
-    return data;
-  },
+  const openUpload = () =>
+    setUploadOpen(true);
 
-  async deleteSavedQuery(id) {
-    const { data } = await axios.delete(
-      `${API}/sql-lab/saved/${id}`
-    );
+  const closeUpload = () =>
+    setUploadOpen(false);
 
-    return data;
-  },
+  const openExplorer = () =>
+    setTableExplorerOpen(true);
 
-  async togglePin(id) {
-    const { data } = await axios.put(
-      `${API}/sql-lab/saved/${id}/pin`
-    );
+  const closeExplorer = () =>
+    setTableExplorerOpen(false);
 
-    return data;
-  },
+  const openHistory = async () => {
+    await loadHistory();
+    setHistoryOpen(true);
+  };
 
-  // =========================================================
-  // Upload Dataset
-  // =========================================================
+  const closeHistory = () =>
+    setHistoryOpen(false);
 
-  async uploadCSV(file) {
-    const formData = new FormData();
+  const openSavedQueries = async () => {
+    await loadSavedQueries();
+    setSavedQueriesOpen(true);
+  };
 
-    formData.append("file", file);
+  const closeSavedQueries = () =>
+    setSavedQueriesOpen(false);
 
-    const { data } = await axios.post(
-      `${API}/sql-lab/upload`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+  /* =========================================================
+     Run History Query
+  ========================================================= */
 
-    return data;
-  },
+  const runHistoryQuery = async (query) => {
+    const trimmedQuery = query?.trim();
 
-  // =========================================================
-  // Table Data
-  // =========================================================
+    if (!trimmedQuery || loading) return;
 
-  async fetchTableData(tableName) {
-    const { data } = await axios.get(
-      `${API}/sql-lab/table/${tableName}`
-    );
+    setSqlQuery(trimmedQuery);
 
-    return data;
-  },
+    try {
+      setLoading(true);
+
+      const response =
+        await sqlLabService.runQuery(
+          trimmedQuery
+        );
+
+      setResult({
+        columns: response.columns || [],
+        rows: response.rows || [],
+      });
+
+      await loadHistory();
+
+      setHistoryOpen(false);
+    } catch (error) {
+      console.error(
+        "History query failed:",
+        error
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* =========================================================
+     Run Saved Query
+  ========================================================= */
+
+  const runSavedQuery = async (query) => {
+    const trimmedQuery = query?.trim();
+
+    if (!trimmedQuery || loading) return;
+
+    setSqlQuery(trimmedQuery);
+
+    try {
+      setLoading(true);
+
+      const response =
+        await sqlLabService.runQuery(
+          trimmedQuery
+        );
+
+      setResult({
+        columns: response.columns || [],
+        rows: response.rows || [],
+      });
+
+      await loadHistory();
+
+      setSavedQueriesOpen(false);
+    } catch (error) {
+      console.error(
+        "Saved query failed:",
+        error
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* =========================================================
+     Delete Saved Query
+  ========================================================= */
+
+  const deleteSavedQuery = async (id) => {
+    try {
+      await sqlLabService.deleteSavedQuery(id);
+
+      await loadSavedQueries();
+    } catch (error) {
+      console.error(
+        "Failed to delete saved query:",
+        error
+      );
+    }
+  };
+
+  /* =========================================================
+     Toggle Pin
+  ========================================================= */
+
+  const togglePin = async (id) => {
+    try {
+      await sqlLabService.togglePin(id);
+
+      await loadSavedQueries();
+    } catch (error) {
+      console.error(
+        "Failed to update saved query:",
+        error
+      );
+    }
+  };
+
+  /* =========================================================
+     Return
+  ========================================================= */
+
+  return {
+    // Editor
+    sqlQuery,
+    setSqlQuery,
+
+    // Results
+    result,
+    loading,
+
+    // Charts
+    chartType,
+    setChartType,
+
+    // Metadata
+    tables,
+    columns,
+    uploadedTable,
+
+    // History
+    queryHistory,
+
+    // Saved Queries
+    savedQueries,
+
+    // Dialog State
+    uploadOpen,
+    tableExplorerOpen,
+    historyOpen,
+    savedQueriesOpen,
+
+    // Dialog Actions
+    openUpload,
+    closeUpload,
+
+    openExplorer,
+    closeExplorer,
+
+    openHistory,
+    closeHistory,
+
+    openSavedQueries,
+    closeSavedQueries,
+
+    // SQL Actions
+    runQuery,
+    saveQuery,
+    uploadDataset,
+    exportCSV,
+
+    // Query Actions
+    runHistoryQuery,
+    runSavedQuery,
+    deleteSavedQuery,
+    togglePin,
+  };
 };
 
-export default sqlLabService;
+export default useSqlLab;
