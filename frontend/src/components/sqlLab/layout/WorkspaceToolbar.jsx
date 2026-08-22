@@ -45,20 +45,46 @@ const WorkspaceToolbar = ({
   ];
 
   return (
-    <div className="rounded-2xl border border-slate-700/50 bg-slate-900/70 backdrop-blur-xl">
+    <div
+      className="
+        overflow-hidden
+        rounded-2xl
+        border
+        border-slate-700/60
+        bg-slate-900
+        shadow-xl
+      "
+    >
       {/* Header */}
-      <div className="border-b border-slate-700/50 px-6 py-4">
+      <div
+        className="
+          border-b
+          border-slate-700/60
+          bg-slate-800/40
+          px-5
+          py-4
+        "
+      >
         <h2 className="text-sm font-semibold text-white">
           Workspace Tools
         </h2>
 
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="mt-1 text-xs text-slate-400">
           Manage datasets, inspect tables and access your SQL workspace.
         </p>
       </div>
 
-      {/* Cards */}
-      <div className="grid gap-4 p-6 md:grid-cols-2 xl:grid-cols-4">
+      {/* Workspace Actions */}
+      <div
+        className="
+          grid
+          grid-cols-1
+          gap-3
+          p-4
+          sm:grid-cols-2
+          xl:grid-cols-4
+        "
+      >
         {workspaceItems.map((item) => (
           <WorkspaceCard
             key={item.title}
