@@ -3,12 +3,15 @@ import axios from "axios";
 const API = import.meta.env.VITE_API_BASE_URL;
 
 const sqlLabService = {
-  // ===============================
+  // =========================================================
   // Metadata
-  // ===============================
+  // =========================================================
 
   async fetchTables() {
-    const { data } = await axios.get(`${API}/sql-lab/tables`);
+    const { data } = await axios.get(
+      `${API}/sql-lab/tables`
+    );
+
     return data;
   },
 
@@ -29,7 +32,9 @@ const sqlLabService = {
       tables.map(async (table) => {
         const columns = await this.fetchSchema(table);
 
-        allColumns[table] = columns.map((column) => column.column);
+        allColumns[table] = columns.map(
+          (column) => column.column
+        );
       })
     );
 
@@ -39,9 +44,9 @@ const sqlLabService = {
     };
   },
 
-  // ===============================
+  // =========================================================
   // Query Execution
-  // ===============================
+  // =========================================================
 
   async runQuery(query) {
     const { data } = await axios.post(
@@ -54,9 +59,21 @@ const sqlLabService = {
     return data;
   },
 
-  // ===============================
-  // Save Query
-  // ===============================
+  // =========================================================
+  // Query History
+  // =========================================================
+
+  async fetchHistory() {
+    const { data } = await axios.get(
+      `${API}/sql-lab/history`
+    );
+
+    return data;
+  },
+
+  // =========================================================
+  // Saved Queries
+  // =========================================================
 
   async saveQuery(query) {
     const { data } = await axios.post(
@@ -69,9 +86,33 @@ const sqlLabService = {
     return data;
   },
 
-  // ===============================
+  async fetchSavedQueries() {
+    const { data } = await axios.get(
+      `${API}/sql-lab/saved`
+    );
+
+    return data;
+  },
+
+  async deleteSavedQuery(id) {
+    const { data } = await axios.delete(
+      `${API}/sql-lab/saved/${id}`
+    );
+
+    return data;
+  },
+
+  async togglePin(id) {
+    const { data } = await axios.put(
+      `${API}/sql-lab/saved/${id}/pin`
+    );
+
+    return data;
+  },
+
+  // =========================================================
   // Upload Dataset
-  // ===============================
+  // =========================================================
 
   async uploadCSV(file) {
     const formData = new FormData();
@@ -86,6 +127,18 @@ const sqlLabService = {
           "Content-Type": "multipart/form-data",
         },
       }
+    );
+
+    return data;
+  },
+
+  // =========================================================
+  // Table Data
+  // =========================================================
+
+  async fetchTableData(tableName) {
+    const { data } = await axios.get(
+      `${API}/sql-lab/table/${tableName}`
     );
 
     return data;
