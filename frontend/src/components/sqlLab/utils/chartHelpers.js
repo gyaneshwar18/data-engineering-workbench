@@ -1,23 +1,65 @@
 const isNumber = (value) => {
-  return value !== null && value !== "" && !Number.isNaN(Number(value));
+  if (value === null || value === undefined || value === "") {
+    return false;
+  }
+
+  if (typeof value === "number") {
+    return Number.isFinite(value);
+  }
+
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+
+    if (!trimmed) {
+      return false;
+    }
+
+    return Number.isFinite(Number(trimmed));
+  }
+
+  return false;
 };
+
+
+/* -------------------------------------------------- */
+/* Find numeric columns                               */
+/* -------------------------------------------------- */
 
 const findNumericColumns = (columns, rows) => {
-  if (!rows?.length) return [];
+  if (!columns.length || !rows?.length) {
+    return [];
+  }
 
   return columns.filter((column) =>
-    rows.some((row) => isNumber(row[column]))
+    rows.some((row) => isNumber(row?.[column]))
   );
 };
 
-const findCategoryColumn = (columns, numericColumns) => {
+
+/* -------------------------------------------------- */
+/* Find category column                               */
+/* -------------------------------------------------- */
+
+const findCategoryColumn = (
+  columns,
+  numericColumns
+) => {
   return (
-    columns.find((column) => !numericColumns.includes(column)) ||
-    columns[0]
+    columns.find(
+      (column) => !numericColumns.includes(column)
+    ) || columns[0]
   );
 };
 
-export const getChartData = (columns = [], rows = []) => {
+
+/* -------------------------------------------------- */
+/* Prepare chart data                                 */
+/* -------------------------------------------------- */
+
+export const getChartData = (
+  columns = [],
+  rows = []
+) => {
   if (!columns.length || !rows.length) {
     return {
       canRender: false,
@@ -28,9 +70,12 @@ export const getChartData = (columns = [], rows = []) => {
     };
   }
 
-  const numericColumns = findNumericColumns(columns, rows);
+  const numericColumns = findNumericColumns(
+    columns,
+    rows
+  );
 
-  if (numericColumns.length === 0) {
+  if (!numericColumns.length) {
     return {
       canRender: false,
       reason: "No numeric columns found.",
@@ -54,6 +99,11 @@ export const getChartData = (columns = [], rows = []) => {
   };
 };
 
+
+/* -------------------------------------------------- */
+/* Supported chart types                              */
+/* -------------------------------------------------- */
+
 export const chartTypes = [
   {
     value: "bar",
@@ -73,32 +123,64 @@ export const chartTypes = [
   },
 ];
 
+
+/* -------------------------------------------------- */
+/* Pie chart data                                     */
+/* -------------------------------------------------- */
+
 export const getPieData = (
-  data,
+  data = [],
   categoryKey,
   numericKey
 ) => {
-  return data.map((item) => ({
-    name: item[categoryKey],
-    value: Number(item[numericKey]),
-  }));
+  if (!categoryKey || !numericKey) {
+    return [];
+  }
+
+  return data
+    .filter((item) =>
+      isNumber(item?.[numericKey])
+    )
+    .map((item) => ({
+      name:
+        item?.[categoryKey] !== null &&
+        item?.[categoryKey] !== undefined
+          ? String(item[categoryKey])
+          : "Unknown",
+
+      value: Number(item[numericKey]),
+    }));
 };
 
+
+/* -------------------------------------------------- */
+/* Default chart type                                */
+/* -------------------------------------------------- */
+
 export const getDefaultChartType = (
-  columns,
-  rows
+  columns = [],
+  rows = []
 ) => {
-  const { canRender, numericKeys } = getChartData(
-    columns,
-    rows
-  );
+  const {
+    canRender,
+    numericKeys,
+  } = getChartData(columns, rows);
 
-  if (!canRender) return null;
+  if (!canRender) {
+    return null;
+  }
 
-  if (numericKeys.length === 1) return "bar";
+  if (numericKeys.length === 1) {
+    return "bar";
+  }
 
   return "line";
 };
+
+
+/* -------------------------------------------------- */
+/* Chart colors                                       */
+/* -------------------------------------------------- */
 
 export const COLORS = [
   "#06B6D4",

@@ -30,40 +30,73 @@ const WorkspaceCard = ({
   description,
   icon: Icon,
   color = "cyan",
-  onClick = () => {},
+  onClick = () => { },
 }) => {
   const style = colorStyles[color] || colorStyles.cyan;
 
   return (
     <button
+      type="button"
       onClick={onClick}
-      className={`group w-full rounded-2xl border border-slate-700/50 bg-slate-800/50 p-5 text-left transition-all duration-200 hover:-translate-y-1 hover:bg-slate-800 hover:shadow-xl ${style.hover}`}
+      className={`
+    group
+    w-full
+    rounded-2xl
+    border
+    border-slate-700/50
+    bg-slate-800/50
+    p-6
+    text-left
+    transition-all
+    duration-200
+    hover:-translate-y-0.5
+    hover:bg-slate-800
+    hover:shadow-xl
+    ${style.hover}
+  `}
     >
-      {/* Icon */}
-      <div
-        className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl border ${style.border} ${style.bg}`}
-      >
-        <Icon className={`h-6 w-6 ${style.icon}`} />
-      </div>
+      <div className="flex items-center gap-3">
+        {/* Icon */}
+        <div
+          className={`
+            flex
+            h-10
+            w-10
+            shrink-0
+            items-center
+            justify-center
+            rounded-lg
+            border
+            ${style.border}
+            ${style.bg}
+          `}
+        >
+          <Icon className={`h-5 w-5 ${style.icon}`} />
+        </div>
 
-      {/* Title */}
-      <h3 className="text-base font-semibold text-white">
-        {title}
-      </h3>
+        {/* Content */}
+        <div className="min-w-0 flex-1">
+          <h3 className="truncate text-sm font-semibold text-slate-200">
+            {title}
+          </h3>
 
-      {/* Description */}
-      <p className="mt-2 text-sm leading-6 text-slate-400">
-        {description}
-      </p>
+          <p className="mt-0.5 truncate text-xs text-slate-500">
+            {description}
+          </p>
+        </div>
 
-      {/* Footer */}
-      <div className="mt-5 flex items-center justify-between">
-        <span className="text-xs font-medium text-slate-500">
-          Open
-        </span>
-
+        {/* Arrow */}
         <svg
-          className="h-5 w-5 text-slate-500 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-white"
+          className="
+            h-4
+            w-4
+            shrink-0
+            text-slate-600
+            transition-all
+            duration-200
+            group-hover:translate-x-0.5
+            group-hover:text-slate-300
+          "
           fill="none"
           stroke="currentColor"
           strokeWidth="2"

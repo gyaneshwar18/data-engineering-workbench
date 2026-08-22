@@ -7,7 +7,6 @@ const useSqlLab = () => {
   /* ---------------------------------- */
 
   const [sqlQuery, setSqlQuery] = useState("");
-
   const [loading, setLoading] = useState(false);
 
   /* ---------------------------------- */
@@ -30,9 +29,7 @@ const useSqlLab = () => {
   /* ---------------------------------- */
 
   const [tables, setTables] = useState([]);
-
   const [columns, setColumns] = useState({});
-
   const [uploadedTable, setUploadedTable] = useState("");
 
   /* ---------------------------------- */
@@ -52,13 +49,10 @@ const useSqlLab = () => {
   /* ---------------------------------- */
 
   const [uploadOpen, setUploadOpen] = useState(false);
-
   const [tableExplorerOpen, setTableExplorerOpen] =
     useState(false);
-
   const [historyOpen, setHistoryOpen] =
     useState(false);
-
   const [savedQueriesOpen, setSavedQueriesOpen] =
     useState(false);
 
@@ -71,11 +65,11 @@ const useSqlLab = () => {
       const metadata =
         await sqlLabService.fetchMetadata();
 
-      setTables(metadata.tables || []);
-      setColumns(metadata.columns || {});
+      setTables(metadata?.tables || []);
+      setColumns(metadata?.columns || {});
     } catch (error) {
       console.error(
-        "Failed to load metadata",
+        "Failed to load database metadata:",
         error
       );
     }
@@ -86,56 +80,97 @@ const useSqlLab = () => {
   }, [loadMetadata]);
 
   /* ---------------------------------- */
+  /* Add Query To History               */
+  /* ---------------------------------- */
+
+  const addToHistory = useCallback((query) => {
+    setQueryHistory((previous) => [
+      {
+        id: Date.now(),
+        query,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
+      },
+      ...previous,
+    ]);
+  }, []);
+
+  /* ---------------------------------- */
   /* Run Query                          */
   /* ---------------------------------- */
 
-  const runQuery = async () => {
-    if (!sqlQuery.trim()) return;
+  const runQuery = useCallback(async () => {
+    const query = sqlQuery.trim();
+
+    if (!query || loading) return;
 
     try {
       setLoading(true);
 
       const response =
-        await sqlLabService.runQuery(sqlQuery);
+        await sqlLabService.runQuery(query);
 
       setResult({
-        columns: response.columns || [],
-        rows: response.rows || [],
+        columns: response?.columns || [],
+        rows: response?.rows || [],
       });
 
-      setQueryHistory((previous) => [
-        {
-          id: Date.now(),
-          query: sqlQuery,
-          date: new Date().toLocaleDateString(),
-          time: new Date().toLocaleTimeString(),
-        },
-        ...previous,
-      ]);
+      addToHistory(query);
+
+      /*
+       * Refresh metadata after schema-changing queries.
+       * This keeps Table Explorer and table suggestions
+       * synchronized with the database.
+       */
+      const normalizedQuery = query.toLowerCase();
+
+      const changesSchema =
+        normalizedQuery.startsWith("create ") ||
+        normalizedQuery.startsWith("alter ") ||
+        normalizedQuery.startsWith("drop ") ||
+        normalizedQuery.startsWith("truncate ");
+
+      if (changesSchema) {
+        await loadMetadata();
+      }
     } catch (error) {
-      console.error(
-        "SQL query failed:",
-        error
-      );
+      console.error("SQL query failed:", error);
+
+      /*
+       * Clear previous results when the query fails.
+       * This prevents old results from looking like
+       * the result of the failed query.
+       */
+      setResult({
+        columns: [],
+        rows: [],
+      });
     } finally {
       setLoading(false);
     }
-  };
+  }, [
+    sqlQuery,
+    loading,
+    addToHistory,
+    loadMetadata,
+  ]);
 
   /* ---------------------------------- */
   /* Save Query                         */
   /* ---------------------------------- */
 
   const saveQuery = async () => {
-    if (!sqlQuery.trim()) return;
+    const query = sqlQuery.trim();
+
+    if (!query) return;
 
     try {
-      await sqlLabService.saveQuery(sqlQuery);
+      await sqlLabService.saveQuery(query);
 
       setSavedQueries((previous) => [
         {
           id: Date.now(),
-          query: sqlQuery,
+          query,
           saved_at: new Date().toLocaleString(),
         },
         ...previous,
@@ -162,9 +197,14 @@ const useSqlLab = () => {
         await sqlLabService.uploadCSV(file);
 
       setUploadedTable(
-        response.table_name || ""
+        response?.table_name || ""
       );
 
+      /*
+       * New CSV table should immediately become
+       * available inside Table Explorer and
+       * SQL autocomplete.
+       */
       await loadMetadata();
     } catch (error) {
       console.error(
@@ -180,14 +220,48 @@ const useSqlLab = () => {
   /* Export CSV                         */
   /* ---------------------------------- */
 
-  const exportCSV = () => {
-    if (!result.rows.length) return;
+  const escapeCSVValue = (value) => {
+    if (
+      value === null ||
+      value === undefined
+    ) {
+      return "";
+    }
 
-    const headers = result.columns.join(",");
+    const stringValue = String(value);
+
+    /*
+     * Escape values containing:
+     * comma, quote, or newline.
+     */
+    if (
+      stringValue.includes(",") ||
+      stringValue.includes('"') ||
+      stringValue.includes("\n")
+    ) {
+      return `"${stringValue.replaceAll('"', '""')}"`;
+    }
+
+    return stringValue;
+  };
+
+  const exportCSV = () => {
+    if (
+      !result?.columns?.length ||
+      !result?.rows?.length
+    ) {
+      return;
+    }
+
+    const headers = result.columns
+      .map(escapeCSVValue)
+      .join(",");
 
     const csvRows = result.rows.map((row) =>
       result.columns
-        .map((column) => row[column])
+        .map((column) =>
+          escapeCSVValue(row[column])
+        )
         .join(",")
     );
 
@@ -210,9 +284,7 @@ const useSqlLab = () => {
     link.download = "query_result.csv";
 
     document.body.appendChild(link);
-
     link.click();
-
     document.body.removeChild(link);
 
     window.URL.revokeObjectURL(url);
@@ -251,27 +323,35 @@ const useSqlLab = () => {
   /* ---------------------------------- */
 
   const runHistoryQuery = async (query) => {
-    if (!query?.trim()) return;
+    const selectedQuery = query?.trim();
 
-    setSqlQuery(query);
+    if (!selectedQuery) return;
+
+    setSqlQuery(selectedQuery);
+    setHistoryOpen(false);
 
     try {
       setLoading(true);
 
       const response =
-        await sqlLabService.runQuery(query);
+        await sqlLabService.runQuery(
+          selectedQuery
+        );
 
       setResult({
-        columns: response.columns || [],
-        rows: response.rows || [],
+        columns: response?.columns || [],
+        rows: response?.rows || [],
       });
-
-      setHistoryOpen(false);
     } catch (error) {
       console.error(
         "History query failed:",
         error
       );
+
+      setResult({
+        columns: [],
+        rows: [],
+      });
     } finally {
       setLoading(false);
     }
@@ -282,27 +362,35 @@ const useSqlLab = () => {
   /* ---------------------------------- */
 
   const runSavedQuery = async (query) => {
-    if (!query?.trim()) return;
+    const selectedQuery = query?.trim();
 
-    setSqlQuery(query);
+    if (!selectedQuery) return;
+
+    setSqlQuery(selectedQuery);
+    setSavedQueriesOpen(false);
 
     try {
       setLoading(true);
 
       const response =
-        await sqlLabService.runQuery(query);
+        await sqlLabService.runQuery(
+          selectedQuery
+        );
 
       setResult({
-        columns: response.columns || [],
-        rows: response.rows || [],
+        columns: response?.columns || [],
+        rows: response?.rows || [],
       });
-
-      setSavedQueriesOpen(false);
     } catch (error) {
       console.error(
         "Saved query failed:",
         error
       );
+
+      setResult({
+        columns: [],
+        rows: [],
+      });
     } finally {
       setLoading(false);
     }

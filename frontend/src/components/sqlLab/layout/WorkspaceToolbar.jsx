@@ -61,7 +61,7 @@ const WorkspaceToolbar = ({
           border-b
           border-slate-700/60
           bg-slate-800/40
-          px-5
+          px-6
           py-4
         "
       >
@@ -69,19 +69,18 @@ const WorkspaceToolbar = ({
           Workspace Tools
         </h2>
 
-        <p className="mt-1 text-xs text-slate-400">
+        <p className="mt-1 text-sm text-slate-400">
           Manage datasets, inspect tables and access your SQL workspace.
         </p>
       </div>
 
-      {/* Workspace Actions */}
+      {/* Workspace Cards */}
       <div
         className="
           grid
-          grid-cols-1
-          gap-3
-          p-4
-          sm:grid-cols-2
+          gap-4
+          p-5
+          md:grid-cols-2
           xl:grid-cols-4
         "
       >

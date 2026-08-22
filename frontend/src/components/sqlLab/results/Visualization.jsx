@@ -56,8 +56,16 @@ const Visualization = ({
   const renderChart = () => {
     if (!canRender) {
       return (
-        <div className="flex h-[420px] items-center justify-center text-slate-500">
-          {reason}
+        <div className="flex min-h-[420px] flex-col items-center justify-center px-6 text-center">
+          <BarChart3 className="mb-4 h-12 w-12 text-slate-600" />
+
+          <h3 className="text-lg font-semibold text-slate-300">
+            No Data Available
+          </h3>
+
+          <p className="mt-2 max-w-md text-sm leading-6 text-slate-500">
+            {reason || "Execute a SQL query with suitable data to visualize the results."}
+          </p>
         </div>
       );
     }
@@ -66,20 +74,60 @@ const Visualization = ({
       case "line":
         return (
           <ResponsiveContainer width="100%" height={420}>
-            <LineChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-              <XAxis dataKey={categoryKey} stroke="#94A3B8" />
-              <YAxis stroke="#94A3B8" />
-              <Tooltip />
+            <LineChart
+              data={data}
+              margin={{
+                top: 10,
+                right: 20,
+                left: 0,
+                bottom: 10,
+              }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="#334155"
+                vertical={false}
+              />
+
+              <XAxis
+                dataKey={categoryKey}
+                stroke="#94A3B8"
+                tick={{ fill: "#94A3B8", fontSize: 12 }}
+                tickLine={false}
+                axisLine={{ stroke: "#334155" }}
+              />
+
+              <YAxis
+                stroke="#94A3B8"
+                tick={{ fill: "#94A3B8", fontSize: 12 }}
+                tickLine={false}
+                axisLine={false}
+              />
+
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#0f172a",
+                  border: "1px solid #334155",
+                  borderRadius: "10px",
+                  color: "#e2e8f0",
+                }}
+                labelStyle={{
+                  color: "#cbd5e1",
+                  fontWeight: 600,
+                }}
+              />
+
               <Legend />
 
               {numericKeys.map((key, index) => (
                 <Line
                   key={key}
+                  type="monotone"
                   dataKey={key}
                   stroke={COLORS[index % COLORS.length]}
-                  strokeWidth={3}
-                  dot={{ r: 4 }}
+                  strokeWidth={2.5}
+                  dot={{ r: 3 }}
+                  activeDot={{ r: 5 }}
                 />
               ))}
             </LineChart>
@@ -89,51 +137,99 @@ const Visualization = ({
       case "area":
         return (
           <ResponsiveContainer width="100%" height={420}>
-            <AreaChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-              <XAxis dataKey={categoryKey} stroke="#94A3B8" />
-              <YAxis stroke="#94A3B8" />
-              <Tooltip />
+            <AreaChart
+              data={data}
+              margin={{
+                top: 10,
+                right: 20,
+                left: 0,
+                bottom: 10,
+              }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="#334155"
+                vertical={false}
+              />
+
+              <XAxis
+                dataKey={categoryKey}
+                stroke="#94A3B8"
+                tick={{ fill: "#94A3B8", fontSize: 12 }}
+                tickLine={false}
+                axisLine={{ stroke: "#334155" }}
+              />
+
+              <YAxis
+                stroke="#94A3B8"
+                tick={{ fill: "#94A3B8", fontSize: 12 }}
+                tickLine={false}
+                axisLine={false}
+              />
+
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#0f172a",
+                  border: "1px solid #334155",
+                  borderRadius: "10px",
+                  color: "#e2e8f0",
+                }}
+                labelStyle={{
+                  color: "#cbd5e1",
+                  fontWeight: 600,
+                }}
+              />
+
               <Legend />
 
               {numericKeys.map((key, index) => (
                 <Area
                   key={key}
+                  type="monotone"
                   dataKey={key}
                   stroke={COLORS[index % COLORS.length]}
                   fill={COLORS[index % COLORS.length]}
-                  fillOpacity={0.3}
+                  fillOpacity={0.18}
+                  strokeWidth={2.5}
                 />
               ))}
             </AreaChart>
           </ResponsiveContainer>
         );
 
-      case "pie":
+      case "pie": {
+        const pieData = getPieData(
+          data,
+          categoryKey,
+          numericKey
+        );
+
         return (
           <ResponsiveContainer width="100%" height={420}>
             <PieChart>
-              <Tooltip />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#0f172a",
+                  border: "1px solid #334155",
+                  borderRadius: "10px",
+                  color: "#e2e8f0",
+                }}
+              />
+
               <Legend />
 
               <Pie
-                data={getPieData(
-                  data,
-                  categoryKey,
-                  numericKey
-                )}
+                data={pieData}
                 dataKey="value"
                 nameKey="name"
-                outerRadius={140}
+                outerRadius={145}
+                innerRadius={55}
+                paddingAngle={2}
                 label
               >
-                {getPieData(
-                  data,
-                  categoryKey,
-                  numericKey
-                ).map((entry, index) => (
+                {pieData.map((entry, index) => (
                   <Cell
-                    key={index}
+                    key={`cell-${index}`}
                     fill={COLORS[index % COLORS.length]}
                   />
                 ))}
@@ -141,22 +237,61 @@ const Visualization = ({
             </PieChart>
           </ResponsiveContainer>
         );
+      }
 
       default:
         return (
           <ResponsiveContainer width="100%" height={420}>
-            <BarChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-              <XAxis dataKey={categoryKey} stroke="#94A3B8" />
-              <YAxis stroke="#94A3B8" />
-              <Tooltip />
+            <BarChart
+              data={data}
+              margin={{
+                top: 10,
+                right: 20,
+                left: 0,
+                bottom: 10,
+              }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="#334155"
+                vertical={false}
+              />
+
+              <XAxis
+                dataKey={categoryKey}
+                stroke="#94A3B8"
+                tick={{ fill: "#94A3B8", fontSize: 12 }}
+                tickLine={false}
+                axisLine={{ stroke: "#334155" }}
+              />
+
+              <YAxis
+                stroke="#94A3B8"
+                tick={{ fill: "#94A3B8", fontSize: 12 }}
+                tickLine={false}
+                axisLine={false}
+              />
+
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#0f172a",
+                  border: "1px solid #334155",
+                  borderRadius: "10px",
+                  color: "#e2e8f0",
+                }}
+                labelStyle={{
+                  color: "#cbd5e1",
+                  fontWeight: 600,
+                }}
+              />
+
               <Legend />
 
               {numericKeys.map((key, index) => (
                 <Bar
                   key={key}
                   dataKey={key}
-                  radius={[8, 8, 0, 0]}
+                  radius={[6, 6, 0, 0]}
                   fill={COLORS[index % COLORS.length]}
                 />
               ))}
@@ -167,9 +302,11 @@ const Visualization = ({
   };
 
   return (
-    <div className="rounded-2xl border border-slate-700 bg-slate-900 shadow-xl">
+    <div className="overflow-hidden rounded-2xl border border-slate-700/50 bg-slate-900/70 shadow-xl backdrop-blur-xl">
+
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-700 px-6 py-5">
+      <div className="flex items-center justify-between border-b border-slate-700/50 px-6 py-5">
+
         <div>
           <h2 className="text-lg font-semibold text-white">
             Visualization
@@ -180,27 +317,46 @@ const Visualization = ({
           </p>
         </div>
 
-        <div className="flex gap-2">
+        {/* Chart Controls */}
+        <div className="flex items-center gap-2 rounded-xl border border-slate-700/60 bg-slate-800/60 p-1.5">
+
           {chartTypes.map((type) => {
             const Icon = icons[type.value];
+
+            const isActive =
+              chartType === type.value;
 
             return (
               <button
                 key={type.value}
+                type="button"
                 onClick={() =>
                   onChartTypeChange(type.value)
                 }
-                className={`rounded-xl p-3 transition ${
-                  chartType === type.value
-                    ? "bg-cyan-500 text-slate-950"
-                    : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white"
-                }`}
                 title={type.label}
+                aria-label={`Use ${type.label} chart`}
+                className={`
+                  flex
+                  h-10
+                  w-10
+                  items-center
+                  justify-center
+                  rounded-lg
+                  transition-all
+                  duration-200
+
+                  ${
+                    isActive
+                      ? "bg-cyan-500 text-slate-950 shadow-md"
+                      : "text-slate-400 hover:bg-slate-700 hover:text-white"
+                  }
+                `}
               >
-                <Icon size={18} />
+                <Icon className="h-5 w-5" />
               </button>
             );
           })}
+
         </div>
       </div>
 
@@ -208,6 +364,7 @@ const Visualization = ({
       <div className="p-6">
         {renderChart()}
       </div>
+
     </div>
   );
 };
