@@ -8,16 +8,7 @@ const ResultTable = ({
     columns.length > 0 && rows.length > 0;
 
   return (
-    <div
-      className="
-        overflow-hidden
-        rounded-2xl
-        border
-        border-slate-700/60
-        bg-slate-900
-        shadow-xl
-      "
-    >
+    <div className="min-w-0 max-w-full overflow-hidden rounded-2xl border border-slate-700/50 bg-slate-900/70 backdrop-blur-xl">
       {/* Header */}
       <div
         className="

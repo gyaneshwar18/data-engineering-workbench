@@ -2,7 +2,9 @@ import { useEffect, useRef } from "react";
 import Editor from "@monaco-editor/react";
 import { Database } from "lucide-react";
 
-import { registerSqlCompletionProvider } from "../utils/sqlCompletionProvider";
+import {
+  registerSqlCompletionProvider,
+} from "../utils/sqlCompletionProvider";
 
 const SqlEditor = ({
   value,
@@ -157,10 +159,15 @@ const SqlEditor = ({
   return (
     <div
       className="
+        min-w-0
+        w-full
+        max-w-full
         overflow-hidden
+
         rounded-2xl
         border
         border-slate-700/50
+
         bg-slate-900/70
         shadow-xl
         backdrop-blur-xl
@@ -173,25 +180,32 @@ const SqlEditor = ({
       <div
         className="
           flex
+          min-w-0
           items-center
           justify-between
+          gap-4
+
           border-b
           border-slate-700/50
+
           bg-slate-900/80
+
           px-6
           py-4
         "
       >
         {/* Left */}
-        <div className="flex items-center gap-3">
 
+        <div className="flex min-w-0 items-center gap-3">
           <div
             className="
               flex
               h-9
               w-9
+              shrink-0
               items-center
               justify-center
+
               rounded-lg
               border
               border-cyan-500/20
@@ -201,27 +215,30 @@ const SqlEditor = ({
             <Database className="h-5 w-5 text-cyan-400" />
           </div>
 
-          <div>
+          <div className="min-w-0">
             <h2 className="text-sm font-semibold text-white">
               SQL Editor
             </h2>
 
-            <p className="mt-0.5 text-sm text-slate-400">
+            <p className="mt-0.5 truncate text-sm text-slate-400">
               Write and execute PostgreSQL queries
             </p>
           </div>
-
         </div>
 
         {/* Right */}
+
         <span
           className="
+            shrink-0
             rounded-full
             border
             border-emerald-500/20
             bg-emerald-500/10
+
             px-3
             py-1
+
             text-xs
             font-medium
             text-emerald-400
@@ -235,21 +252,29 @@ const SqlEditor = ({
       {/* Monaco Editor                                     */}
       {/* ================================================= */}
 
-      <div className="bg-[#0B0D10]">
+      <div
+        className="
+          min-w-0
+          w-full
+          max-w-full
+          overflow-hidden
 
+          bg-[#0B0D10]
+        "
+      >
         <Editor
           height="420px"
           language="sql"
-
           value={value}
-
           onChange={(v) => onChange(v || "")}
-
           onMount={handleEditorDidMount}
-
           theme="sql-dark"
 
           options={{
+            /* --------------------------------------- */
+            /* Layout                                  */
+            /* --------------------------------------- */
+
             automaticLayout: true,
 
             /* --------------------------------------- */
@@ -287,6 +312,10 @@ const SqlEditor = ({
             /* Text                                    */
             /* --------------------------------------- */
 
+            /*
+             * Keep long SQL inside Monaco.
+             * It must never expand the page width.
+             */
             wordWrap: "on",
 
             scrollBeyondLastLine: false,
@@ -349,6 +378,7 @@ const SqlEditor = ({
               verticalScrollbarSize: 8,
               horizontalScrollbarSize: 8,
               useShadows: false,
+              alwaysConsumeMouseWheel: false,
             },
 
             /* --------------------------------------- */
@@ -403,7 +433,6 @@ const SqlEditor = ({
             selectOnLineNumbers: true,
           }}
         />
-
       </div>
     </div>
   );
