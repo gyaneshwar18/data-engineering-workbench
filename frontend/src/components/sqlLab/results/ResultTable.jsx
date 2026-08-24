@@ -83,14 +83,8 @@ const ResultTable = ({
 
       {/* Table */}
       {hasData ? (
-        <div
-          className="
-            max-h-[520px]
-            overflow-auto
-          "
-        >
-          <table className="min-w-full border-collapse">
-
+        <div className="min-w-0 max-w-full overflow-auto">
+          <table className="w-max min-w-full border-collapse">
             {/* Header */}
             <thead className="sticky top-0 z-10">
 
@@ -153,7 +147,7 @@ const ResultTable = ({
                       "
                     >
                       {row[column] !== null &&
-                      row[column] !== undefined ? (
+                        row[column] !== undefined ? (
                         String(row[column])
                       ) : (
                         <span className="text-slate-600">
