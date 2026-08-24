@@ -53,6 +53,10 @@ const Visualization = ({
 
   const numericKey = numericKeys[0];
 
+  /* ================================================== */
+  /* AXIS                                                */
+  /* ================================================== */
+
   const renderXAxis = () => (
     <XAxis
       dataKey={categoryKey}
@@ -79,8 +83,13 @@ const Visualization = ({
       }}
       tickLine={false}
       axisLine={false}
+      width={55}
     />
   );
+
+  /* ================================================== */
+  /* TOOLTIP                                             */
+  /* ================================================== */
 
   const renderTooltip = () => (
     <Tooltip
@@ -97,34 +106,160 @@ const Visualization = ({
     />
   );
 
-  const renderChart = () => {
-    if (!canRender) {
-      return (
-        <div className="flex min-h-[420px] flex-col items-center justify-center px-6 text-center">
+  /* ================================================== */
+  /* EMPTY STATE                                         */
+  /* ================================================== */
+
+  if (!canRender) {
+    return (
+      <div
+        className="
+          block
+          w-full
+          min-w-0
+          max-w-full
+          overflow-hidden
+
+          rounded-2xl
+          border
+          border-slate-700
+
+          bg-slate-900
+
+          shadow-xl
+        "
+      >
+        {/* Header */}
+
+        <div
+          className="
+            flex
+            w-full
+            min-w-0
+            max-w-full
+
+            flex-wrap
+            items-center
+            justify-between
+            gap-4
+
+            border-b
+            border-slate-700
+
+            px-6
+            py-5
+          "
+        >
+          <div className="min-w-0">
+            <h2 className="text-lg font-semibold text-white">
+              Visualization
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-400">
+              Visual representation of SQL query results.
+            </p>
+          </div>
+
+          <div className="flex shrink-0 gap-2">
+            {chartTypes.map((type) => {
+              const Icon = icons[type.value];
+
+              return (
+                <button
+                  key={type.value}
+                  type="button"
+                  onClick={() =>
+                    onChartTypeChange?.(type.value)
+                  }
+                  className={`
+                    rounded-xl
+                    p-3
+                    transition
+
+                    ${
+                      chartType === type.value
+                        ? "bg-cyan-500 text-slate-950"
+                        : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white"
+                    }
+                  `}
+                  title={type.label}
+                  aria-label={type.label}
+                >
+                  <Icon size={18} />
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Empty state */}
+
+        <div
+          className="
+            flex
+            min-h-[420px]
+            w-full
+            min-w-0
+            max-w-full
+
+            flex-col
+            items-center
+            justify-center
+
+            overflow-hidden
+
+            px-6
+            text-center
+          "
+        >
           <BarChart3 className="mb-4 h-12 w-12 text-slate-600" />
 
           <h3 className="text-lg font-semibold text-slate-300">
             No Data Available
           </h3>
 
-          <p className="mt-2 max-w-md text-sm leading-6 text-slate-500">
+          <p
+            className="
+              mt-2
+              max-w-md
+              text-sm
+              leading-6
+              text-slate-500
+            "
+          >
             {reason ||
               "Execute a SQL query with suitable data to visualize the results."}
           </p>
         </div>
-      );
-    }
+      </div>
+    );
+  }
+
+  /* ================================================== */
+  /* CHART                                               */
+  /* ================================================== */
+
+  const renderChart = () => {
+    /*
+     * IMPORTANT:
+     *
+     * ResponsiveContainer is inside a fixed-width
+     * bounded parent. This prevents Recharts from
+     * contributing an unexpected intrinsic width to
+     * the SQL Lab page.
+     */
 
     switch (chartType) {
-      /* ---------------------------------- */
-      /* Line Chart                         */
-      /* ---------------------------------- */
+      /* ================================================ */
+      /* LINE                                               */
+      /* ================================================ */
 
       case "line":
         return (
           <ResponsiveContainer
             width="100%"
             height={420}
+            minWidth={0}
           >
             <LineChart
               data={data}
@@ -164,15 +299,16 @@ const Visualization = ({
           </ResponsiveContainer>
         );
 
-      /* ---------------------------------- */
-      /* Area Chart                         */
-      /* ---------------------------------- */
+      /* ================================================ */
+      /* AREA                                               */
+      /* ================================================ */
 
       case "area":
         return (
           <ResponsiveContainer
             width="100%"
             height={420}
+            minWidth={0}
           >
             <AreaChart
               data={data}
@@ -214,9 +350,9 @@ const Visualization = ({
           </ResponsiveContainer>
         );
 
-      /* ---------------------------------- */
-      /* Pie Chart                          */
-      /* ---------------------------------- */
+      /* ================================================ */
+      /* PIE                                                */
+      /* ================================================ */
 
       case "pie": {
         const pieData = getPieData(
@@ -229,6 +365,7 @@ const Visualization = ({
           <ResponsiveContainer
             width="100%"
             height={420}
+            minWidth={0}
           >
             <PieChart>
               <Tooltip
@@ -255,7 +392,9 @@ const Visualization = ({
                   <Cell
                     key={`cell-${index}`}
                     fill={
-                      COLORS[index % COLORS.length]
+                      COLORS[
+                        index % COLORS.length
+                      ]
                     }
                   />
                 ))}
@@ -265,15 +404,16 @@ const Visualization = ({
         );
       }
 
-      /* ---------------------------------- */
-      /* Bar Chart                          */
-      /* ---------------------------------- */
+      /* ================================================ */
+      /* BAR                                                */
+      /* ================================================ */
 
       default:
         return (
           <ResponsiveContainer
             width="100%"
             height={420}
+            minWidth={0}
           >
             <BarChart
               data={data}
@@ -312,10 +452,52 @@ const Visualization = ({
     }
   };
 
+  /* ================================================== */
+  /* MAIN VISUALIZATION                                 */
+  /* ================================================== */
+
   return (
-    <div className="min-w-0 max-w-full overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-xl">
-      {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700 px-6 py-5">
+    <div
+      className="
+        block
+        w-full
+        min-w-0
+        max-w-full
+
+        overflow-hidden
+
+        rounded-2xl
+        border
+        border-slate-700
+
+        bg-slate-900
+
+        shadow-xl
+      "
+    >
+      {/* ================================================== */}
+      {/* HEADER                                             */}
+      {/* ================================================== */}
+
+      <div
+        className="
+          flex
+          w-full
+          min-w-0
+          max-w-full
+
+          flex-wrap
+          items-center
+          justify-between
+          gap-4
+
+          border-b
+          border-slate-700
+
+          px-6
+          py-5
+        "
+      >
         <div className="min-w-0">
           <h2 className="text-lg font-semibold text-white">
             Visualization
@@ -326,8 +508,17 @@ const Visualization = ({
           </p>
         </div>
 
-        {/* Chart Type Controls */}
-        <div className="flex shrink-0 gap-2">
+        {/* ================================================== */}
+        {/* CHART TYPE CONTROLS                               */}
+        {/* ================================================== */}
+
+        <div
+          className="
+            flex
+            shrink-0
+            gap-2
+          "
+        >
           {chartTypes.map((type) => {
             const Icon = icons[type.value];
 
@@ -338,11 +529,17 @@ const Visualization = ({
                 onClick={() =>
                   onChartTypeChange?.(type.value)
                 }
-                className={`rounded-xl p-3 transition ${
-                  chartType === type.value
-                    ? "bg-cyan-500 text-slate-950"
-                    : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white"
-                }`}
+                className={`
+                  rounded-xl
+                  p-3
+                  transition
+
+                  ${
+                    chartType === type.value
+                      ? "bg-cyan-500 text-slate-950"
+                      : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white"
+                  }
+                `}
                 title={type.label}
                 aria-label={type.label}
               >
@@ -353,9 +550,42 @@ const Visualization = ({
         </div>
       </div>
 
-      {/* Chart */}
-      <div className="min-w-0 max-w-full overflow-hidden p-6">
-        {renderChart()}
+      {/* ================================================== */}
+      {/* CHART VIEWPORT                                    */}
+      {/* ================================================== */}
+
+      <div
+        className="
+          block
+          w-full
+          min-w-0
+          max-w-full
+
+          overflow-hidden
+
+          p-4
+          sm:p-6
+        "
+      >
+        {/* ================================================== */}
+        {/* BOUNDED CHART CONTAINER                           */}
+        {/* ================================================== */}
+
+        <div
+          className="
+            relative
+            block
+
+            h-[420px]
+            w-full
+            min-w-0
+            max-w-full
+
+            overflow-hidden
+          "
+        >
+          {renderChart()}
+        </div>
       </div>
     </div>
   );

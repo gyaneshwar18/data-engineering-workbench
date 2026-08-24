@@ -1,52 +1,57 @@
-import { useCallback, useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+
 import sqlLabService from "../../../services/sqlLabService";
 
 const useSqlLab = () => {
-  /* ---------------------------------- */
-  /* Editor                             */
-  /* ---------------------------------- */
+  /* ================================================== */
+  /* Editor                                             */
+  /* ================================================== */
 
   const [sqlQuery, setSqlQuery] = useState("");
   const [loading, setLoading] = useState(false);
 
-  /* ---------------------------------- */
-  /* Query Results                      */
-  /* ---------------------------------- */
+  /* ================================================== */
+  /* Query Results                                      */
+  /* ================================================== */
 
   const [result, setResult] = useState({
     columns: [],
     rows: [],
   });
 
-  /* ---------------------------------- */
-  /* Visualization                     */
-  /* ---------------------------------- */
+  /* ================================================== */
+  /* Visualization                                     */
+  /* ================================================== */
 
   const [chartType, setChartType] = useState("bar");
 
-  /* ---------------------------------- */
-  /* Database Metadata                  */
-  /* ---------------------------------- */
+  /* ================================================== */
+  /* Database Metadata                                 */
+  /* ================================================== */
 
   const [tables, setTables] = useState([]);
   const [columns, setColumns] = useState({});
   const [uploadedTable, setUploadedTable] = useState("");
 
-  /* ---------------------------------- */
-  /* Query History                      */
-  /* ---------------------------------- */
+  /* ================================================== */
+  /* Query History                                      */
+  /* ================================================== */
 
   const [queryHistory, setQueryHistory] = useState([]);
 
-  /* ---------------------------------- */
-  /* Saved Queries                      */
-  /* ---------------------------------- */
+  /* ================================================== */
+  /* Saved Queries                                      */
+  /* ================================================== */
 
   const [savedQueries, setSavedQueries] = useState([]);
 
-  /* ---------------------------------- */
-  /* Dialog State                       */
-  /* ---------------------------------- */
+  /* ================================================== */
+  /* Dialog State                                       */
+  /* ================================================== */
 
   const [uploadOpen, setUploadOpen] = useState(false);
   const [tableExplorerOpen, setTableExplorerOpen] =
@@ -56,9 +61,9 @@ const useSqlLab = () => {
   const [savedQueriesOpen, setSavedQueriesOpen] =
     useState(false);
 
-  /* ---------------------------------- */
-  /* Load Database Metadata             */
-  /* ---------------------------------- */
+  /* ================================================== */
+  /* Load Database Metadata                             */
+  /* ================================================== */
 
   const loadMetadata = useCallback(async () => {
     try {
@@ -75,34 +80,74 @@ const useSqlLab = () => {
     }
   }, []);
 
-  useEffect(() => {
-    loadMetadata();
-  }, [loadMetadata]);
+  /* ================================================== */
+  /* Load Query History                                 */
+  /* ================================================== */
 
-  /* ---------------------------------- */
-  /* Add Query To History               */
-  /* ---------------------------------- */
+  const loadHistory = useCallback(async () => {
+    try {
+      const history =
+        await sqlLabService.fetchHistory();
 
-  const addToHistory = useCallback((query) => {
-    setQueryHistory((previous) => [
-      {
-        id: Date.now(),
-        query,
-        date: new Date().toLocaleDateString(),
-        time: new Date().toLocaleTimeString(),
-      },
-      ...previous,
-    ]);
+      setQueryHistory(
+        Array.isArray(history)
+          ? history
+          : []
+      );
+    } catch (error) {
+      console.error(
+        "Failed to load query history:",
+        error
+      );
+    }
   }, []);
 
-  /* ---------------------------------- */
-  /* Run Query                          */
-  /* ---------------------------------- */
+  /* ================================================== */
+  /* Load Saved Queries                                 */
+  /* ================================================== */
+
+  const loadSavedQueries = useCallback(async () => {
+    try {
+      const queries =
+        await sqlLabService.fetchSavedQueries();
+
+      setSavedQueries(
+        Array.isArray(queries)
+          ? queries
+          : []
+      );
+    } catch (error) {
+      console.error(
+        "Failed to load saved queries:",
+        error
+      );
+    }
+  }, []);
+
+  /* ================================================== */
+  /* Initial Loading                                    */
+  /* ================================================== */
+
+  useEffect(() => {
+    loadMetadata();
+    loadHistory();
+    loadSavedQueries();
+  }, [
+    loadMetadata,
+    loadHistory,
+    loadSavedQueries,
+  ]);
+
+  /* ================================================== */
+  /* Run Query                                          */
+  /* ================================================== */
 
   const runQuery = useCallback(async () => {
     const query = sqlQuery.trim();
 
-    if (!query || loading) return;
+    if (!query || loading) {
+      return;
+    }
 
     try {
       setLoading(true);
@@ -115,14 +160,17 @@ const useSqlLab = () => {
         rows: response?.rows || [],
       });
 
-      addToHistory(query);
+      /*
+       * The backend is now the source of truth
+       * for query history.
+       */
+      await loadHistory();
 
       /*
-       * Refresh metadata after schema-changing queries.
-       * This keeps Table Explorer and table suggestions
-       * synchronized with the database.
+       * Refresh metadata after schema changes.
        */
-      const normalizedQuery = query.toLowerCase();
+      const normalizedQuery =
+        query.toLowerCase();
 
       const changesSchema =
         normalizedQuery.startsWith("create ") ||
@@ -134,118 +182,125 @@ const useSqlLab = () => {
         await loadMetadata();
       }
     } catch (error) {
-      console.error("SQL query failed:", error);
+      console.error(
+        "SQL query failed:",
+        error
+      );
 
-      /*
-       * Clear previous results when the query fails.
-       * This prevents old results from looking like
-       * the result of the failed query.
-       */
       setResult({
         columns: [],
         rows: [],
       });
+
+      /*
+       * Even failed queries are stored by
+       * the backend, so refresh history here too.
+       */
+      await loadHistory();
     } finally {
       setLoading(false);
     }
   }, [
     sqlQuery,
     loading,
-    addToHistory,
+    loadHistory,
     loadMetadata,
   ]);
 
-  /* ---------------------------------- */
-  /* Save Query                         */
-  /* ---------------------------------- */
+  /* ================================================== */
+  /* Save Query                                         */
+  /* ================================================== */
 
-  const saveQuery = async () => {
+  const saveQuery = useCallback(async () => {
     const query = sqlQuery.trim();
 
-    if (!query) return;
+    if (!query) {
+      return;
+    }
 
     try {
       await sqlLabService.saveQuery(query);
 
-      setSavedQueries((previous) => [
-        {
-          id: Date.now(),
-          query,
-          saved_at: new Date().toLocaleString(),
-        },
-        ...previous,
-      ]);
+      /*
+       * Reload from backend so the real database
+       * record becomes the frontend state.
+       */
+      await loadSavedQueries();
     } catch (error) {
       console.error(
         "Failed to save query:",
         error
       );
     }
-  };
+  }, [
+    sqlQuery,
+    loadSavedQueries,
+  ]);
 
-  /* ---------------------------------- */
-  /* Upload Dataset                     */
-  /* ---------------------------------- */
+  /* ================================================== */
+  /* Upload Dataset                                     */
+  /* ================================================== */
 
-  const uploadDataset = async (file) => {
-    if (!file) return;
+  const uploadDataset = useCallback(
+    async (file) => {
+      if (!file) {
+        return;
+      }
 
-    try {
-      setLoading(true);
+      try {
+        setLoading(true);
 
-      const response =
-        await sqlLabService.uploadCSV(file);
+        const response =
+          await sqlLabService.uploadCSV(file);
 
-      setUploadedTable(
-        response?.table_name || ""
-      );
+        setUploadedTable(
+          response?.table_name ||
+          ""
+        );
 
-      /*
-       * New CSV table should immediately become
-       * available inside Table Explorer and
-       * SQL autocomplete.
-       */
-      await loadMetadata();
-    } catch (error) {
-      console.error(
-        "Dataset upload failed:",
-        error
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+        await loadMetadata();
+      } catch (error) {
+        console.error(
+          "Dataset upload failed:",
+          error
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [loadMetadata]
+  );
 
-  /* ---------------------------------- */
-  /* Export CSV                         */
-  /* ---------------------------------- */
+  /* ================================================== */
+  /* Export CSV                                         */
+  /* ================================================== */
 
   const escapeCSVValue = (value) => {
     if (
       value === null ||
-      value === undefined
+      value === undefined ||
+      value === ""
     ) {
       return "";
     }
 
     const stringValue = String(value);
 
-    /*
-     * Escape values containing:
-     * comma, quote, or newline.
-     */
     if (
       stringValue.includes(",") ||
       stringValue.includes('"') ||
       stringValue.includes("\n")
     ) {
-      return `"${stringValue.replaceAll('"', '""')}"`;
+      return `"${stringValue.replaceAll(
+        '"',
+        '""'
+      )}"`;
     }
 
     return stringValue;
   };
 
-  const exportCSV = () => {
+  const exportCSV = useCallback(() => {
     if (
       !result?.columns?.length ||
       !result?.rows?.length
@@ -253,26 +308,32 @@ const useSqlLab = () => {
       return;
     }
 
-    const headers = result.columns
-      .map(escapeCSVValue)
-      .join(",");
-
-    const csvRows = result.rows.map((row) =>
+    const headers =
       result.columns
-        .map((column) =>
-          escapeCSVValue(row[column])
-        )
-        .join(",")
-    );
+        .map(escapeCSVValue)
+        .join(",");
+
+    const csvRows =
+      result.rows.map((row) =>
+        result.columns
+          .map((column) =>
+            escapeCSVValue(row[column])
+          )
+          .join(",")
+      );
 
     const csv = [
       headers,
       ...csvRows,
     ].join("\n");
 
-    const blob = new Blob([csv], {
-      type: "text/csv;charset=utf-8;",
-    });
+    const blob = new Blob(
+      [csv],
+      {
+        type:
+          "text/csv;charset=utf-8;",
+      }
+    );
 
     const url =
       window.URL.createObjectURL(blob);
@@ -281,18 +342,21 @@ const useSqlLab = () => {
       document.createElement("a");
 
     link.href = url;
-    link.download = "query_result.csv";
+    link.download =
+      "query_result.csv";
 
     document.body.appendChild(link);
+
     link.click();
+
     document.body.removeChild(link);
 
     window.URL.revokeObjectURL(url);
-  };
+  }, [result]);
 
-  /* ---------------------------------- */
-  /* Dialog Controls                    */
-  /* ---------------------------------- */
+  /* ================================================== */
+  /* Dialog Controls                                    */
+  /* ================================================== */
 
   const openUpload = () =>
     setUploadOpen(true);
@@ -306,111 +370,150 @@ const useSqlLab = () => {
   const closeExplorer = () =>
     setTableExplorerOpen(false);
 
-  const openHistory = () =>
+  const openHistory = async () => {
+    await loadHistory();
     setHistoryOpen(true);
+  };
 
   const closeHistory = () =>
     setHistoryOpen(false);
 
-  const openSavedQueries = () =>
+  const openSavedQueries = async () => {
+    await loadSavedQueries();
     setSavedQueriesOpen(true);
+  };
 
   const closeSavedQueries = () =>
     setSavedQueriesOpen(false);
 
-  /* ---------------------------------- */
-  /* Run History Query                  */
-  /* ---------------------------------- */
+  /* ================================================== */
+  /* Run History Query                                  */
+  /* ================================================== */
 
-  const runHistoryQuery = async (query) => {
-    const selectedQuery = query?.trim();
+  const runHistoryQuery = useCallback(
+    async (query) => {
+      const selectedQuery =
+        query?.trim();
 
-    if (!selectedQuery) return;
+      if (!selectedQuery) {
+        return;
+      }
 
-    setSqlQuery(selectedQuery);
-    setHistoryOpen(false);
+      setSqlQuery(selectedQuery);
+      setHistoryOpen(false);
 
-    try {
-      setLoading(true);
+      try {
+        setLoading(true);
 
-      const response =
-        await sqlLabService.runQuery(
-          selectedQuery
+        const response =
+          await sqlLabService.runQuery(
+            selectedQuery
+          );
+
+        setResult({
+          columns:
+            response?.columns || [],
+          rows:
+            response?.rows || [],
+        });
+
+        await loadHistory();
+      } catch (error) {
+        console.error(
+          "History query failed:",
+          error
         );
 
-      setResult({
-        columns: response?.columns || [],
-        rows: response?.rows || [],
-      });
-    } catch (error) {
-      console.error(
-        "History query failed:",
-        error
-      );
+        setResult({
+          columns: [],
+          rows: [],
+        });
 
-      setResult({
-        columns: [],
-        rows: [],
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+        await loadHistory();
+      } finally {
+        setLoading(false);
+      }
+    },
+    [loadHistory]
+  );
 
-  /* ---------------------------------- */
-  /* Run Saved Query                    */
-  /* ---------------------------------- */
+  /* ================================================== */
+  /* Run Saved Query                                    */
+  /* ================================================== */
 
-  const runSavedQuery = async (query) => {
-    const selectedQuery = query?.trim();
+  const runSavedQuery = useCallback(
+    async (query) => {
+      const selectedQuery =
+        query?.trim();
 
-    if (!selectedQuery) return;
+      if (!selectedQuery) {
+        return;
+      }
 
-    setSqlQuery(selectedQuery);
-    setSavedQueriesOpen(false);
+      setSqlQuery(selectedQuery);
+      setSavedQueriesOpen(false);
 
-    try {
-      setLoading(true);
+      try {
+        setLoading(true);
 
-      const response =
-        await sqlLabService.runQuery(
-          selectedQuery
+        const response =
+          await sqlLabService.runQuery(
+            selectedQuery
+          );
+
+        setResult({
+          columns:
+            response?.columns || [],
+          rows:
+            response?.rows || [],
+        });
+
+        await loadHistory();
+      } catch (error) {
+        console.error(
+          "Saved query failed:",
+          error
         );
 
-      setResult({
-        columns: response?.columns || [],
-        rows: response?.rows || [],
-      });
-    } catch (error) {
-      console.error(
-        "Saved query failed:",
-        error
-      );
+        setResult({
+          columns: [],
+          rows: [],
+        });
 
-      setResult({
-        columns: [],
-        rows: [],
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+        await loadHistory();
+      } finally {
+        setLoading(false);
+      }
+    },
+    [loadHistory]
+  );
 
-  /* ---------------------------------- */
-  /* Delete Saved Query                 */
-  /* ---------------------------------- */
+  /* ================================================== */
+  /* Delete Saved Query                                 */
+  /* ================================================== */
 
-  const deleteSavedQuery = (id) => {
-    setSavedQueries((previous) =>
-      previous.filter(
-        (item) => item.id !== id
-      )
+  const deleteSavedQuery =
+    useCallback(
+      async (id) => {
+        try {
+          await sqlLabService.deleteSavedQuery(
+            id
+          );
+
+          await loadSavedQueries();
+        } catch (error) {
+          console.error(
+            "Failed to delete saved query:",
+            error
+          );
+        }
+      },
+      [loadSavedQueries]
     );
-  };
 
-  /* ---------------------------------- */
-  /* Return                             */
-  /* ---------------------------------- */
+  /* ================================================== */
+  /* Return                                             */
+  /* ================================================== */
 
   return {
     /* Editor */
@@ -432,6 +535,8 @@ const useSqlLab = () => {
 
     /* History */
     queryHistory,
+
+    /* Saved Queries */
     savedQueries,
 
     /* Dialog State */

@@ -3,9 +3,9 @@ import axios from "axios";
 const API = import.meta.env.VITE_API_BASE_URL;
 
 const sqlLabService = {
-  // ===============================
-  // Metadata
-  // ===============================
+  /* ================================================== */
+  /* Metadata                                           */
+  /* ================================================== */
 
   async fetchTables() {
     const { data } = await axios.get(
@@ -44,9 +44,9 @@ const sqlLabService = {
     };
   },
 
-  // ===============================
-  // Query Execution
-  // ===============================
+  /* ================================================== */
+  /* Query Execution                                    */
+  /* ================================================== */
 
   async runQuery(query) {
     const { data } = await axios.post(
@@ -59,9 +59,21 @@ const sqlLabService = {
     return data;
   },
 
-  // ===============================
-  // Save Query
-  // ===============================
+  /* ================================================== */
+  /* Query History                                      */
+  /* ================================================== */
+
+  async fetchHistory() {
+    const { data } = await axios.get(
+      `${API}/sql-lab/history`
+    );
+
+    return data;
+  },
+
+  /* ================================================== */
+  /* Saved Queries                                      */
+  /* ================================================== */
 
   async saveQuery(query) {
     const { data } = await axios.post(
@@ -74,9 +86,25 @@ const sqlLabService = {
     return data;
   },
 
-  // ===============================
-  // Upload Dataset
-  // ===============================
+  async fetchSavedQueries() {
+    const { data } = await axios.get(
+      `${API}/sql-lab/saved`
+    );
+
+    return data;
+  },
+
+  async deleteSavedQuery(id) {
+    const { data } = await axios.delete(
+      `${API}/sql-lab/saved/${id}`
+    );
+
+    return data;
+  },
+
+  /* ================================================== */
+  /* Upload Dataset                                     */
+  /* ================================================== */
 
   async uploadCSV(file) {
     const formData = new FormData();
