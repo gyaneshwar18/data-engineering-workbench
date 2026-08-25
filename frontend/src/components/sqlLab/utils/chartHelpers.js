@@ -63,7 +63,7 @@ export const getChartData = (
   if (!columns.length || !rows.length) {
     return {
       canRender: false,
-      reason: "No data available.",
+      reason: "Run a SQL query to generate data for your visualization",
       data: [],
       categoryKey: "",
       numericKeys: [],
@@ -179,7 +179,7 @@ export const getDefaultChartType = (
 
 
 /* -------------------------------------------------- */
-/* Chart colors                                       */
+/* Chart colors                                       */ 
 /* -------------------------------------------------- */
 
 export const COLORS = [

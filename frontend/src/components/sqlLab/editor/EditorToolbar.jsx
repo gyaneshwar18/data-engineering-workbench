@@ -3,7 +3,10 @@ import {
   Save,
   Download,
   Loader2,
+  CheckCircle2,
 } from "lucide-react";
+
+import { useEffect, useState } from "react";
 
 const EditorToolbar = ({
   loading = false,
@@ -11,6 +14,30 @@ const EditorToolbar = ({
   onSave = () => {},
   onExport = () => {},
 }) => {
+  const [saved, setSaved] = useState(false);
+
+  const handleSave = async () => {
+    try {
+      await onSave();
+
+      setSaved(true);
+
+      // Return to Ready after 2.5 seconds
+      setTimeout(() => {
+        setSaved(false);
+      }, 2500);
+    } catch (error) {
+      console.error("Failed to save query:", error);
+    }
+  };
+
+  // If a new query starts running, clear saved state
+  useEffect(() => {
+    if (loading) {
+      setSaved(false);
+    }
+  }, [loading]);
+
   return (
     <div
       className="
@@ -31,7 +58,10 @@ const EditorToolbar = ({
         py-3
       "
     >
-      {/* Actions */}
+      {/* ================================================== */}
+      {/* ACTIONS                                            */}
+      {/* ================================================== */}
+
       <div className="flex items-center gap-2">
 
         {/* Run Query */}
@@ -83,7 +113,7 @@ const EditorToolbar = ({
         {/* Save Query */}
         <button
           type="button"
-          onClick={onSave}
+          onClick={handleSave}
           disabled={loading}
           className="
             inline-flex
@@ -159,7 +189,10 @@ const EditorToolbar = ({
         </button>
       </div>
 
-      {/* Execution Status */}
+      {/* ================================================== */}
+      {/* EXECUTION / ACTION STATUS                         */}
+      {/* ================================================== */}
+
       <div
         className="
           flex
@@ -176,31 +209,73 @@ const EditorToolbar = ({
           py-2
         "
       >
-        <span
-          className={`
-            h-2
-            w-2
-            rounded-full
+        {/* Running */}
+        {loading ? (
+          <>
+            <span
+              className="
+                h-2
+                w-2
+                rounded-full
+                animate-pulse
+                bg-amber-400
+              "
+            />
 
-            ${
-              loading
-                ? "animate-pulse bg-amber-400"
-                : "bg-emerald-400"
-            }
-          `}
-        />
+            <span
+              className="
+                text-sm
+                font-medium
+                text-amber-400
+              "
+            >
+              Executing Query...
+            </span>
+          </>
+        ) : saved ? (
+          /* Query Saved */
+          <>
+            <CheckCircle2
+              className="
+                h-4
+                w-4
+                text-emerald-400
+              "
+            />
 
-        <span
-          className="
-            text-sm
-            font-medium
-            text-slate-400
-          "
-        >
-          {loading
-            ? "Executing Query..."
-            : "Ready"}
-        </span>
+            <span
+              className="
+                text-sm
+                font-medium
+                text-emerald-400
+              "
+            >
+              Query Saved
+            </span>
+          </>
+        ) : (
+          /* Ready */
+          <>
+            <span
+              className="
+                h-2
+                w-2
+                rounded-full
+                bg-emerald-400
+              "
+            />
+
+            <span
+              className="
+                text-sm
+                font-medium
+                text-slate-400
+              "
+            >
+              Ready
+            </span>
+          </>
+        )}
       </div>
     </div>
   );

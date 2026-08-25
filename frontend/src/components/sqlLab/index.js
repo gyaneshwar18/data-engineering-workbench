@@ -1,5 +1,3 @@
-// Layout
-export { default as SqlLabHeader } from "./layout/SqlLabHeader";
 
 
 export { default as WorkspaceToolbar } from "./layout/WorkspaceToolbar";

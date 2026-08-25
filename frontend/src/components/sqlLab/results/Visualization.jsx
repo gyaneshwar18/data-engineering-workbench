@@ -304,7 +304,7 @@ const Visualization = ({
           text-slate-300
         "
       >
-        No Data Available
+        Ready to Visualize
       </h3>
 
       <p
@@ -317,7 +317,7 @@ const Visualization = ({
         "
       >
         {reason ||
-          "Execute a SQL query with suitable numeric data to visualize the results."}
+          "Run a SQL query to generate data for your visualization."}
       </p>
     </div>
   );
@@ -373,8 +373,8 @@ const Visualization = ({
               dataKey={key}
               stroke={
                 COLORS[
-                  index %
-                    COLORS.length
+                index %
+                COLORS.length
                 ]
               }
               strokeWidth={3}
@@ -442,14 +442,14 @@ const Visualization = ({
               dataKey={key}
               stroke={
                 COLORS[
-                  index %
-                    COLORS.length
+                index %
+                COLORS.length
                 ]
               }
               fill={
                 COLORS[
-                  index %
-                    COLORS.length
+                index %
+                COLORS.length
                 ]
               }
               fillOpacity={0.12}
@@ -516,8 +516,8 @@ const Visualization = ({
               dataKey={key}
               fill={
                 COLORS[
-                  index %
-                    COLORS.length
+                index %
+                COLORS.length
                 ]
               }
               radius={[
@@ -616,8 +616,8 @@ const Visualization = ({
                       key={`cell-${index}`}
                       fill={
                         COLORS[
-                          index %
-                            COLORS.length
+                        index %
+                        COLORS.length
                         ]
                       }
                     />
@@ -637,8 +637,8 @@ const Visualization = ({
               value: item.name,
               color:
                 COLORS[
-                  index %
-                    COLORS.length
+                index %
+                COLORS.length
                 ],
             })
           )}
@@ -758,7 +758,7 @@ const Visualization = ({
               {(() => {
                 const Icon =
                   icons[
-                    chartType
+                  chartType
                   ] ||
                   BarChart3;
 
@@ -830,7 +830,7 @@ const Visualization = ({
 
               const Icon =
                 icons[
-                  type.value
+                type.value
                 ];
 
               const active =
@@ -860,10 +860,9 @@ const Visualization = ({
                     transition-all
                     duration-200
 
-                    ${
-                      active
-                        ? "bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/20"
-                        : "text-slate-400 hover:bg-slate-700 hover:text-white"
+                    ${active
+                      ? "bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/20"
+                      : "text-slate-400 hover:bg-slate-700 hover:text-white"
                     }
                   `}
                   title={

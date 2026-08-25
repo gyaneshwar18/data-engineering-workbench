@@ -1,5 +1,5 @@
 import {
-  SqlLabHeader,
+  
   SqlEditor,
   EditorToolbar,
   WorkspaceToolbar,
@@ -120,9 +120,7 @@ const SqlLab = () => {
             {/* HEADER                                             */}
             {/* ================================================== */}
 
-            <section className="w-full min-w-0">
-              <SqlLabHeader />
-            </section>
+            
 
             {/* ================================================== */}
             {/* EDITOR                                             */}
