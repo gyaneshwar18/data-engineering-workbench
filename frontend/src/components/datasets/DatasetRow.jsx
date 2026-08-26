@@ -1,4 +1,4 @@
-import databaseIcon from "../../assets/datasets/database.svg";
+import databaseIcon from "../../assets/datasets/dataset.svg";
 import csvIcon from "../../assets/datasets/csv.svg";
 import apiIcon from "../../assets/datasets/api.svg";
 
