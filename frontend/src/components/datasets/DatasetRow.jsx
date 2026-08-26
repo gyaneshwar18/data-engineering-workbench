@@ -1,44 +1,66 @@
-import { useEffect, useState } from "react";
-import { getDatasetStats } from "../../api/datasetApi";
-
-import datasetIcon from "../../assets/datasets/dataset.svg";
+import databaseIcon from "../../assets/datasets/database.svg";
+import csvIcon from "../../assets/datasets/csv.svg";
+import apiIcon from "../../assets/datasets/api.svg";
 
 export default function DatasetRow({ dataset, onClick }) {
-  const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const {
+    table_name: tableName,
+    type = "table",
+    source = "database",
+    row_count: rowCount,
+    column_count: columnCount,
+    updated_at: updatedAt,
+  } = dataset || {};
 
-  const tableName = dataset?.table_name;
+  const getDatasetIcon = () => {
+    if (source === "csv" || type === "csv") {
+      return csvIcon;
+    }
 
-  useEffect(() => {
-    let active = true;
+    if (source === "api" || type === "api") {
+      return apiIcon;
+    }
 
-    const loadStats = async () => {
-      if (!tableName) return;
+    return databaseIcon;
+  };
 
-      try {
-        const data = await getDatasetStats(tableName);
+  const getSourceLabel = () => {
+    if (source === "csv") return "CSV dataset";
+    if (source === "api") return "API dataset";
 
-        if (active) {
-          setStats(data);
-        }
-      } catch (error) {
-        console.error(
-          `Failed to load stats for ${tableName}`,
-          error
-        );
-      } finally {
-        if (active) {
-          setLoading(false);
-        }
-      }
-    };
+    return "PostgreSQL dataset";
+  };
 
-    loadStats();
+  const getTypeLabel = () => {
+    if (type === "csv") return "CSV";
+    if (type === "api") return "API";
 
-    return () => {
-      active = false;
-    };
-  }, [tableName]);
+    return "Table";
+  };
+
+  const formatNumber = (value) => {
+    if (value === null || value === undefined) {
+      return "—";
+    }
+
+    return Number(value).toLocaleString();
+  };
+
+  const formatUpdatedAt = (value) => {
+    if (!value) {
+      return null;
+    }
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return null;
+    }
+
+    return date.toLocaleDateString();
+  };
+
+  const updatedLabel = formatUpdatedAt(updatedAt);
 
   return (
     <button
@@ -48,101 +70,159 @@ export default function DatasetRow({ dataset, onClick }) {
         group
         grid
         w-full
-        grid-cols-[minmax(260px,2fr)_140px_100px_100px_48px]
+        grid-cols-[minmax(300px,2fr)_140px_110px_110px_48px]
         items-center
+
         border-b
         border-slate-800/70
+
         px-5
         py-4
+
         text-left
-        transition-colors
+
+        transition-all
         duration-200
+
         hover:bg-slate-800/30
+
         last:border-b-0
       "
     >
-      {/* Dataset */}
+      {/* ================================================== */}
+      {/* DATASET                                            */}
+      {/* ================================================== */}
+
       <div className="flex min-w-0 items-center gap-3">
+        {/* Icon */}
         <div
           className="
             flex
-            h-9
-            w-9
+            h-10
+            w-10
             shrink-0
             items-center
             justify-center
-            rounded-lg
+
+            rounded-xl
+
             border
-            border-slate-700
-            bg-slate-800/60
-            transition-colors
-            group-hover:border-blue-500/30
+            border-slate-700/80
+
+            bg-slate-800/70
+
+            transition-all
+            duration-200
+
+            group-hover:border-blue-500/40
+            group-hover:bg-blue-500/10
           "
         >
           <img
-            src={datasetIcon}
+            src={getDatasetIcon()}
             alt=""
             className="h-5 w-5 object-contain"
           />
         </div>
 
+        {/* Name + metadata */}
         <div className="min-w-0">
-          <p className="truncate text-sm font-medium text-slate-200 transition-colors group-hover:text-white">
-            {tableName}
+          <p
+            className="
+              truncate
+
+              text-[15px]
+              font-medium
+
+              text-slate-200
+
+              transition-colors
+              duration-200
+
+              group-hover:text-white
+            "
+          >
+            {tableName || "Unnamed dataset"}
           </p>
 
-          <p className="mt-0.5 truncate text-xs text-slate-500">
-            PostgreSQL dataset
-          </p>
+          <div className="mt-1 flex items-center gap-2">
+            <span className="text-xs text-slate-500">
+              {getSourceLabel()}
+            </span>
+
+            {updatedLabel && (
+              <>
+                <span className="text-slate-700">•</span>
+
+                <span className="text-xs text-slate-500">
+                  Updated {updatedLabel}
+                </span>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Type */}
+      {/* ================================================== */}
+      {/* TYPE                                               */}
+      {/* ================================================== */}
+
       <div>
         <span
           className="
             inline-flex
-            rounded-md
+            items-center
+
+            rounded-lg
+
             border
             border-slate-700/80
-            bg-slate-800/40
-            px-2.5
-            py-1
+
+            bg-slate-800/50
+
+            px-3
+            py-1.5
+
             text-xs
-            text-slate-400
+            font-medium
+
+            text-slate-300
           "
         >
-          Table
+          {getTypeLabel()}
         </span>
       </div>
 
-      {/* Rows */}
-      <div className="text-sm text-slate-300">
-        {loading ? (
-          <span className="text-slate-600">—</span>
-        ) : (
-          stats?.row_count?.toLocaleString() ?? "—"
-        )}
+      {/* ================================================== */}
+      {/* ROWS                                               */}
+      {/* ================================================== */}
+
+      <div className="text-[14px] font-medium text-slate-300">
+        {formatNumber(rowCount)}
       </div>
 
-      {/* Columns */}
-      <div className="text-sm text-slate-300">
-        {loading ? (
-          <span className="text-slate-600">—</span>
-        ) : (
-          stats?.column_count?.toLocaleString() ?? "—"
-        )}
+      {/* ================================================== */}
+      {/* COLUMNS                                            */}
+      {/* ================================================== */}
+
+      <div className="text-[14px] font-medium text-slate-300">
+        {formatNumber(columnCount)}
       </div>
 
-      {/* Arrow */}
+      {/* ================================================== */}
+      {/* ARROW                                              */}
+      {/* ================================================== */}
+
       <div className="flex justify-end">
         <span
           className="
             text-lg
             text-slate-600
+
             transition-all
             duration-200
-            group-hover:translate-x-0.5
+
+            group-hover:translate-x-1
             group-hover:text-slate-300
           "
         >
