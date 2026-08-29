@@ -55,19 +55,20 @@ export default function Topbar() {
         to="/workbench/profile"
         aria-label="View Gyaneshwar's profile"
         className="
-          group
-          relative
-          flex
-          items-center
-          gap-3
-          rounded-lg
-          py-1.5
-          transition-all
-          duration-200
-          focus:outline-none
-          focus:ring-2
-          focus:ring-blue-500/30
-        "
+    group
+    relative
+
+    flex
+    items-center
+    gap-3
+
+    py-1.5
+
+    transition-all
+    duration-200
+
+    focus:outline-none
+  "
       >
         {/* ======================================================= */}
         {/* TOOLTIP                                                 */}
