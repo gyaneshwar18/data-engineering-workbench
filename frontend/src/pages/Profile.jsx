@@ -23,6 +23,8 @@ export default function Profile() {
         <div className="mt-8 space-y-8">
 
           <AboutSection />
+          
+          <EngineeringRoadmap />
 
           <ExperienceTimeline />
 
@@ -30,7 +32,7 @@ export default function Profile() {
 
           <Certifications />
 
-          <EngineeringRoadmap />
+          
 
           <ProjectsTimeline />
 
