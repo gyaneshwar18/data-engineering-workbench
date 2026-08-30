@@ -1,41 +1,91 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from sqlalchemy import func, text
+
 from app.database import get_db
-from app import models
-from app.models import Pipeline, PipelineRun
+from app.models import QueryHistory, Pipeline, PipelineRun
+
 
 router = APIRouter()
 
+
+# ============================================================
+# DASHBOARD STATS
+# ============================================================
+
 @router.get("/dashboard/stats")
-def get_dashboard_stats(db: Session = Depends(get_db)):
+def get_dashboard_stats(
+    db: Session = Depends(get_db),
+):
+    # --------------------------------------------------------
+    # SQL Queries
+    # --------------------------------------------------------
 
-    stats = db.query(models.DashboardStats).first()
+    sql_queries = (
+        db.query(func.count(QueryHistory.id))
+        .scalar()
+        or 0
+    )
 
-    if not stats:
-        stats = models.DashboardStats(
-            sql_queries=142,
-            datasets=12,
-            pipelines=5,
-            api_sources=3
-        )
-        db.add(stats)
-        db.commit()
-        db.refresh(stats)
+    # --------------------------------------------------------
+    # Datasets
+    # --------------------------------------------------------
+    #
+    # Count actual tables in the public PostgreSQL schema.
+    #
+    datasets = db.execute(
+        text("""
+            SELECT COUNT(*)
+            FROM information_schema.tables
+            WHERE table_schema = 'public'
+        """)
+    ).scalar() or 0
 
-    return stats
+    # --------------------------------------------------------
+    # Pipelines
+    # --------------------------------------------------------
+
+    pipelines = (
+        db.query(func.count(Pipeline.id))
+        .scalar()
+        or 0
+    )
+
+    # --------------------------------------------------------
+    # API Sources
+    # --------------------------------------------------------
+
+    api_sources = (
+        db.query(func.count(Pipeline.id))
+        .filter(Pipeline.source == "api")
+        .scalar()
+        or 0
+    )
+
+    return {
+        "sql_queries": sql_queries,
+        "datasets": datasets,
+        "pipelines": pipelines,
+        "api_sources": api_sources,
+    }
+
+
+# ============================================================
+# RECENT ACTIVITY
+# ============================================================
 
 @router.get("/dashboard/recent-activity")
 def get_recent_activity(
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     runs = (
         db.query(
             PipelineRun,
-            Pipeline.name
+            Pipeline.name,
         )
         .join(
             Pipeline,
-            PipelineRun.pipeline_id == Pipeline.id
+            PipelineRun.pipeline_id == Pipeline.id,
         )
         .order_by(
             PipelineRun.started_at.desc()
@@ -47,6 +97,7 @@ def get_recent_activity(
     activity = []
 
     for run, pipeline_name in runs:
+
         duration = None
 
         if run.started_at and run.finished_at:
