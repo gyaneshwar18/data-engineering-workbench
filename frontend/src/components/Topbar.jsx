@@ -1,50 +1,130 @@
 import { Link } from "react-router-dom";
+import { Menu, X } from "lucide-react";
 
-export default function Topbar() {
+export default function Topbar({
+  sidebarExpanded = false,
+  onMenuToggle,
+}) {
   return (
     <header
       className="
         flex
-        h-[72px]
+        h-[64px]
         w-full
+        shrink-0
         items-center
         justify-between
+
         border-b
         border-slate-800/80
+
         bg-slate-950/95
-        px-7
+
+        px-4
+        sm:px-5
+        md:h-[72px]
+        md:px-7
+
         backdrop-blur-xl
       "
     >
       {/* ========================================================= */}
-      {/* LEFT — WORKBENCH CONTEXT                                  */}
+      {/* LEFT — MOBILE MENU + WORKBENCH CONTEXT                   */}
       {/* ========================================================= */}
 
-      <div className="min-w-0">
-        <h2
-          className="
-            truncate
-            text-lg
-            font-semibold
-            leading-6
-            tracking-tight
-            text-slate-100
-          "
-        >
-          Data Engineering Workbench
-        </h2>
+      <div className="flex min-w-0 items-center gap-3">
+        {/* ======================================================= */}
+        {/* MOBILE SIDEBAR TOGGLE                                   */}
+        {/* ======================================================= */}
 
-        <p
+        <button
+          type="button"
+          onClick={onMenuToggle}
+          aria-label={
+            sidebarExpanded
+              ? "Collapse navigation"
+              : "Expand navigation"
+          }
+          aria-expanded={sidebarExpanded}
           className="
-            mt-0.5
-            text-xs
-            font-medium
-            leading-4
-            text-slate-500
+            flex
+            h-10
+            w-10
+            shrink-0
+            items-center
+            justify-center
+
+            rounded-lg
+
+            text-slate-400
+
+            transition-colors
+            duration-150
+
+            hover:bg-slate-800/60
+            hover:text-slate-100
+
+            focus:outline-none
+            focus-visible:ring-2
+            focus-visible:ring-blue-500/40
+
+            md:hidden
           "
         >
-          Platform overview
-        </p>
+          {sidebarExpanded ? (
+            <X
+              size={20}
+              strokeWidth={1.8}
+            />
+          ) : (
+            <Menu
+              size={20}
+              strokeWidth={1.8}
+            />
+          )}
+        </button>
+
+        {/* ======================================================= */}
+        {/* WORKBENCH CONTEXT                                       */}
+        {/* ======================================================= */}
+
+        <div className="min-w-0">
+          <h2
+            className="
+              truncate
+
+              text-base
+              font-semibold
+              leading-5
+              tracking-tight
+
+              text-slate-100
+
+              sm:text-lg
+              sm:leading-6
+            "
+          >
+            Data Engineering Workbench
+          </h2>
+
+          <p
+            className="
+              mt-0.5
+
+              truncate
+
+              text-[11px]
+              font-medium
+              leading-4
+
+              text-slate-500
+
+              sm:text-xs
+            "
+          >
+            Platform overview
+          </p>
+        </div>
       </div>
 
       {/* ========================================================= */}
@@ -55,20 +135,24 @@ export default function Topbar() {
         to="/workbench/profile"
         aria-label="View Gyaneshwar's profile"
         className="
-    group
-    relative
+          group
+          relative
 
-    flex
-    items-center
-    gap-3
+          flex
+          shrink-0
+          items-center
+          gap-2.5
 
-    py-1.5
+          py-1.5
+          pl-2
 
-    transition-all
-    duration-200
+          transition-all
+          duration-200
 
-    focus:outline-none
-  "
+          focus:outline-none
+          focus-visible:ring-2
+          focus-visible:ring-blue-500/30
+        "
       >
         {/* ======================================================= */}
         {/* TOOLTIP                                                 */}
@@ -77,28 +161,42 @@ export default function Topbar() {
         <span
           className="
             pointer-events-none
+
             invisible
+
             absolute
             right-0
             top-full
             z-50
+
             mt-1.5
+
             whitespace-nowrap
+
             rounded-lg
+
             border
             border-slate-700/80
+
             bg-slate-800
+
             px-3
             py-1.5
+
             text-xs
             font-medium
+
             text-slate-100
+
             shadow-lg
             shadow-black/30
+
             opacity-0
             translate-y-[-2px]
+
             transition-all
             duration-150
+
             group-hover:visible
             group-hover:translate-y-0
             group-hover:opacity-100
@@ -113,12 +211,16 @@ export default function Topbar() {
               absolute
               -top-1
               right-5
+
               h-2
               w-2
+
               rotate-45
+
               border-l
               border-t
               border-slate-700/80
+
               bg-slate-800
             "
           />
@@ -131,12 +233,17 @@ export default function Topbar() {
         <div
           className="
             relative
+
             h-10
             w-10
+
             shrink-0
+
             rounded-full
+
             transition-transform
             duration-200
+
             group-hover:scale-[1.03]
           "
         >
@@ -146,12 +253,18 @@ export default function Topbar() {
             className="
               absolute
               -inset-1.5
+
               rounded-full
+
               bg-blue-500/15
+
               opacity-80
+
               blur-md
+
               transition-all
               duration-200
+
               group-hover:bg-blue-500/25
               group-hover:opacity-100
             "
@@ -162,14 +275,21 @@ export default function Topbar() {
           <div
             className="
               relative
+
               h-10
               w-10
+
               overflow-hidden
+
               rounded-full
+
               bg-slate-900
+
               shadow-[0_0_14px_rgba(59,130,246,0.16)]
+
               transition-all
               duration-200
+
               group-hover:shadow-[0_0_22px_rgba(59,130,246,0.28)]
             "
           >
@@ -192,45 +312,23 @@ export default function Topbar() {
         <span
           className="
             hidden
+
             text-sm
             font-semibold
             tracking-tight
+
             text-slate-200
+
             transition-colors
             duration-200
+
             group-hover:text-white
+
             sm:block
           "
         >
           Gyaneshwar
         </span>
-
-        {/* ======================================================= */}
-        {/* NAVIGATION ARROW                                        */}
-        {/* ======================================================= */}
-
-        <svg
-          viewBox="0 0 20 20"
-          fill="none"
-          className="
-            h-4
-            w-4
-            text-slate-600
-            transition-all
-            duration-200
-            group-hover:translate-x-0.5
-            group-hover:text-blue-400
-          "
-          aria-hidden="true"
-        >
-          <path
-            d="M7.5 4.5L13 10L7.5 15.5"
-            stroke="currentColor"
-            strokeWidth="1.7"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
       </Link>
     </header>
   );

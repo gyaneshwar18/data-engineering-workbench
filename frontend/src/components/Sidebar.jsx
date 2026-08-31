@@ -36,13 +36,12 @@ const navigation = [
   },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ mobileOpen = false, onNavigate }) {
   return (
     <aside
-      className="
+      className={`
         flex
         h-screen
-        w-[248px]
         shrink-0
         flex-col
 
@@ -52,15 +51,39 @@ export default function Sidebar() {
         bg-slate-950
 
         text-slate-200
-      "
+
+        transition-[width]
+        duration-200
+        ease-out
+
+        w-[58px]
+        ${mobileOpen ? "sm:w-[58px]" : ""}
+
+        md:w-[248px]
+      `}
     >
       {/* ========================================================= */}
       {/* BRAND                                                     */}
       {/* ========================================================= */}
 
-      <div className="px-6 pb-7 pt-7">
-        <div className="flex items-center gap-3">
+      <div
+        className="
+          flex
+          shrink-0
+          items-center
+          justify-center
+
+          px-2
+          pb-7
+          pt-7
+
+          md:justify-start
+          md:px-6
+        "
+      >
+        <div className="flex min-w-0 items-center gap-3">
           {/* Brand mark */}
+
           <div
             className="
               flex
@@ -86,7 +109,9 @@ export default function Sidebar() {
             DE
           </div>
 
-          <div className="min-w-0">
+          {/* Brand text — desktop only */}
+
+          <div className="hidden min-w-0 md:block">
             <h1
               className="
                 truncate
@@ -114,10 +139,17 @@ export default function Sidebar() {
       </div>
 
       {/* ========================================================= */}
-      {/* NAVIGATION                                                 */}
+      {/* NAVIGATION                                                */}
       {/* ========================================================= */}
 
-      <nav className="flex-1 px-3">
+      <nav
+        aria-label="Workbench navigation"
+        className="
+          flex-1
+          px-2
+          md:px-3
+        "
+      >
         <div className="space-y-1">
           {navigation.map(
             ({ name, to, icon: Icon, end }) => (
@@ -125,6 +157,9 @@ export default function Sidebar() {
                 key={to}
                 to={to}
                 end={end}
+                onClick={onNavigate}
+                title={name}
+                aria-label={name}
                 className={({ isActive }) =>
                   [
                     "group",
@@ -133,13 +168,17 @@ export default function Sidebar() {
                     "h-11",
                     "w-full",
                     "items-center",
+                    "justify-center",
                     "gap-3",
                     "rounded-lg",
-                    "px-3",
+                    "px-2",
                     "text-sm",
                     "font-medium",
                     "transition-all",
                     "duration-150",
+
+                    "md:justify-start",
+                    "md:px-3",
 
                     isActive
                       ? [
@@ -157,14 +196,17 @@ export default function Sidebar() {
                 {({ isActive }) => (
                   <>
                     {/* Active indicator */}
+
                     {isActive && (
                       <span
                         className="
                           absolute
                           left-0
                           top-1/2
+
                           h-5
                           w-0.5
+
                           -translate-y-1/2
 
                           rounded-full
@@ -174,13 +216,17 @@ export default function Sidebar() {
                       />
                     )}
 
+                    {/* Route icon */}
+
                     <Icon
                       size={18}
                       strokeWidth={isActive ? 2.1 : 1.8}
                       className={`
                         shrink-0
+
                         transition-colors
                         duration-150
+
                         ${
                           isActive
                             ? "text-blue-400"
@@ -189,7 +235,53 @@ export default function Sidebar() {
                       `}
                     />
 
-                    <span>{name}</span>
+                    {/* Route name — desktop only */}
+
+                    <span className="hidden md:block">
+                      {name}
+                    </span>
+
+                    {/* Mobile tooltip */}
+
+                    <span
+                      className="
+                        pointer-events-none
+                        absolute
+                        left-full
+                        z-50
+                        ml-2
+
+                        hidden
+                        whitespace-nowrap
+
+                        rounded-md
+                        border
+                        border-slate-700/80
+
+                        bg-slate-800
+
+                        px-2.5
+                        py-1.5
+
+                        text-xs
+                        font-medium
+                        text-slate-100
+
+                        shadow-lg
+                        shadow-black/30
+
+                        opacity-0
+
+                        transition-opacity
+                        duration-150
+
+                        group-hover:opacity-100
+
+                        md:hidden
+                      "
+                    >
+                      {name}
+                    </span>
                   </>
                 )}
               </NavLink>
@@ -202,7 +294,15 @@ export default function Sidebar() {
       {/* FOOTER                                                     */}
       {/* ========================================================= */}
 
-      <div className="px-5 pb-5">
+      <div
+        className="
+          hidden
+          px-5
+          pb-5
+
+          md:block
+        "
+      >
         <div
           className="
             border-t
