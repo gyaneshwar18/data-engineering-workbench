@@ -220,7 +220,7 @@ export default function ProfileHeader() {
         <div className="flex shrink-0 flex-col gap-3">
 
           <Link
-            to="/dashboard"
+            to="/workbench"
             className="
               group
               flex
