@@ -1,15 +1,11 @@
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
 
-export default function Topbar({
-  sidebarExpanded = false,
-  onMenuToggle,
-}) {
+export default function Topbar() {
   return (
     <header
       className="
         flex
-        h-[64px]
+        h-[72px]
         w-full
         shrink-0
         items-center
@@ -21,147 +17,86 @@ export default function Topbar({
         bg-slate-950/95
 
         px-4
-        sm:px-5
-        md:h-[72px]
-        md:px-7
-
         backdrop-blur-xl
+
+        sm:px-5
+        md:px-6
+        lg:px-7
       "
     >
-      {/* ========================================================= */}
-      {/* LEFT — MOBILE MENU + WORKBENCH CONTEXT                   */}
-      {/* ========================================================= */}
-
-      <div className="flex min-w-0 items-center gap-3">
-        {/* ======================================================= */}
-        {/* MOBILE SIDEBAR TOGGLE                                   */}
-        {/* ======================================================= */}
-
-        <button
-          type="button"
-          onClick={onMenuToggle}
-          aria-label={
-            sidebarExpanded
-              ? "Collapse navigation"
-              : "Expand navigation"
-          }
-          aria-expanded={sidebarExpanded}
+      {/* Application identity */}
+      <div className="min-w-0">
+        {/* Desktop */}
+        <h2
           className="
-            flex
-            h-10
-            w-10
-            shrink-0
-            items-center
-            justify-center
-
-            rounded-lg
-
-            text-slate-400
-
-            transition-colors
-            duration-150
-
-            hover:bg-slate-800/60
-            hover:text-slate-100
-
-            focus:outline-none
-            focus-visible:ring-2
-            focus-visible:ring-blue-500/40
-
-            md:hidden
+            hidden
+            text-lg
+            font-semibold
+            leading-6
+            tracking-tight
+            text-slate-100
+            lg:block
           "
         >
-          {sidebarExpanded ? (
-            <X
-              size={20}
-              strokeWidth={1.8}
-            />
-          ) : (
-            <Menu
-              size={20}
-              strokeWidth={1.8}
-            />
-          )}
-        </button>
+          Data Engineering Workbench
+        </h2>
 
-        {/* ======================================================= */}
-        {/* WORKBENCH CONTEXT                                       */}
-        {/* ======================================================= */}
+        {/* Mobile / Tablet */}
+        <h2
+          className="
+            block
+            text-base
+            font-semibold
+            leading-6
+            tracking-tight
+            text-slate-100
+            lg:hidden
+          "
+        >
+          Workbench
+        </h2>
 
-        <div className="min-w-0">
-          <h2
-            className="
-              truncate
-
-              text-base
-              font-semibold
-              leading-5
-              tracking-tight
-
-              text-slate-100
-
-              sm:text-lg
-              sm:leading-6
-            "
-          >
-            Data Engineering Workbench
-          </h2>
-
-          <p
-            className="
-              mt-0.5
-
-              truncate
-
-              text-[11px]
-              font-medium
-              leading-4
-
-              text-slate-500
-
-              sm:text-xs
-            "
-          >
-            Platform overview
-          </p>
-        </div>
+        <p
+          className="
+            mt-0.5
+            text-[11px]
+            font-medium
+            leading-4
+            text-slate-500
+            sm:text-xs
+          "
+        >
+          Platform overview
+        </p>
       </div>
 
-      {/* ========================================================= */}
-      {/* RIGHT — PERSONAL PROFILE                                  */}
-      {/* ========================================================= */}
-
+      {/* Profile */}
       <Link
         to="/workbench/profile"
         aria-label="View Gyaneshwar's profile"
         className="
           group
           relative
-
+          ml-3
           flex
           shrink-0
           items-center
-          gap-2.5
-
+          gap-2
           py-1.5
-          pl-2
 
           transition-all
           duration-200
 
           focus:outline-none
-          focus-visible:ring-2
-          focus-visible:ring-blue-500/30
+
+          sm:ml-4
+          sm:gap-3
         "
       >
-        {/* ======================================================= */}
-        {/* TOOLTIP                                                 */}
-        {/* ======================================================= */}
-
+        {/* Profile tooltip */}
         <span
           className="
             pointer-events-none
-
             invisible
 
             absolute
@@ -174,7 +109,6 @@ export default function Topbar({
             whitespace-nowrap
 
             rounded-lg
-
             border
             border-slate-700/80
 
@@ -185,7 +119,6 @@ export default function Topbar({
 
             text-xs
             font-medium
-
             text-slate-100
 
             shadow-lg
@@ -203,63 +136,36 @@ export default function Topbar({
           "
         >
           View my profile
-
-          {/* Tooltip pointer */}
-
-          <span
-            className="
-              absolute
-              -top-1
-              right-5
-
-              h-2
-              w-2
-
-              rotate-45
-
-              border-l
-              border-t
-              border-slate-700/80
-
-              bg-slate-800
-            "
-          />
         </span>
 
-        {/* ======================================================= */}
-        {/* AVATAR                                                  */}
-        {/* ======================================================= */}
-
+        {/* Avatar */}
         <div
           className="
             relative
-
-            h-10
-            w-10
-
+            h-9
+            w-9
             shrink-0
-
             rounded-full
 
             transition-transform
             duration-200
 
             group-hover:scale-[1.03]
+
+            sm:h-10
+            sm:w-10
           "
         >
-          {/* Soft premium glow */}
-
+          {/* Subtle avatar glow */}
           <div
             className="
               absolute
               -inset-1.5
-
               rounded-full
 
               bg-blue-500/15
 
               opacity-80
-
               blur-md
 
               transition-all
@@ -270,17 +176,12 @@ export default function Topbar({
             "
           />
 
-          {/* Avatar image */}
-
           <div
             className="
               relative
-
-              h-10
-              w-10
-
+              h-9
+              w-9
               overflow-hidden
-
               rounded-full
 
               bg-slate-900
@@ -291,6 +192,9 @@ export default function Topbar({
               duration-200
 
               group-hover:shadow-[0_0_22px_rgba(59,130,246,0.28)]
+
+              sm:h-10
+              sm:w-10
             "
           >
             <img
@@ -305,18 +209,13 @@ export default function Topbar({
           </div>
         </div>
 
-        {/* ======================================================= */}
-        {/* NAME                                                    */}
-        {/* ======================================================= */}
-
+        {/* Profile name */}
         <span
           className="
             hidden
-
             text-sm
             font-semibold
             tracking-tight
-
             text-slate-200
 
             transition-colors
@@ -329,6 +228,36 @@ export default function Topbar({
         >
           Gyaneshwar
         </span>
+
+        {/* Profile navigation indicator */}
+        <svg
+          viewBox="0 0 20 20"
+          fill="none"
+          className="
+            hidden
+            h-4
+            w-4
+
+            text-slate-600
+
+            transition-all
+            duration-200
+
+            group-hover:translate-x-0.5
+            group-hover:text-blue-400
+
+            sm:block
+          "
+          aria-hidden="true"
+        >
+          <path
+            d="M7.5 4.5L13 10L7.5 15.5"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
       </Link>
     </header>
   );

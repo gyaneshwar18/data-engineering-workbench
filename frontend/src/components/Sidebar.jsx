@@ -5,6 +5,7 @@ import {
   Database,
   Workflow,
   Table,
+  Menu,
 } from "lucide-react";
 
 const navigation = [
@@ -36,7 +37,11 @@ const navigation = [
   },
 ];
 
-export default function Sidebar({ mobileOpen = false, onNavigate }) {
+export default function Sidebar({
+  expanded = false,
+  onToggle,
+  onNavigate,
+}) {
   return (
     <aside
       className={`
@@ -56,34 +61,46 @@ export default function Sidebar({ mobileOpen = false, onNavigate }) {
         duration-200
         ease-out
 
-        w-[58px]
-        ${mobileOpen ? "sm:w-[58px]" : ""}
+        ${expanded ? "w-[200px]" : "w-[60px]"}
 
-        md:w-[248px]
+        lg:w-[248px]
       `}
     >
-      {/* ========================================================= */}
-      {/* BRAND                                                     */}
-      {/* ========================================================= */}
-
+      {/* Sidebar header */}
       <div
-        className="
-          flex
+        className={`
           shrink-0
-          items-center
-          justify-center
 
-          px-2
-          pb-7
-          pt-7
+          pt-5
+          pb-5
 
-          md:justify-start
-          md:px-6
-        "
+          lg:px-6
+          lg:pb-7
+          lg:pt-7
+
+          ${
+            expanded
+              ? "px-3"
+              : "flex flex-col items-center px-2"
+          }
+        `}
       >
-        <div className="flex min-w-0 items-center gap-3">
-          {/* Brand mark */}
+        <div
+          className={`
+            flex
+            items-center
 
+            ${
+              expanded
+                ? "justify-between"
+                : "flex-col gap-3"
+            }
+
+            lg:justify-start
+            lg:gap-3
+          `}
+        >
+          {/* Brand */}
           <div
             className="
               flex
@@ -109,9 +126,26 @@ export default function Sidebar({ mobileOpen = false, onNavigate }) {
             DE
           </div>
 
-          {/* Brand text — desktop only */}
+          {/* Brand text */}
+          <div
+            className={`
+              min-w-0
+              overflow-hidden
 
-          <div className="hidden min-w-0 md:block">
+              transition-all
+              duration-200
+
+              lg:ml-0
+              lg:max-w-[160px]
+              lg:opacity-100
+
+              ${
+                expanded
+                  ? "ml-3 max-w-[145px] opacity-100"
+                  : "ml-0 max-w-0 opacity-0"
+              }
+            `}
+          >
             <h1
               className="
                 truncate
@@ -127,6 +161,7 @@ export default function Sidebar({ mobileOpen = false, onNavigate }) {
             <p
               className="
                 mt-0.5
+                truncate
                 text-xs
                 font-medium
                 text-slate-500
@@ -135,20 +170,76 @@ export default function Sidebar({ mobileOpen = false, onNavigate }) {
               Data Platform
             </p>
           </div>
+
+          {/* Sidebar toggle */}
+          <button
+            type="button"
+            onClick={onToggle}
+            aria-label={
+              expanded
+                ? "Collapse navigation"
+                : "Expand navigation"
+            }
+            aria-expanded={expanded}
+            className={`
+              flex
+              h-9
+              w-9
+              shrink-0
+              items-center
+              justify-center
+
+              rounded-lg
+
+              border
+              border-slate-800
+
+              text-slate-500
+
+              transition-all
+              duration-150
+
+              hover:border-slate-700
+              hover:bg-slate-800/60
+              hover:text-slate-200
+
+              focus:outline-none
+              focus:ring-2
+              focus:ring-blue-500/30
+
+              lg:hidden
+
+              ${
+                expanded
+                  ? "ml-2"
+                  : ""
+              }
+            `}
+          >
+            <Menu
+              size={18}
+              strokeWidth={1.8}
+              aria-hidden="true"
+            />
+          </button>
         </div>
       </div>
 
-      {/* ========================================================= */}
-      {/* NAVIGATION                                                */}
-      {/* ========================================================= */}
-
+      {/* Navigation */}
       <nav
-        aria-label="Workbench navigation"
-        className="
+        className={`
+          min-h-0
           flex-1
-          px-2
-          md:px-3
-        "
+
+          ${
+            expanded
+              ? "px-3"
+              : "px-2"
+          }
+
+          lg:px-3
+        `}
+        aria-label="Workbench navigation"
       >
         <div className="space-y-1">
           {navigation.map(
@@ -158,8 +249,7 @@ export default function Sidebar({ mobileOpen = false, onNavigate }) {
                 to={to}
                 end={end}
                 onClick={onNavigate}
-                title={name}
-                aria-label={name}
+                title={!expanded ? name : undefined}
                 className={({ isActive }) =>
                   [
                     "group",
@@ -168,17 +258,19 @@ export default function Sidebar({ mobileOpen = false, onNavigate }) {
                     "h-11",
                     "w-full",
                     "items-center",
-                    "justify-center",
-                    "gap-3",
                     "rounded-lg",
-                    "px-2",
                     "text-sm",
                     "font-medium",
-                    "transition-all",
+                    "transition-colors",
                     "duration-150",
 
-                    "md:justify-start",
-                    "md:px-3",
+                    expanded
+                      ? "gap-3 px-3"
+                      : "justify-center px-2",
+
+                    "lg:justify-start",
+                    "lg:gap-3",
+                    "lg:px-3",
 
                     isActive
                       ? [
@@ -196,31 +288,27 @@ export default function Sidebar({ mobileOpen = false, onNavigate }) {
                 {({ isActive }) => (
                   <>
                     {/* Active indicator */}
-
                     {isActive && (
                       <span
                         className="
                           absolute
                           left-0
                           top-1/2
-
                           h-5
                           w-0.5
-
                           -translate-y-1/2
-
                           rounded-full
-
                           bg-blue-400
                         "
                       />
                     )}
 
-                    {/* Route icon */}
-
+                    {/* Navigation icon */}
                     <Icon
                       size={18}
-                      strokeWidth={isActive ? 2.1 : 1.8}
+                      strokeWidth={
+                        isActive ? 2.1 : 1.8
+                      }
                       className={`
                         shrink-0
 
@@ -235,50 +323,24 @@ export default function Sidebar({ mobileOpen = false, onNavigate }) {
                       `}
                     />
 
-                    {/* Route name — desktop only */}
-
-                    <span className="hidden md:block">
-                      {name}
-                    </span>
-
-                    {/* Mobile tooltip */}
-
+                    {/* Navigation label */}
                     <span
-                      className="
-                        pointer-events-none
-                        absolute
-                        left-full
-                        z-50
-                        ml-2
-
-                        hidden
+                      className={`
+                        min-w-0
+                        truncate
                         whitespace-nowrap
 
-                        rounded-md
-                        border
-                        border-slate-700/80
+                        transition-all
+                        duration-200
 
-                        bg-slate-800
+                        lg:block
 
-                        px-2.5
-                        py-1.5
-
-                        text-xs
-                        font-medium
-                        text-slate-100
-
-                        shadow-lg
-                        shadow-black/30
-
-                        opacity-0
-
-                        transition-opacity
-                        duration-150
-
-                        group-hover:opacity-100
-
-                        md:hidden
-                      "
+                        ${
+                          expanded
+                            ? "max-w-[130px] opacity-100"
+                            : "max-w-0 opacity-0"
+                        }
+                      `}
                     >
                       {name}
                     </span>
@@ -290,45 +352,77 @@ export default function Sidebar({ mobileOpen = false, onNavigate }) {
         </div>
       </nav>
 
-      {/* ========================================================= */}
-      {/* FOOTER                                                     */}
-      {/* ========================================================= */}
-
+      {/* Sidebar footer */}
       <div
-        className="
-          hidden
-          px-5
+        className={`
+          shrink-0
           pb-5
 
-          md:block
-        "
+          transition-all
+          duration-200
+
+          ${
+            expanded
+              ? "px-4"
+              : "px-2"
+          }
+
+          lg:px-5
+        `}
       >
         <div
           className="
             border-t
             border-slate-800/70
-
             pt-4
           "
         >
           <p
-            className="
+            className={`
+              overflow-hidden
+
               text-[10px]
               font-medium
               uppercase
               tracking-[0.12em]
               text-slate-600
-            "
+
+              transition-all
+              duration-200
+
+              lg:max-w-full
+              lg:opacity-100
+
+              ${
+                expanded
+                  ? "max-w-full opacity-100"
+                  : "max-w-0 opacity-0"
+              }
+            `}
           >
             Workbench
           </p>
 
           <p
-            className="
+            className={`
               mt-1
+              overflow-hidden
+
               text-xs
               text-slate-500
-            "
+
+              transition-all
+              duration-200
+
+              lg:max-w-full
+              lg:opacity-100
+
+              ${
+                expanded
+                  ? "max-w-full opacity-100"
+                  : "max-w-0 opacity-0"
+              }
+            `}
           >
             v2.0
           </p>
