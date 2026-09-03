@@ -16,7 +16,6 @@ export default function AppLayout() {
 
   return (
     <div className="flex h-screen w-full min-w-0 overflow-hidden">
-
       {/* ========================================================= */}
       {/* SIDEBAR                                                   */}
       {/* ========================================================= */}
@@ -28,11 +27,10 @@ export default function AppLayout() {
       />
 
       {/* ========================================================= */}
-      {/* RIGHT APPLICATION AREA                                    */}
+      {/* APPLICATION AREA                                          */}
       {/* ========================================================= */}
 
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         {/* ======================================================= */}
         {/* TOPBAR                                                   */}
         {/* ======================================================= */}
@@ -43,15 +41,13 @@ export default function AppLayout() {
         />
 
         {/* ======================================================= */}
-        {/* MAIN CONTENT                                             */}
+        {/* MAIN CONTENT                                              */}
         {/* ======================================================= */}
 
         <main
           className="
-            min-h-0
             min-w-0
             flex-1
-
             overflow-x-hidden
             overflow-y-auto
 
@@ -70,7 +66,6 @@ export default function AppLayout() {
         >
           <Outlet />
         </main>
-
       </div>
     </div>
   );
