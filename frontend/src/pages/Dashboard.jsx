@@ -9,7 +9,6 @@ import PipelineTrendChart from "../components/dashboard/PipelineTrendChart";
 import RecentActivity from "../components/dashboard/RecentActivity";
 import QuickActions from "../components/dashboard/QuickActions";
 
-
 import {
   Database,
   Workflow,
@@ -20,18 +19,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid
-} from "recharts";
-
 export default function Dashboard() {
-
   const [stats, setStats] = useState(null);
   const [metrics, setMetrics] = useState(null);
   const [performance, setPerformance] = useState(null);
@@ -54,13 +42,13 @@ export default function Dashboard() {
         metricsRes,
         perfRes,
         pipelineRes,
-        trendRes
+        trendRes,
       ] = await Promise.all([
         axios.get(`${API}/dashboard/stats`),
         axios.get(`${API}/metrics/query-stats`),
         axios.get(`${API}/metrics/query-performance`),
         axios.get(`${API}/metrics/pipeline-analytics`),
-        axios.get(`${API}/metrics/pipeline-trends`)
+        axios.get(`${API}/metrics/pipeline-trends`),
       ]);
 
       setStats(statsRes.data);
@@ -69,7 +57,6 @@ export default function Dashboard() {
       setPipelineAnalytics(pipelineRes.data);
       setPipelineTrends(trendRes.data);
       setLastUpdated(new Date());
-
     } catch (err) {
       console.error("Dashboard error:", err);
     } finally {
@@ -83,19 +70,53 @@ export default function Dashboard() {
     !performance ||
     !pipelineAnalytics
   ) {
-    return <p className="text-white p-6">Loading dashboard...</p>;
+    return (
+      <p
+        className="
+          p-4
+          text-white
+          sm:p-5
+          md:p-6
+        "
+      >
+        Loading dashboard...
+      </p>
+    );
   }
 
   return (
-    <div className="p-6 text-white space-y-6">
+    <div
+      className="
+        min-w-0
+        space-y-5
+        p-4
+        text-white
 
-      {/* HEADER */}
-      <DashboardHeader onRefresh={fetchData} loading={loading} lastUpdated={lastUpdated} />
+        sm:space-y-6
+        sm:p-5
 
-      {/* 🔥 KPI CARDS */}
-      <div className="grid grid-cols-12 gap-6">
+        md:p-6
+      "
+    >
+      {/* Header */}
+      <DashboardHeader
+        onRefresh={fetchData}
+        loading={loading}
+        lastUpdated={lastUpdated}
+      />
 
-        <div className="col-span-12 md:col-span-6  xl:col-span-3">
+      {/* KPI Cards */}
+      <div
+        className="
+          grid
+          min-w-0
+          grid-cols-12
+          gap-4
+
+          md:gap-6
+        "
+      >
+        <div className="col-span-12 min-w-0 md:col-span-6 xl:col-span-3">
           <MetricCard
             title="SQL Queries"
             value={stats.sql_queries}
@@ -105,7 +126,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="col-span-12 md:col-span-6  xl:col-span-3">
+        <div className="col-span-12 min-w-0 md:col-span-6 xl:col-span-3">
           <MetricCard
             title="Pipelines"
             value={stats.pipelines}
@@ -115,7 +136,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="col-span-12 md:col-span-6  xl:col-span-3">
+        <div className="col-span-12 min-w-0 md:col-span-6 xl:col-span-3">
           <MetricCard
             title="Datasets"
             value={stats.datasets}
@@ -125,7 +146,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="col-span-12 md:col-span-6  xl:col-span-3">
+        <div className="col-span-12 min-w-0 md:col-span-6 xl:col-span-3">
           <MetricCard
             title="API Sources"
             value={stats.api_sources}
@@ -134,19 +155,35 @@ export default function Dashboard() {
             color="amber"
           />
         </div>
-
       </div>
 
-      {/* 🔥 PIPELINE HEALTH */}
-      <div>
+      {/* Pipeline Health */}
+      <section className="min-w-0">
+        <h2
+          className="
+            mb-3
+            text-lg
+            font-semibold
+            tracking-tight
 
-        <h2 className="text-xl font-semibold mb-4">
+            sm:mb-4
+            sm:text-xl
+          "
+        >
           Pipeline Health
         </h2>
 
-        <div className="grid grid-cols-12 gap-6">
+        <div
+          className="
+            grid
+            min-w-0
+            grid-cols-12
+            gap-4
 
-          <div className="col-span-12 md:col-span-6 xl:col-span-3">
+            md:gap-6
+          "
+        >
+          <div className="col-span-12 min-w-0 md:col-span-6 xl:col-span-3">
             <MetricCard
               title="Active Pipelines"
               value={pipelineAnalytics.active_pipelines}
@@ -156,7 +193,7 @@ export default function Dashboard() {
             />
           </div>
 
-          <div className="col-span-12 md:col-span-6 xl:col-span-3">
+          <div className="col-span-12 min-w-0 md:col-span-6 xl:col-span-3">
             <MetricCard
               title="Success Rate"
               value={`${pipelineAnalytics.success_rate}%`}
@@ -166,7 +203,7 @@ export default function Dashboard() {
             />
           </div>
 
-          <div className="col-span-12 md:col-span-6 xl:col-span-3">
+          <div className="col-span-12 min-w-0 md:col-span-6 xl:col-span-3">
             <MetricCard
               title="Successful Runs"
               value={pipelineAnalytics.successful_runs}
@@ -176,7 +213,7 @@ export default function Dashboard() {
             />
           </div>
 
-          <div className="col-span-12 md:col-span-6 xl:col-span-3">
+          <div className="col-span-12 min-w-0 md:col-span-6 xl:col-span-3">
             <MetricCard
               title="Failed Runs"
               value={pipelineAnalytics.failed_runs}
@@ -185,58 +222,48 @@ export default function Dashboard() {
               color="amber"
             />
           </div>
-
         </div>
-
-      </div>
-
-
+      </section>
 
       {/* Pipeline Trend */}
+      <div className="min-w-0">
+        <PipelineTrendChart data={pipelineTrends} />
+      </div>
 
-      <PipelineTrendChart
-        data={pipelineTrends}
-      />
+      {/* Analytics */}
+      <div
+        className="
+          grid
+          min-w-0
+          grid-cols-12
+          gap-4
 
-      {/* Analytics + Profile */}
-
-      <div className="grid grid-cols-12 gap-6">
-
+          md:gap-6
+        "
+      >
         {/* Query Analytics */}
-
-        <div className="col-span-12">
+        <div className="col-span-12 min-w-0">
           <QueryChart
             data={performance.queries_per_day}
             metrics={metrics}
           />
         </div>
 
-        {/* Profile */}
-
-
         {/* Quick Actions */}
-
-        <div className="col-span-12 xl:col-span-3">
+        <div className="col-span-12 min-w-0 xl:col-span-3">
           <QuickActions />
         </div>
 
         {/* GitHub */}
-
-        <div className="col-span-12 xl:col-span-9">
+        <div className="col-span-12 min-w-0 xl:col-span-9">
           <GithubHeatmap />
         </div>
-
       </div>
 
       {/* Recent Activity */}
-
-      <RecentActivity />
-
-
-
-
-
-
+      <div className="min-w-0">
+        <RecentActivity />
+      </div>
     </div>
   );
 }
