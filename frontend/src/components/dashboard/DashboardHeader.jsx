@@ -1,6 +1,5 @@
 import {
   RefreshCw,
-  LayoutDashboard,
   Clock3,
 } from "lucide-react";
 
@@ -34,8 +33,8 @@ export default function DashboardHeader({
         border
         border-slate-800
         bg-slate-900/90
-        px-4
-        py-4
+        px-3.5
+        py-3.5
 
         sm:rounded-3xl
         sm:px-5
@@ -51,23 +50,32 @@ export default function DashboardHeader({
         className="
           flex
           min-w-0
-          flex-col
-          gap-4
+          items-center
+          justify-between
+          gap-3
 
-          lg:flex-row
-          lg:items-center
-          lg:justify-between
-          lg:gap-6
+          sm:gap-5
         "
       >
-        {/* Left */}
-        <div className="flex min-w-0 items-center gap-3 sm:gap-4 md:gap-5">
+        {/* Identity */}
+        <div
+          className="
+            flex
+            min-w-0
+            flex-1
+            items-center
+            gap-2.5
+
+            sm:gap-4
+            md:gap-5
+          "
+        >
           <img
             src="/logos/dashboard.svg"
             alt="Data Engineering Workbench"
             className="
-              h-9
-              w-9
+              h-8
+              w-8
               shrink-0
               object-contain
 
@@ -82,26 +90,49 @@ export default function DashboardHeader({
           <div className="min-w-0">
             <h1
               className="
-                text-2xl
+                text-xl
                 font-bold
-                leading-tight
+                leading-6
                 tracking-tight
                 text-white
 
-                sm:text-3xl
+                sm:text-2xl
+                sm:leading-7
+
+                md:text-3xl
+                md:leading-9
               "
             >
               Dashboard
             </h1>
 
+            {/* Mobile */}
+            <p
+              className="
+                mt-0.5
+                truncate
+                text-[10px]
+                font-medium
+                leading-4
+                text-slate-500
+
+                sm:hidden
+              "
+            >
+              Data platform overview
+            </p>
+
+            {/* Desktop / Tablet */}
             <p
               className="
                 mt-1
-                text-xs
+                hidden
+                truncate
+                text-sm
                 leading-5
                 text-slate-400
 
-                sm:text-sm
+                sm:block
               "
             >
               Operational overview of your data platform
@@ -109,60 +140,71 @@ export default function DashboardHeader({
           </div>
         </div>
 
-        {/* Right */}
+        {/* Controls */}
         <div
           className="
             flex
-            min-w-0
+            shrink-0
             items-center
-            justify-between
-            gap-3
+            gap-2
 
-            sm:justify-end
-            sm:gap-4
-
+            sm:gap-3
             md:gap-5
           "
         >
           <div
             className="
               flex
-              min-w-0
-              shrink
+              shrink-0
               items-center
-              gap-2
-              text-xs
+              gap-1.5
+              text-[10px]
+              font-medium
               text-slate-400
 
+              sm:gap-2
               sm:text-sm
             "
           >
             <Clock3
-              size={15}
-              className="shrink-0"
+              size={13}
+              className="
+                shrink-0
+
+                sm:h-[15px]
+                sm:w-[15px]
+              "
             />
 
-            <span className="truncate">
+            {/* Compact mobile text */}
+            <span className="sm:hidden">
+              {formatLastUpdated(lastUpdated)}
+            </span>
+
+            {/* Full text on larger screens */}
+            <span className="hidden sm:inline">
               Updated {formatLastUpdated(lastUpdated)}
             </span>
           </div>
 
+          {/* Refresh */}
           <button
+            type="button"
             onClick={onRefresh}
             disabled={loading}
+            aria-label="Refresh dashboard data"
+            title="Refresh Data"
             className="
               flex
+              h-8
+              w-8
               shrink-0
               items-center
-              gap-2
+              justify-center
               rounded-lg
               border
               border-slate-700
               bg-slate-800
-              px-3
-              py-2
-              text-xs
-              font-medium
               text-white
               transition-all
 
@@ -172,21 +214,25 @@ export default function DashboardHeader({
               disabled:cursor-not-allowed
               disabled:opacity-50
 
+              sm:h-auto
+              sm:w-auto
+              sm:gap-2
               sm:rounded-xl
-              sm:px-4
+              sm:px-3.5
               sm:py-2.5
-              sm:text-sm
 
               md:px-5
               md:py-3
             "
           >
             <RefreshCw
-              size={16}
+              size={14}
               className={loading ? "animate-spin" : ""}
             />
 
-            <span>Refresh Data</span>
+            <span className="hidden text-sm font-medium sm:inline">
+              Refresh Data
+            </span>
           </button>
         </div>
       </div>
