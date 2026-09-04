@@ -1,7 +1,7 @@
 import { useState } from "react";
+import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
-import { Outlet } from "react-router-dom";
 
 export default function AppLayout() {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
@@ -16,33 +16,19 @@ export default function AppLayout() {
 
   return (
     <div className="flex h-screen w-full min-w-0 overflow-hidden">
-      {/* ========================================================= */}
-      {/* SIDEBAR                                                   */}
-      {/* ========================================================= */}
-
+      {/* Navigation */}
       <Sidebar
         expanded={sidebarExpanded}
         onToggle={toggleSidebar}
         onNavigate={collapseSidebar}
       />
 
-      {/* ========================================================= */}
-      {/* APPLICATION AREA                                          */}
-      {/* ========================================================= */}
-
+      {/* Application area */}
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        {/* ======================================================= */}
-        {/* TOPBAR                                                   */}
-        {/* ======================================================= */}
-
         <Topbar
           sidebarExpanded={sidebarExpanded}
           onMenuToggle={toggleSidebar}
         />
-
-        {/* ======================================================= */}
-        {/* MAIN CONTENT                                              */}
-        {/* ======================================================= */}
 
         <main
           className="
@@ -51,17 +37,16 @@ export default function AppLayout() {
             overflow-x-hidden
             overflow-y-auto
 
+            bg-linear-to-br
+            from-gray-100
+            to-gray-200
+            dark:from-gray-950
+            dark:to-gray-900
+
             p-4
             sm:p-5
             md:p-6
             lg:p-8
-
-            bg-linear-to-br
-            from-gray-100
-            to-gray-200
-
-            dark:from-gray-950
-            dark:to-gray-900
           "
         >
           <Outlet />

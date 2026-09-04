@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
+import { Menu } from "lucide-react";
 
-export default function Topbar() {
+export default function Topbar({
+  sidebarExpanded = false,
+  onMenuToggle,
+}) {
   return (
     <header
       className="
@@ -24,50 +28,86 @@ export default function Topbar() {
         lg:px-7
       "
     >
-      {/* Application identity */}
-      <div className="min-w-0">
-        {/* Desktop */}
-        <h2
+      {/* Left side */}
+      <div className="flex min-w-0 flex-1 items-center">
+        {/* Mobile / tablet navigation toggle */}
+        <button
+          type="button"
+          onClick={onMenuToggle}
+          aria-label={
+            sidebarExpanded
+              ? "Close navigation"
+              : "Open navigation"
+          }
+          aria-expanded={sidebarExpanded}
           className="
-            hidden
-            text-lg
-            font-semibold
-            leading-6
-            tracking-tight
-            text-slate-100
-            lg:block
-          "
-        >
-          Data Engineering Workbench
-        </h2>
+      mr-3
+      flex
+      h-10
+      w-10
+      shrink-0
+      items-center
+      justify-center
 
-        {/* Mobile / Tablet */}
-        <h2
-          className="
-            block
-            text-base
-            font-semibold
-            leading-6
-            tracking-tight
-            text-slate-100
-            lg:hidden
-          "
-        >
-          Workbench
-        </h2>
+      rounded-lg
 
-        <p
-          className="
-            mt-0.5
-            text-[11px]
-            font-medium
-            leading-4
-            text-slate-500
-            sm:text-xs
-          "
+      border
+      border-slate-800
+
+      text-slate-400
+
+      transition-colors
+      duration-150
+
+      hover:border-slate-700
+      hover:bg-slate-800/60
+      hover:text-slate-200
+
+      focus:outline-none
+      focus:ring-2
+      focus:ring-blue-500/30
+
+      lg:hidden
+    "
         >
-          Platform overview
-        </p>
+          <Menu
+            size={19}
+            strokeWidth={1.8}
+            aria-hidden="true"
+          />
+        </button>
+
+        {/* Application identity */}
+        <div className="min-w-0">
+          <h2
+            className="
+        truncate
+        text-base
+        font-semibold
+        leading-6
+        tracking-tight
+        text-slate-100
+
+        sm:text-lg
+      "
+          >
+            Data Foundry
+          </h2>
+
+          <p
+            className="
+        mt-0.5
+        text-[11px]
+        font-medium
+        leading-4
+        text-slate-500
+
+        sm:text-xs
+      "
+          >
+            Data Engineering Platform
+          </p>
+        </div>
       </div>
 
       {/* Profile */}
@@ -81,7 +121,7 @@ export default function Topbar() {
           flex
           shrink-0
           items-center
-          gap-2
+
           py-1.5
 
           transition-all
@@ -90,7 +130,6 @@ export default function Topbar() {
           focus:outline-none
 
           sm:ml-4
-          sm:gap-3
         "
       >
         {/* Profile tooltip */}
@@ -209,10 +248,12 @@ export default function Topbar() {
           </div>
         </div>
 
-        {/* Profile name */}
+        {/* Name — only when enough space exists */}
         <span
           className="
             hidden
+            ml-3
+
             text-sm
             font-semibold
             tracking-tight
@@ -223,7 +264,7 @@ export default function Topbar() {
 
             group-hover:text-white
 
-            sm:block
+            md:block
           "
         >
           Gyaneshwar
@@ -234,6 +275,7 @@ export default function Topbar() {
           viewBox="0 0 20 20"
           fill="none"
           className="
+            ml-1
             hidden
             h-4
             w-4
@@ -246,7 +288,7 @@ export default function Topbar() {
             group-hover:translate-x-0.5
             group-hover:text-blue-400
 
-            sm:block
+            md:block
           "
           aria-hidden="true"
         >
