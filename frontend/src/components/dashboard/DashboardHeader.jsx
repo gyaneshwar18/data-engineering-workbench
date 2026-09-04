@@ -29,94 +29,166 @@ export default function DashboardHeader({
   return (
     <div
       className="
-        rounded-3xl
+        min-w-0
+        rounded-2xl
         border
         border-slate-800
         bg-slate-900/90
-        px-8
-        py-6
+        px-4
+        py-4
+
+        sm:rounded-3xl
+        sm:px-5
+        sm:py-5
+
+        md:px-6
+        md:py-6
+
+        lg:px-8
       "
     >
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+      <div
+        className="
+          flex
+          min-w-0
+          flex-col
+          gap-4
 
+          lg:flex-row
+          lg:items-center
+          lg:justify-between
+          lg:gap-6
+        "
+      >
         {/* Left */}
-        <div className="flex items-center gap-5">
-
+        <div className="flex min-w-0 items-center gap-3 sm:gap-4 md:gap-5">
           <img
             src="/logos/dashboard.svg"
             alt="Data Engineering Workbench"
-            className="h-12 w-12 object-contain"
+            className="
+              h-9
+              w-9
+              shrink-0
+              object-contain
+
+              sm:h-10
+              sm:w-10
+
+              md:h-12
+              md:w-12
+            "
           />
 
-          <div>
+          <div className="min-w-0">
+            <h1
+              className="
+                text-2xl
+                font-bold
+                leading-tight
+                tracking-tight
+                text-white
 
-            <h1 className="text-3xl font-bold tracking-tight text-white">
+                sm:text-3xl
+              "
+            >
               Dashboard
             </h1>
 
-            <p className="mt-1 text-sm text-slate-400">
+            <p
+              className="
+                mt-1
+                text-xs
+                leading-5
+                text-slate-400
+
+                sm:text-sm
+              "
+            >
               Operational overview of your data platform
             </p>
-
           </div>
-
         </div>
 
         {/* Right */}
+        <div
+          className="
+            flex
+            min-w-0
+            items-center
+            justify-between
+            gap-3
 
-        <div className="flex items-center gap-5">
+            sm:justify-end
+            sm:gap-4
 
-          <div className="flex items-center gap-2 text-sm text-slate-400">
+            md:gap-5
+          "
+        >
+          <div
+            className="
+              flex
+              min-w-0
+              shrink
+              items-center
+              gap-2
+              text-xs
+              text-slate-400
 
-            <Clock3 size={15} />
+              sm:text-sm
+            "
+          >
+            <Clock3
+              size={15}
+              className="shrink-0"
+            />
 
-            <span>
+            <span className="truncate">
               Updated {formatLastUpdated(lastUpdated)}
             </span>
-
           </div>
 
           <button
             onClick={onRefresh}
             disabled={loading}
             className="
-      flex
-      items-center
-      gap-2
+              flex
+              shrink-0
+              items-center
+              gap-2
+              rounded-lg
+              border
+              border-slate-700
+              bg-slate-800
+              px-3
+              py-2
+              text-xs
+              font-medium
+              text-white
+              transition-all
 
-      rounded-xl
+              hover:border-blue-500/30
+              hover:bg-slate-700
 
-      border
-      border-slate-700
+              disabled:cursor-not-allowed
+              disabled:opacity-50
 
-      bg-slate-800
+              sm:rounded-xl
+              sm:px-4
+              sm:py-2.5
+              sm:text-sm
 
-      px-5
-      py-3
-
-      text-sm
-      font-medium
-      text-white
-
-      transition-all
-
-      hover:border-blue-500/30
-      hover:bg-slate-700
-
-      disabled:opacity-50
-      disabled:cursor-not-allowed
-    "
+              md:px-5
+              md:py-3
+            "
           >
             <RefreshCw
-              size={17}
+              size={16}
               className={loading ? "animate-spin" : ""}
             />
 
-            Refresh Data
+            <span>Refresh Data</span>
           </button>
-
         </div>
-
       </div>
     </div>
   );
