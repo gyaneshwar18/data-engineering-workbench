@@ -116,7 +116,7 @@ export default function Dashboard() {
           md:gap-6
         "
       >
-        <div className="col-span-12 min-w-0 md:col-span-6 xl:col-span-3">
+        <div className="col-span-6 min-w-0 xl:col-span-3">
           <MetricCard
             title="SQL Queries"
             value={stats.sql_queries}
@@ -126,7 +126,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="col-span-12 min-w-0 md:col-span-6 xl:col-span-3">
+        <div className="col-span-6 min-w-0 xl:col-span-3">
           <MetricCard
             title="Pipelines"
             value={stats.pipelines}
@@ -136,7 +136,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="col-span-12 min-w-0 md:col-span-6 xl:col-span-3">
+        <div className="col-span-6 min-w-0 xl:col-span-3">
           <MetricCard
             title="Datasets"
             value={stats.datasets}
@@ -146,7 +146,7 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="col-span-12 min-w-0 md:col-span-6 xl:col-span-3">
+        <div className="col-span-6 min-w-0 xl:col-span-3">
           <MetricCard
             title="API Sources"
             value={stats.api_sources}
@@ -183,7 +183,7 @@ export default function Dashboard() {
             md:gap-6
           "
         >
-          <div className="col-span-12 min-w-0 md:col-span-6 xl:col-span-3">
+          <div className="col-span-6 min-w-0 xl:col-span-3">
             <MetricCard
               title="Active Pipelines"
               value={pipelineAnalytics.active_pipelines}
@@ -193,7 +193,7 @@ export default function Dashboard() {
             />
           </div>
 
-          <div className="col-span-12 min-w-0 md:col-span-6 xl:col-span-3">
+          <div className="col-span-6 min-w-0 xl:col-span-3">
             <MetricCard
               title="Success Rate"
               value={`${pipelineAnalytics.success_rate}%`}
@@ -203,7 +203,7 @@ export default function Dashboard() {
             />
           </div>
 
-          <div className="col-span-12 min-w-0 md:col-span-6 xl:col-span-3">
+          <div className="col-span-6 min-w-0 xl:col-span-3">
             <MetricCard
               title="Successful Runs"
               value={pipelineAnalytics.successful_runs}
@@ -213,7 +213,7 @@ export default function Dashboard() {
             />
           </div>
 
-          <div className="col-span-12 min-w-0 md:col-span-6 xl:col-span-3">
+          <div className="col-span-6 min-w-0 xl:col-span-3">
             <MetricCard
               title="Failed Runs"
               value={pipelineAnalytics.failed_runs}

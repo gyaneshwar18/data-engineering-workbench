@@ -49,67 +49,101 @@ export default function MetricCard({
       }}
       className="
         h-full
-        min-h-[145px]
+        min-w-0
 
-        rounded-3xl
+        rounded-2xl
         border
         border-slate-800
 
         bg-slate-900/90
 
-        px-5
-        py-4
+        px-3.5
+        py-3.5
 
         transition-all
         duration-300
 
         hover:border-slate-700
         hover:shadow-lg
+
+        sm:rounded-3xl
+        sm:px-4
+        sm:py-4
+
+        md:px-5
       "
     >
-      <div className="flex items-start justify-between">
-
+      <div className="flex min-w-0 items-start justify-between gap-2.5 sm:gap-3">
         {/* Left */}
+        <div className="min-w-0 flex-1">
+          <p
+            className="
+              truncate
+              text-xs
+              font-medium
+              text-slate-400
 
-        <div className="flex-1 min-w-0">
-
-          <p className="text-sm font-medium text-slate-400">
+              sm:text-sm
+            "
+          >
             {title}
           </p>
 
-          <h2 className="mt-4 text-[2rem] xl:text-3xl font-semibold tracking-tight text-white leading-tight">
+          <h2
+            className="
+              mt-2
+              truncate
+              text-2xl
+              font-semibold
+              leading-tight
+              tracking-tight
+              text-white
+
+              sm:mt-3
+              sm:text-[2rem]
+
+              xl:text-3xl
+            "
+          >
             {value}
           </h2>
 
           {subtitle && (
             <p
               className={`
-                mt-1.5
-                text-sm
+                mt-1
+                truncate
+                text-[11px]
                 font-medium
+
+                sm:mt-1.5
+                sm:text-sm
+
                 ${theme.accent}
               `}
             >
               {subtitle}
             </p>
           )}
-
         </div>
 
         {/* Icon */}
-
         <div
           className={`
             flex
-            h-10
-            w-10
+            h-8
+            w-8
             shrink-0
             items-center
             justify-center
 
-            rounded-xl
+            rounded-lg
 
             border
+
+            sm:h-10
+            sm:w-10
+            sm:rounded-xl
 
             ${theme.bg}
             ${theme.border}
@@ -117,12 +151,16 @@ export default function MetricCard({
         >
           {Icon && (
             <Icon
-              size={18}
-              className={theme.icon}
+              size={16}
+              className={`
+                ${theme.icon}
+
+                sm:h-[18px]
+                sm:w-[18px]
+              `}
             />
           )}
         </div>
-
       </div>
     </motion.div>
   );
