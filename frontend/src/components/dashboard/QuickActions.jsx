@@ -43,15 +43,13 @@ export default function QuickActions() {
 
       setCreateOpen(false);
       setCreated(true);
-
     } catch (error) {
       console.error("Create pipeline error:", error);
 
       alert(
         error?.response?.data?.detail ||
-        "Failed to create pipeline."
+          "Failed to create pipeline."
       );
-
     } finally {
       setCreating(false);
     }
@@ -69,15 +67,13 @@ export default function QuickActions() {
 
       setUploadOpen(false);
       setDatasetUploaded(true);
-
     } catch (error) {
       console.error("Dataset upload failed:", error);
 
       alert(
         error?.response?.data?.detail ||
-        "Failed to upload dataset."
+          "Failed to upload dataset."
       );
-
     } finally {
       setUploading(false);
     }
@@ -86,33 +82,77 @@ export default function QuickActions() {
   return (
     <div
       className="
-        rounded-3xl
+        min-w-0
+        overflow-hidden
+        rounded-2xl
         border
         border-slate-800
         bg-slate-900/90
-        overflow-hidden
+        shadow-sm
+        transition-all
+        duration-300
+        hover:shadow-xl
+
+        sm:rounded-3xl
       "
     >
-
       {/* Header */}
 
-      <div className="px-6 py-5 border-b border-slate-800">
+      <div
+        className="
+          border-b
+          border-slate-800
+          px-3.5
+          py-3
 
-        <h2 className="text-lg font-semibold text-white">
+          sm:px-5
+          sm:py-4
+
+          md:px-6
+          md:py-5
+        "
+      >
+        <h2
+          className="
+            text-sm
+            font-semibold
+            leading-5
+            tracking-tight
+            text-white
+
+            sm:text-lg
+          "
+        >
           Quick Actions
         </h2>
 
-        <p className="mt-1 text-sm text-slate-400">
+        <p
+          className="
+            mt-0.5
+            truncate
+            text-[9px]
+            leading-4
+            text-slate-400
+
+            sm:mt-1
+            sm:text-sm
+          "
+        >
           Frequently used operations across your platform
         </p>
-
       </div>
-
 
       {/* Actions */}
 
-      <div className="p-4 space-y-2">
+      <div
+        className="
+          space-y-1.5
+          p-3
 
+          sm:space-y-2
+          sm:p-4
+        "
+      >
         {/* New Pipeline */}
 
         <ActionCard
@@ -125,7 +165,6 @@ export default function QuickActions() {
             setCreateOpen(true);
           }}
         />
-
 
         {/* Upload Dataset */}
 
@@ -140,7 +179,6 @@ export default function QuickActions() {
           }}
         />
 
-
         {/* SQL Lab */}
 
         <ActionCard
@@ -151,7 +189,6 @@ export default function QuickActions() {
           color="purple"
         />
 
-
         {/* Browse Datasets */}
 
         <ActionCard
@@ -161,29 +198,37 @@ export default function QuickActions() {
           to="/workbench/datasets"
           color="amber"
         />
-
       </div>
 
-
-      {/* -------------------------------------------------------- */}
       {/* Pipeline Success Message */}
-      {/* -------------------------------------------------------- */}
 
       {created && (
         <div
           className="
-            mx-4
-            mb-4
+            mx-3
+            mb-3
             rounded-xl
             border
             border-emerald-500/20
             bg-emerald-500/10
-            px-4
-            py-3
+            px-3
+            py-2.5
+
+            sm:mx-4
+            sm:mb-4
+            sm:px-4
+            sm:py-3
           "
         >
+          <p
+            className="
+              text-xs
+              font-medium
+              text-emerald-400
 
-          <p className="text-sm font-medium text-emerald-400">
+              sm:text-sm
+            "
+          >
             Pipeline created successfully.
           </p>
 
@@ -195,39 +240,49 @@ export default function QuickActions() {
             }}
             className="
               mt-1
-              text-xs
+              text-[10px]
               font-medium
               text-emerald-300
-              hover:text-emerald-200
               transition
+              hover:text-emerald-200
+
+              sm:text-xs
             "
           >
             View Pipelines →
           </button>
-
         </div>
       )}
 
-
-      {/* -------------------------------------------------------- */}
       {/* Dataset Success Message */}
-      {/* -------------------------------------------------------- */}
 
       {datasetUploaded && (
         <div
           className="
-            mx-4
-            mb-4
+            mx-3
+            mb-3
             rounded-xl
             border
             border-blue-500/20
             bg-blue-500/10
-            px-4
-            py-3
+            px-3
+            py-2.5
+
+            sm:mx-4
+            sm:mb-4
+            sm:px-4
+            sm:py-3
           "
         >
+          <p
+            className="
+              text-xs
+              font-medium
+              text-blue-400
 
-          <p className="text-sm font-medium text-blue-400">
+              sm:text-sm
+            "
+          >
             Dataset uploaded successfully.
           </p>
 
@@ -239,23 +294,21 @@ export default function QuickActions() {
             }}
             className="
               mt-1
-              text-xs
+              text-[10px]
               font-medium
               text-blue-300
-              hover:text-blue-200
               transition
+              hover:text-blue-200
+
+              sm:text-xs
             "
           >
             View Datasets →
           </button>
-
         </div>
       )}
 
-
-      {/* -------------------------------------------------------- */}
       {/* Create Pipeline Dialog */}
-      {/* -------------------------------------------------------- */}
 
       <CreatePipelineDialog
         isOpen={createOpen}
@@ -264,10 +317,7 @@ export default function QuickActions() {
         creating={creating}
       />
 
-
-      {/* -------------------------------------------------------- */}
       {/* Upload Dataset Dialog */}
-      {/* -------------------------------------------------------- */}
 
       <UploadDatasetDialog
         open={uploadOpen}
@@ -275,7 +325,6 @@ export default function QuickActions() {
         onUpload={handleDatasetUpload}
         uploading={uploading}
       />
-
     </div>
   );
 }
