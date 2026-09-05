@@ -19,42 +19,14 @@ export default function PipelineTrendChart({
     data && data.length > 0
       ? data
       : [
-          {
-            date: "Mon",
-            success: 5,
-            failed: 1,
-          },
-          {
-            date: "Tue",
-            success: 8,
-            failed: 0,
-          },
-          {
-            date: "Wed",
-            success: 6,
-            failed: 2,
-          },
-          {
-            date: "Thu",
-            success: 10,
-            failed: 1,
-          },
-          {
-            date: "Fri",
-            success: 9,
-            failed: 0,
-          },
-          {
-            date: "Sat",
-            success: 12,
-            failed: 1,
-          },
-          {
-            date: "Sun",
-            success: 7,
-            failed: 0,
-          },
-        ];
+        { date: "Mon", success: 5, failed: 1 },
+        { date: "Tue", success: 8, failed: 0 },
+        { date: "Wed", success: 6, failed: 2 },
+        { date: "Thu", success: 10, failed: 1 },
+        { date: "Fri", success: 9, failed: 0 },
+        { date: "Sat", success: 12, failed: 1 },
+        { date: "Sun", success: 7, failed: 0 },
+      ];
 
   const totalSuccess = chartData.reduce(
     (sum, item) => sum + item.success,
@@ -69,104 +41,226 @@ export default function PipelineTrendChart({
   return (
     <div
       className="
-        rounded-3xl
+        min-w-0
+        overflow-hidden
+        rounded-2xl
         border
         border-slate-800
         bg-slate-900/90
         shadow-sm
-        hover:shadow-xl
         transition-all
         duration-300
-        overflow-hidden
+        hover:shadow-xl
+
+        sm:rounded-3xl
       "
     >
       {/* Header */}
+      <div
+        className="
+          border-b
+          border-slate-800
+          px-3.5
+          py-3
 
-      <div className="px-6 py-5 border-b border-slate-800">
+          sm:px-5
+          sm:py-4
 
-        <div className="flex justify-between items-center">
+          md:px-6
+          md:py-5
+        "
+      >
+        <div
+          className="
+            flex
+            min-w-0
+            items-center
+            justify-between
+            gap-2.5
 
-          <div className="flex items-center gap-4">
+            sm:gap-5
+          "
+        >
+          {/* Title */}
+          <div
+            className="
+              flex
+              min-w-0
+              flex-1
+              items-center
+              gap-2.5
 
+              sm:gap-4
+            "
+          >
             <div
               className="
-                h-11
-                w-11
-
-                rounded-xl
-
-                bg-green-500/10
-
-                border
-                border-green-500/20
-
                 flex
+                h-8
+                w-8
+                shrink-0
                 items-center
                 justify-center
+                rounded-lg
+                border
+                border-green-500/20
+                bg-green-500/10
+
+                sm:h-11
+                sm:w-11
+                sm:rounded-xl
               "
             >
               <TrendingUp
-                size={20}
-                className="text-green-400"
+                size={16}
+                className="
+                  text-green-400
+
+                  sm:h-5
+                  sm:w-5
+                "
               />
             </div>
 
-            <div>
+            <div className="min-w-0 flex-1">
+              <h2
+                className="
+                  whitespace-nowrap
+                  text-[12.5px]
+                  font-semibold
+                  leading-5
+                  tracking-tight
+                  text-white
 
-              <h2 className="text-lg font-semibold text-white">
+                  sm:text-lg
+                "
+              >
                 Pipeline Execution Trend
               </h2>
 
-              <p className="text-sm text-slate-400">
+              <p
+                className="
+                  mt-0.5
+                  truncate
+                  text-[9px]
+                  leading-3.5
+                  text-slate-400
+
+                  sm:text-sm
+                  sm:leading-5
+                "
+              >
                 Pipeline executions over time
               </p>
-
             </div>
-
           </div>
 
-          <div className="flex gap-6">
+          {/* Summary */}
+          <div
+            className="
+              flex
+              shrink-0
+              items-center
+              gap-2.5
 
+              sm:gap-6
+            "
+          >
             <div className="text-right">
+              <p
+                className="
+                  text-[8px]
+                  font-medium
+                  uppercase
+                  tracking-wide
+                  text-slate-500
 
-              <p className="text-xs uppercase tracking-wider text-slate-500">
+                  sm:text-xs
+                "
+              >
                 Success
               </p>
 
-              <p className="text-xl font-bold text-green-400">
+              <p
+                className="
+                  text-sm
+                  font-bold
+                  leading-4
+                  text-green-400
+
+                  sm:text-xl
+                  sm:leading-6
+                "
+              >
                 {totalSuccess}
               </p>
-
             </div>
 
             <div className="text-right">
+              <p
+                className="
+                  text-[8px]
+                  font-medium
+                  uppercase
+                  tracking-wide
+                  text-slate-500
 
-              <p className="text-xs uppercase tracking-wider text-slate-500">
+                  sm:text-xs
+                "
+              >
                 Failed
               </p>
 
-              <p className="text-xl font-bold text-red-400">
+              <p
+                className="
+                  text-sm
+                  font-bold
+                  leading-4
+                  text-red-400
+
+                  sm:text-xl
+                  sm:leading-6
+                "
+              >
                 {totalFailed}
               </p>
-
             </div>
-
           </div>
-
         </div>
-
       </div>
 
       {/* Chart */}
+      <div
+        className="
+          h-[205px]
+          px-1.5
+          py-3
 
-      <div className="h-[340px] px-6 py-5">
+          sm:h-[270px]
+          sm:px-4
+          sm:py-4
 
+          md:h-[300px]
+          md:px-5
+
+          lg:h-[320px]
+          lg:px-6
+          lg:py-5
+        "
+      >
         <ResponsiveContainer
           width="100%"
           height="100%"
         >
-          <LineChart data={chartData}>
-
+          <LineChart
+            data={chartData}
+            margin={{
+              top: 5,
+              right: 5,
+              left: -8,
+              bottom: 0,
+            }}
+          >
             <CartesianGrid
               stroke="#1e293b"
               strokeDasharray="4 4"
@@ -177,20 +271,35 @@ export default function PipelineTrendChart({
               stroke="#64748b"
               axisLine={false}
               tickLine={false}
+              tick={{
+                fontSize: 9,
+              }}
+              interval="preserveStartEnd"
+              padding={{
+                left: 2,
+                right: 2,
+              }}
             />
 
             <YAxis
               stroke="#64748b"
               axisLine={false}
               tickLine={false}
+              tick={{
+                fontSize: 9,
+              }}
+              width={32}
+              tickMargin={0}
+              allowDecimals={false}
             />
 
             <Tooltip
               contentStyle={{
                 background: "#0f172a",
                 border: "1px solid #334155",
-                borderRadius: "12px",
+                borderRadius: "10px",
                 color: "#fff",
+                fontSize: "12px",
               }}
             />
 
@@ -198,12 +307,12 @@ export default function PipelineTrendChart({
               type="monotone"
               dataKey="success"
               stroke="#22c55e"
-              strokeWidth={3}
+              strokeWidth={2.5}
               dot={{
-                r: 4,
+                r: 2.8,
               }}
               activeDot={{
-                r: 6,
+                r: 5,
               }}
             />
 
@@ -211,31 +320,46 @@ export default function PipelineTrendChart({
               type="monotone"
               dataKey="failed"
               stroke="#ef4444"
-              strokeWidth={3}
+              strokeWidth={2.5}
               dot={{
-                r: 4,
+                r: 2.8,
               }}
               activeDot={{
-                r: 6,
+                r: 5,
               }}
             />
-
           </LineChart>
-
         </ResponsiveContainer>
-
       </div>
 
       {/* Footer */}
+      <div
+        className="
+          border-t
+          border-slate-800
+          px-3.5
+          py-2.5
 
-      <div className="border-t border-slate-800 px-6 py-4">
+          sm:px-5
+          sm:py-3
 
-        <p className="text-xs text-slate-500">
+          md:px-6
+          md:py-3.5
+        "
+      >
+        <p
+          className="
+            truncate
+            text-[9px]
+            leading-4
+            text-slate-500
+
+            sm:text-xs
+          "
+        >
           Success and failed pipeline executions for the last 7 days
         </p>
-
       </div>
-
     </div>
   );
 }
