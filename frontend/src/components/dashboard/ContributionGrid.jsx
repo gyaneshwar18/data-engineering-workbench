@@ -1,9 +1,36 @@
+import { useLayoutEffect, useRef } from "react";
 import ContributionCell from "./ContributionCell";
 
 export default function ContributionGrid({ weeks }) {
+  const gridRef = useRef(null);
+
+  useLayoutEffect(() => {
+    if (!gridRef.current) {
+      return;
+    }
+
+    const isMobile = window.matchMedia("(max-width: 1023px)").matches;
+
+    if (!isMobile) {
+      return;
+    }
+
+    const scrollContainer =
+      gridRef.current.closest(".overflow-x-auto");
+
+    if (!scrollContainer) {
+      return;
+    }
+
+    const scrollToLatest = () => {
+      scrollContainer.scrollLeft =
+        scrollContainer.scrollWidth - scrollContainer.clientWidth;
+    };
+
+    requestAnimationFrame(scrollToLatest);
+  }, [weeks]);
+
   const monthLabels = [];
-
-
 
   let previousLabelIndex = -10;
 
@@ -17,10 +44,10 @@ export default function ContributionGrid({ weeks }) {
     const previousMonth =
       index > 0
         ? new Date(
-          weeks[index - 1].contribution_days[0].date
-        ).toLocaleString("default", {
-          month: "short",
-        })
+            weeks[index - 1].contribution_days[0].date
+          ).toLocaleString("default", {
+            month: "short",
+          })
         : null;
 
     if (
@@ -36,8 +63,7 @@ export default function ContributionGrid({ weeks }) {
   });
 
   return (
-    <div className="w-full">
-
+    <div ref={gridRef} className="w-full">
       {/* Month Labels */}
 
       <div
