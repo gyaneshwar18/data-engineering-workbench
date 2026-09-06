@@ -37,64 +37,115 @@ export default function ActionCard({
   const className = `
     group
     flex
+    min-w-0
     w-full
     items-center
     justify-between
+    gap-2.5
     rounded-xl
     border
     border-slate-800
     bg-slate-900/40
-    px-4
-    py-3
+    px-3
+    py-2.5
     text-left
     transition-all
     duration-200
+
     hover:border-slate-700
     hover:bg-slate-800/40
+
+    sm:gap-3
+    sm:px-4
+    sm:py-3
   `;
 
   const content = (
     <>
-      <div className="flex items-center gap-3">
+      <div
+        className="
+          flex
+          min-w-0
+          flex-1
+          items-center
+          gap-2.5
+
+          sm:gap-3
+        "
+      >
         <div
           className={`
             flex
-            h-9
-            w-9
+            h-8
+            w-8
             shrink-0
             items-center
             justify-center
-            rounded-xl
+            rounded-lg
             border
+
+            sm:h-9
+            sm:w-9
+            sm:rounded-xl
+
             ${theme.bg}
             ${theme.border}
           `}
         >
           <Icon
-            size={18}
-            className={theme.icon}
+            size={16}
+            className={`
+              ${theme.icon}
+
+              sm:h-[18px]
+              sm:w-[18px]
+            `}
           />
         </div>
 
-        <div>
-          <h3 className="text-sm font-semibold text-white">
+        <div className="min-w-0 flex-1">
+          <h3
+            className="
+              truncate
+              text-xs
+              font-semibold
+              leading-5
+              text-white
+
+              sm:text-sm
+            "
+          >
             {title}
           </h3>
 
-          <p className="mt-0.5 text-xs text-slate-400">
+          <p
+            className="
+              mt-0.5
+              truncate
+              text-[10px]
+              leading-4
+              text-slate-400
+
+              sm:text-xs
+            "
+          >
             {subtitle}
           </p>
         </div>
       </div>
 
       <ChevronRight
-        size={18}
+        size={16}
         className="
           shrink-0
           text-slate-600
           transition-transform
           duration-200
+
           group-hover:translate-x-1
+
+          sm:h-[18px]
+          sm:w-[18px]
         "
       />
     </>
