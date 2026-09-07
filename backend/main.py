@@ -32,7 +32,7 @@ def root():
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173","https://data-engineering-workbench.vercel.app"],
+    allow_origins=["http://localhost:5173","http://192.168.29.71:5173","https://data-engineering-workbench.vercel.app"],
     
     allow_credentials=True,
     allow_methods=["*"],
