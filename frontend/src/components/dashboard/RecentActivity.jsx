@@ -204,6 +204,9 @@ export default function RecentActivity() {
 
         <button
           type="button"
+          onClick={() => {
+              window.location.href = "/workbench/pipelines";
+          }}
           className="
             flex
             h-8
