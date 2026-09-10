@@ -18,12 +18,14 @@ const ResultTable = ({
 
         overflow-hidden
 
-        rounded-2xl
+        rounded-xl
         border
         border-slate-700/50
 
         bg-slate-900/70
         backdrop-blur-xl
+
+        sm:rounded-2xl
       "
     >
       {/* ================================================== */}
@@ -38,15 +40,19 @@ const ResultTable = ({
 
           items-center
           justify-between
-          gap-4
+          gap-3
 
           border-b
           border-slate-700/60
 
           bg-slate-800/40
 
-          px-6
-          py-4
+          px-3.5
+          py-3
+
+          sm:gap-4
+          sm:px-6
+          sm:py-4
         "
       >
         <div
@@ -54,34 +60,68 @@ const ResultTable = ({
             flex
             min-w-0
             items-center
-            gap-3
+            gap-2.5
+
+            sm:gap-3
           "
         >
           <div
             className="
               flex
-              h-10
-              w-10
+              h-8
+              w-8
               shrink-0
 
               items-center
               justify-center
 
-              rounded-xl
+              rounded-lg
               border
               border-cyan-500/20
               bg-cyan-500/10
+
+              sm:h-10
+              sm:w-10
+              sm:rounded-xl
             "
           >
-            <Database className="h-5 w-5 text-cyan-400" />
+            <Database
+              className="
+                h-4
+                w-4
+                text-cyan-400
+
+                sm:h-5
+                sm:w-5
+              "
+            />
           </div>
 
           <div className="min-w-0">
-            <h2 className="text-sm font-semibold text-white">
+            <h2
+              className="
+                truncate
+                text-xs
+                font-semibold
+                text-white
+
+                sm:text-sm
+              "
+            >
               Query Results
             </h2>
 
-            <p className="mt-1 text-sm text-slate-400">
+            <p
+              className="
+                mt-0.5
+                truncate
+                text-[10px]
+                text-slate-400
+
+                sm:mt-1
+                sm:text-sm
+              "
+            >
               {hasData
                 ? `${rows.length} rows returned`
                 : "Execute a query to view results"}
@@ -94,16 +134,28 @@ const ResultTable = ({
             className="
               shrink-0
 
-              rounded-lg
+              rounded-md
               border
               border-emerald-500/20
               bg-emerald-500/10
 
-              px-3
-              py-1
+              px-2
+              py-0.5
+
+              sm:rounded-lg
+              sm:px-3
+              sm:py-1
             "
           >
-            <span className="text-xs font-medium text-emerald-400">
+            <span
+              className="
+                text-[9px]
+                font-medium
+                text-emerald-400
+
+                sm:text-xs
+              "
+            >
               Success
             </span>
           </div>
@@ -157,17 +209,21 @@ const ResultTable = ({
 
                       bg-slate-800
 
-                      px-5
-                      py-3
+                      px-3
+                      py-2.5
 
                       text-left
-                      text-xs
+                      text-[10px]
                       font-semibold
                       uppercase
                       tracking-wider
                       text-slate-300
 
                       last:border-r-0
+
+                      sm:px-5
+                      sm:py-3
+                      sm:text-xs
                     "
                   >
                     {column}
@@ -207,21 +263,27 @@ const ResultTable = ({
                               border-r
                               border-slate-800/60
 
-                              px-5
-                              py-3
+                              px-3
+                              py-2.5
 
-                              text-sm
+                              text-xs
                               text-slate-300
 
                               last:border-r-0
+
+                              sm:px-5
+                              sm:py-3
+                              sm:text-sm
                             "
                           >
                             <div
                               className="
-                                max-w-[360px]
+                                max-w-[240px]
 
                                 truncate
                                 whitespace-nowrap
+
+                                sm:max-w-[360px]
                               "
                               title={
                                 value !==
@@ -265,7 +327,7 @@ const ResultTable = ({
         <div
           className="
             flex
-            h-64
+            h-56
             w-full
             min-w-0
 
@@ -273,35 +335,72 @@ const ResultTable = ({
             items-center
             justify-center
 
-            px-6
+            px-4
             text-center
+
+            sm:h-64
+            sm:px-6
           "
         >
           <div
             className="
-              mb-4
+              mb-3
 
               flex
-              h-12
-              w-12
+              h-10
+              w-10
 
               items-center
               justify-center
 
-              rounded-xl
+              rounded-lg
               border
               border-slate-700
               bg-slate-800/60
+
+              sm:mb-4
+              sm:h-12
+              sm:w-12
+              sm:rounded-xl
             "
           >
-            <Database className="h-5 w-5 text-slate-500" />
+            <Database
+              className="
+                h-4
+                w-4
+                text-slate-500
+
+                sm:h-5
+                sm:w-5
+              "
+            />
           </div>
 
-          <h3 className="text-lg font-semibold text-slate-300">
+          <h3
+            className="
+              text-base
+              font-semibold
+              text-slate-300
+
+              sm:text-lg
+            "
+          >
             No Results Yet
           </h3>
 
-          <p className="mt-2 max-w-md text-sm leading-6 text-slate-500">
+          <p
+            className="
+              mt-1.5
+              max-w-md
+              text-xs
+              leading-5
+              text-slate-500
+
+              sm:mt-2
+              sm:text-sm
+              sm:leading-6
+            "
+          >
             Write a SQL query and click
             <span className="mx-1 font-medium text-cyan-400">
               Run Query
