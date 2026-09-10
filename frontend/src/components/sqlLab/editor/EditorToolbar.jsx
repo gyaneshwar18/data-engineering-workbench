@@ -41,11 +41,8 @@ const EditorToolbar = ({
   return (
     <div
       className="
-        flex
-        flex-wrap
-        items-center
-        justify-between
-        gap-4
+        min-w-0
+        w-full
 
         rounded-xl
         border
@@ -54,33 +51,54 @@ const EditorToolbar = ({
         bg-slate-900/70
         backdrop-blur-xl
 
-        px-4
-        py-3
+        px-3
+        py-2.5
+
+        sm:flex
+        sm:items-center
+        sm:justify-between
+        sm:gap-4
+        sm:px-4
+        sm:py-3
       "
     >
       {/* ================================================== */}
       {/* ACTIONS                                            */}
       {/* ================================================== */}
 
-      <div className="flex items-center gap-2">
+      <div
+        className="
+          flex
+          min-w-0
+          w-full
+          items-center
+          gap-1.5
 
+          sm:w-auto
+          sm:gap-2
+        "
+      >
         {/* Run Query */}
         <button
           type="button"
           onClick={onRun}
           disabled={loading}
+          title="Run Query"
           className="
             inline-flex
+            h-10
+            min-w-0
+            flex-1
             items-center
-            gap-2
+            justify-center
+            gap-1.5
 
             rounded-lg
 
             bg-cyan-500
-            px-4
-            py-2
+            px-2.5
 
-            text-sm
+            text-xs
             font-semibold
             text-slate-950
 
@@ -92,20 +110,29 @@ const EditorToolbar = ({
 
             disabled:cursor-not-allowed
             disabled:opacity-60
+
+            sm:h-auto
+            sm:flex-none
+            sm:gap-2
+            sm:px-4
+            sm:py-2
+            sm:text-sm
           "
         >
           {loading ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Running...
+              <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin sm:h-4 sm:w-4" />
+              <span className="sm:hidden">Run</span>
+              <span className="hidden sm:inline">Running...</span>
             </>
           ) : (
             <>
               <Play
-                className="h-4 w-4"
+                className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4"
                 fill="currentColor"
               />
-              Run Query
+              <span className="sm:hidden">Run</span>
+              <span className="hidden sm:inline">Run Query</span>
             </>
           )}
         </button>
@@ -115,10 +142,15 @@ const EditorToolbar = ({
           type="button"
           onClick={handleSave}
           disabled={loading}
+          title="Save Query"
           className="
             inline-flex
+            h-10
+            min-w-0
+            flex-1
             items-center
-            gap-2
+            justify-center
+            gap-1.5
 
             rounded-lg
 
@@ -127,10 +159,9 @@ const EditorToolbar = ({
 
             bg-slate-800/70
 
-            px-4
-            py-2
+            px-2.5
 
-            text-sm
+            text-xs
             font-medium
             text-slate-300
 
@@ -143,10 +174,18 @@ const EditorToolbar = ({
 
             disabled:cursor-not-allowed
             disabled:opacity-50
+
+            sm:h-auto
+            sm:flex-none
+            sm:gap-2
+            sm:px-4
+            sm:py-2
+            sm:text-sm
           "
         >
-          <Save className="h-4 w-4" />
-          Save Query
+          <Save className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+          <span className="sm:hidden">Save</span>
+          <span className="hidden sm:inline">Save Query</span>
         </button>
 
         {/* Export CSV */}
@@ -154,10 +193,15 @@ const EditorToolbar = ({
           type="button"
           onClick={onExport}
           disabled={loading}
+          title="Export CSV"
           className="
             inline-flex
+            h-10
+            min-w-0
+            flex-1
             items-center
-            gap-2
+            justify-center
+            gap-1.5
 
             rounded-lg
 
@@ -166,10 +210,9 @@ const EditorToolbar = ({
 
             bg-slate-800/70
 
-            px-4
-            py-2
+            px-2.5
 
-            text-sm
+            text-xs
             font-medium
             text-slate-300
 
@@ -182,10 +225,18 @@ const EditorToolbar = ({
 
             disabled:cursor-not-allowed
             disabled:opacity-50
+
+            sm:h-auto
+            sm:flex-none
+            sm:gap-2
+            sm:px-4
+            sm:py-2
+            sm:text-sm
           "
         >
-          <Download className="h-4 w-4" />
-          Export CSV
+          <Download className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+          <span className="sm:hidden">Export</span>
+          <span className="hidden sm:inline">Export CSV</span>
         </button>
       </div>
 
@@ -195,18 +246,22 @@ const EditorToolbar = ({
 
       <div
         className="
+          mt-2
           flex
+          min-h-4
           items-center
-          gap-2
+          justify-center
+          gap-1.5
 
-          rounded-lg
-          border
-          border-slate-700/50
-
-          bg-slate-800/60
-
-          px-3
-          py-2
+          sm:mt-0
+          sm:min-h-0
+          sm:justify-start
+          sm:rounded-lg
+          sm:border
+          sm:border-slate-700/50
+          sm:bg-slate-800/60
+          sm:px-3
+          sm:py-2
         "
       >
         {/* Running */}
@@ -214,19 +269,22 @@ const EditorToolbar = ({
           <>
             <span
               className="
-                h-2
-                w-2
-                rounded-full
+                h-1.5
+                w-1.5
+                shrink-0
                 animate-pulse
+                rounded-full
                 bg-amber-400
               "
             />
 
             <span
               className="
-                text-sm
+                text-[10px]
                 font-medium
                 text-amber-400
+
+                sm:text-sm
               "
             >
               Executing Query...
@@ -237,17 +295,23 @@ const EditorToolbar = ({
           <>
             <CheckCircle2
               className="
-                h-4
-                w-4
+                h-3.5
+                w-3.5
+                shrink-0
                 text-emerald-400
+
+                sm:h-4
+                sm:w-4
               "
             />
 
             <span
               className="
-                text-sm
+                text-[10px]
                 font-medium
                 text-emerald-400
+
+                sm:text-sm
               "
             >
               Query Saved
@@ -258,8 +322,9 @@ const EditorToolbar = ({
           <>
             <span
               className="
-                h-2
-                w-2
+                h-1.5
+                w-1.5
+                shrink-0
                 rounded-full
                 bg-emerald-400
               "
@@ -267,9 +332,12 @@ const EditorToolbar = ({
 
             <span
               className="
-                text-sm
+                text-[10px]
                 font-medium
-                text-slate-400
+                text-slate-500
+
+                sm:text-sm
+                sm:text-slate-400
               "
             >
               Ready
