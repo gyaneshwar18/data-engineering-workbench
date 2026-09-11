@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
 import { Database } from "lucide-react";
 
@@ -13,6 +13,31 @@ const SqlEditor = ({
 }) => {
   const monacoRef = useRef(null);
   const providerRef = useRef(null);
+
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== "undefined"
+      ? window.matchMedia("(max-width: 767px)").matches
+      : false
+  );
+
+  /* -------------------------------------------------- */
+  /* Responsive Editor Height                           */
+  /* -------------------------------------------------- */
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+
+    const handleChange = (event) => {
+      setIsMobile(event.matches);
+    };
+
+    setIsMobile(mediaQuery.matches);
+    mediaQuery.addEventListener("change", handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange);
+    };
+  }, []);
 
   /* -------------------------------------------------- */
   /* Monaco Mount                                       */
@@ -164,13 +189,15 @@ const SqlEditor = ({
         max-w-full
         overflow-hidden
 
-        rounded-2xl
+        rounded-xl
         border
         border-slate-700/50
 
         bg-slate-900/70
         shadow-xl
         backdrop-blur-xl
+
+        sm:rounded-2xl
       "
     >
       {/* ================================================= */}
@@ -183,25 +210,29 @@ const SqlEditor = ({
           min-w-0
           items-center
           justify-between
-          gap-4
+          gap-2
 
           border-b
           border-slate-700/50
 
           bg-slate-900/80
 
-          px-6
-          py-4
+          px-3.5
+          py-3
+
+          sm:gap-4
+          sm:px-6
+          sm:py-4
         "
       >
         {/* Left */}
 
-        <div className="flex min-w-0 items-center gap-3">
+        <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
           <div
             className="
               flex
-              h-9
-              w-9
+              h-8
+              w-8
               shrink-0
               items-center
               justify-center
@@ -210,17 +241,40 @@ const SqlEditor = ({
               border
               border-cyan-500/20
               bg-cyan-500/10
+
+              sm:h-9
+              sm:w-9
             "
           >
-            <Database className="h-5 w-5 text-cyan-400" />
+            <Database
+              className="h-4 w-4 text-cyan-400 sm:h-5 sm:w-5"
+            />
           </div>
 
           <div className="min-w-0">
-            <h2 className="text-sm font-semibold text-white">
+            <h2
+              className="
+                truncate
+                text-xs
+                font-semibold
+                text-white
+
+                sm:text-sm
+              "
+            >
               SQL Editor
             </h2>
 
-            <p className="mt-0.5 truncate text-sm text-slate-400">
+            <p
+              className="
+                mt-0.5
+                truncate
+                text-[10px]
+                text-slate-400
+
+                sm:text-sm
+              "
+            >
               Write and execute PostgreSQL queries
             </p>
           </div>
@@ -236,12 +290,16 @@ const SqlEditor = ({
             border-emerald-500/20
             bg-emerald-500/10
 
-            px-3
-            py-1
+            px-2
+            py-0.5
 
-            text-xs
+            text-[9px]
             font-medium
             text-emerald-400
+
+            sm:px-3
+            sm:py-1
+            sm:text-xs
           "
         >
           PostgreSQL
@@ -263,7 +321,7 @@ const SqlEditor = ({
         "
       >
         <Editor
-          height="420px"
+          height={isMobile ? "300px" : "420px"}
           language="sql"
           value={value}
           onChange={(v) => onChange(v || "")}
@@ -285,14 +343,14 @@ const SqlEditor = ({
               enabled: false,
             },
 
-            fontSize: 15,
+            fontSize: 14,
 
             fontFamily:
               "'JetBrains Mono', 'Fira Code', 'Consolas', monospace",
 
             fontLigatures: true,
 
-            lineHeight: 24,
+            lineHeight: 22,
 
             /* --------------------------------------- */
             /* Lines                                   */
@@ -314,9 +372,10 @@ const SqlEditor = ({
 
             /*
              * Keep long SQL inside Monaco.
-             * It must never expand the page width.
+             * Lines stay on a single line and Monaco
+             * handles horizontal scrolling internally.
              */
-            wordWrap: "on",
+            wordWrap: "off",
 
             scrollBeyondLastLine: false,
 
@@ -362,8 +421,8 @@ const SqlEditor = ({
             /* --------------------------------------- */
 
             padding: {
-              top: 16,
-              bottom: 16,
+              top: 12,
+              bottom: 12,
             },
 
             /* --------------------------------------- */

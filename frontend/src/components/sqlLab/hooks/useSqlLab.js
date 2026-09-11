@@ -11,7 +11,7 @@
     /* Editor                                             */
     /* ================================================== */
 
-    const [sqlQuery, setSqlQuery] = useState("");
+    const [sqlQuery, setSqlQuery] = useState("SELECT * FROM pipelines LIMIT 10;");
     const [loading, setLoading] = useState(false);
 
     /* ================================================== */
