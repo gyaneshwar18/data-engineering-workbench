@@ -41,16 +41,18 @@ const WorkspaceCard = ({
       className={`
         group
         flex
-        min-h-[108px]
+        min-h-[72px]
         w-full
-        flex-col
-        items-start
+        items-center
+
         rounded-xl
         border
         border-slate-700/50
         bg-slate-800/50
-        p-3
+
+        p-2.5
         text-left
+
         transition-all
         duration-200
 
@@ -61,10 +63,8 @@ const WorkspaceCard = ({
         ${style.hover}
 
         sm:min-h-0
-        sm:flex-row
-        sm:items-center
         sm:rounded-2xl
-        sm:p-6
+        sm:p-4
       `}
     >
       {/* ================================================== */}
@@ -79,13 +79,12 @@ const WorkspaceCard = ({
           shrink-0
           items-center
           justify-center
+
           rounded-lg
           border
+
           ${style.border}
           ${style.bg}
-
-          transition-colors
-          duration-200
 
           sm:h-10
           sm:w-10
@@ -93,8 +92,8 @@ const WorkspaceCard = ({
       >
         <Icon
           className={`
-            h-[18px]
-            w-[18px]
+            h-[17px]
+            w-[17px]
             ${style.icon}
 
             sm:h-5
@@ -109,24 +108,21 @@ const WorkspaceCard = ({
 
       <div
         className="
-          mt-2.5
+          ml-2.5
           min-w-0
-          w-full
+          flex-1
 
           sm:ml-3
-          sm:mt-0
-          sm:flex-1
         "
       >
         <h3
           className="
-            line-clamp-2
+            truncate
             text-xs
             font-semibold
             leading-4
             text-slate-200
 
-            sm:truncate
             sm:text-sm
           "
         >
@@ -136,7 +132,7 @@ const WorkspaceCard = ({
         <p
           className="
             mt-0.5
-            line-clamp-1
+            truncate
             text-[10px]
             leading-4
             text-slate-500
@@ -159,13 +155,14 @@ const WorkspaceCard = ({
           w-4
           shrink-0
           text-slate-600
+
           transition-all
           duration-200
 
           group-hover:translate-x-0.5
           group-hover:text-slate-300
 
-          sm:ml-3
+          sm:ml-2
           sm:block
         "
         fill="none"
