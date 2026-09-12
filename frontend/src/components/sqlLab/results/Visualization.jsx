@@ -30,7 +30,6 @@ import {
   COLORS,
 } from "../utils/chartHelpers";
 
-
 const icons = {
   bar: BarChart3,
   line: LineChartIcon,
@@ -38,13 +37,7 @@ const icons = {
   pie: PieChartIcon,
 };
 
-
-/* ============================================================
-   CONSTANTS
-============================================================ */
-
 const MAX_PIE_ITEMS = 8;
-
 
 /* ============================================================
    TOOLTIP
@@ -73,7 +66,6 @@ const ChartTooltip = () => (
     }}
   />
 );
-
 
 /* ============================================================
    CUSTOM PIE LEGEND
@@ -134,7 +126,6 @@ const CustomPieLegend = ({ payload = [] }) => {
   );
 };
 
-
 /* ============================================================
    PIE DATA PREPARATION
 ============================================================ */
@@ -181,10 +172,58 @@ const preparePieData = (
   return topItems;
 };
 
-
 /* ============================================================
-   AXIS
+   AXIS HELPERS
 ============================================================ */
+
+/*
+  Keep category labels readable without allowing them
+  to collide with neighboring labels.
+*/
+const formatCategoryLabel = (
+  value,
+  maxLength = 12
+) => {
+  const text = String(value ?? "").trim();
+
+  if (!text) {
+    return "";
+  }
+
+  if (text.length <= maxLength) {
+    return text;
+  }
+
+  return `${text.slice(0, maxLength).trim()}…`;
+};
+
+/*
+  Dynamically decide how many X-axis labels should be visible.
+
+  The chart still contains every data point.
+  We only reduce the number of displayed labels.
+
+  Tooltips continue to expose the complete value.
+*/
+const getXAxisInterval = (dataLength) => {
+  if (dataLength <= 5) {
+    return 0;
+  }
+
+  if (dataLength <= 8) {
+    return 1;
+  }
+
+  if (dataLength <= 12) {
+    return 2;
+  }
+
+  if (dataLength <= 16) {
+    return 3;
+  }
+
+  return Math.ceil(dataLength / 5) - 1;
+};
 
 const renderXAxis = (
   categoryKey,
@@ -195,42 +234,36 @@ const renderXAxis = (
     stroke="#64748b"
     tick={{
       fill: "#94a3b8",
-      fontSize: 11,
+      fontSize: 10,
     }}
     tickLine={false}
     axisLine={{
       stroke: "#334155",
     }}
-    interval={
-      data.length > 8
-        ? Math.ceil(data.length / 8)
-        : 0
+    interval={getXAxisInterval(data.length)}
+    tickMargin={8}
+    height={38}
+    minTickGap={14}
+    tickFormatter={(value) =>
+      formatCategoryLabel(value, 12)
     }
-    tickMargin={10}
-    tickFormatter={(value) => {
-      const text = String(value ?? "");
-
-      return text.length > 16
-        ? `${text.slice(0, 16)}…`
-        : text;
-    }}
   />
 );
-
 
 const renderYAxis = () => (
   <YAxis
     stroke="#64748b"
     tick={{
       fill: "#94a3b8",
-      fontSize: 11,
+      fontSize: 10,
     }}
     tickLine={false}
     axisLine={false}
-    width={55}
+    width={34}
+    tickMargin={4}
+    allowDecimals={false}
   />
 );
-
 
 /* ============================================================
    COMPONENT
@@ -242,7 +275,6 @@ const Visualization = ({
   chartType = "bar",
   onChartTypeChange,
 }) => {
-
   const {
     canRender,
     data,
@@ -254,9 +286,7 @@ const Visualization = ({
     rows
   );
 
-
   const numericKey = numericKeys[0];
-
 
   /* ============================================================
      EMPTY STATE
@@ -266,42 +296,57 @@ const Visualization = ({
     <div
       className="
         flex
-        min-h-[440px]
+        min-h-[280px]
         flex-col
         items-center
         justify-center
-        px-6
+        px-5
         text-center
+
+        sm:min-h-[340px]
+        sm:px-6
+
+        lg:min-h-[420px]
       "
     >
       <div
         className="
-          mb-5
+          mb-4
           flex
-          h-16
-          w-16
+          h-12
+          w-12
           items-center
           justify-center
-          rounded-2xl
+          rounded-xl
           border
           border-slate-700
           bg-slate-800/70
+
+          sm:mb-5
+          sm:h-16
+          sm:w-16
+          sm:rounded-2xl
         "
       >
         <BarChart3
           className="
-            h-7
-            w-7
+            h-5
+            w-5
             text-slate-600
+
+            sm:h-7
+            sm:w-7
           "
         />
       </div>
 
       <h3
         className="
-          text-lg
+          text-base
           font-semibold
           text-slate-300
+
+          sm:text-lg
         "
       >
         Ready to Visualize
@@ -309,11 +354,15 @@ const Visualization = ({
 
       <p
         className="
-          mt-2
+          mt-1.5
           max-w-md
-          text-sm
-          leading-6
+          text-xs
+          leading-5
           text-slate-500
+
+          sm:mt-2
+          sm:text-sm
+          sm:leading-6
         "
       >
         {reason ||
@@ -322,7 +371,6 @@ const Visualization = ({
     </div>
   );
 
-
   /* ============================================================
      LINE CHART
   ============================================================ */
@@ -330,15 +378,15 @@ const Visualization = ({
   const renderLineChart = () => (
     <ResponsiveContainer
       width="100%"
-      height={440}
+      height="100%"
     >
       <LineChart
         data={data}
         margin={{
-          top: 15,
-          right: 20,
-          left: 5,
-          bottom: 15,
+          top: 10,
+          right: 8,
+          left: 2,
+          bottom: 2,
         }}
       >
         <CartesianGrid
@@ -373,14 +421,14 @@ const Visualization = ({
               dataKey={key}
               stroke={
                 COLORS[
-                index %
-                COLORS.length
+                  index %
+                  COLORS.length
                 ]
               }
-              strokeWidth={3}
+              strokeWidth={2.5}
               dot={false}
               activeDot={{
-                r: 6,
+                r: 5,
                 strokeWidth: 2,
               }}
               connectNulls
@@ -391,7 +439,6 @@ const Visualization = ({
     </ResponsiveContainer>
   );
 
-
   /* ============================================================
      AREA CHART
   ============================================================ */
@@ -399,15 +446,15 @@ const Visualization = ({
   const renderAreaChart = () => (
     <ResponsiveContainer
       width="100%"
-      height={440}
+      height="100%"
     >
       <AreaChart
         data={data}
         margin={{
-          top: 15,
-          right: 20,
-          left: 5,
-          bottom: 15,
+          top: 10,
+          right: 8,
+          left: 2,
+          bottom: 2,
         }}
       >
         <CartesianGrid
@@ -442,18 +489,18 @@ const Visualization = ({
               dataKey={key}
               stroke={
                 COLORS[
-                index %
-                COLORS.length
+                  index %
+                  COLORS.length
                 ]
               }
               fill={
                 COLORS[
-                index %
-                COLORS.length
+                  index %
+                  COLORS.length
                 ]
               }
               fillOpacity={0.12}
-              strokeWidth={3}
+              strokeWidth={2.5}
               dot={false}
               activeDot={{
                 r: 5,
@@ -466,7 +513,6 @@ const Visualization = ({
     </ResponsiveContainer>
   );
 
-
   /* ============================================================
      BAR CHART
   ============================================================ */
@@ -474,15 +520,15 @@ const Visualization = ({
   const renderBarChart = () => (
     <ResponsiveContainer
       width="100%"
-      height={440}
+      height="100%"
     >
       <BarChart
         data={data}
         margin={{
-          top: 15,
-          right: 20,
-          left: 5,
-          bottom: 15,
+          top: 10,
+          right: 8,
+          left: 2,
+          bottom: 2,
         }}
       >
         <CartesianGrid
@@ -516,13 +562,13 @@ const Visualization = ({
               dataKey={key}
               fill={
                 COLORS[
-                index %
-                COLORS.length
+                  index %
+                  COLORS.length
                 ]
               }
               radius={[
-                7,
-                7,
+                6,
+                6,
                 0,
                 0,
               ]}
@@ -534,13 +580,11 @@ const Visualization = ({
     </ResponsiveContainer>
   );
 
-
   /* ============================================================
      PIE CHART
   ============================================================ */
 
   const renderPieChart = () => {
-
     const pieData =
       preparePieData(
         data,
@@ -557,13 +601,15 @@ const Visualization = ({
           items-center
         "
       >
-
-        {/* Pie itself */}
         <div
           className="
-            h-[350px]
+            h-[220px]
             w-full
             min-w-0
+
+            sm:h-[280px]
+
+            lg:h-[350px]
           "
         >
           <ResponsiveContainer
@@ -571,7 +617,6 @@ const Visualization = ({
             height="100%"
           >
             <PieChart>
-
               <Tooltip
                 contentStyle={{
                   backgroundColor:
@@ -604,8 +649,8 @@ const Visualization = ({
                 nameKey="name"
                 cx="50%"
                 cy="50%"
-                innerRadius={78}
-                outerRadius={125}
+                innerRadius="35%"
+                outerRadius="65%"
                 paddingAngle={2}
                 stroke="#0f172a"
                 strokeWidth={2}
@@ -616,51 +661,44 @@ const Visualization = ({
                       key={`cell-${index}`}
                       fill={
                         COLORS[
-                        index %
-                        COLORS.length
+                          index %
+                          COLORS.length
                         ]
                       }
                     />
                   )
                 )}
               </Pie>
-
             </PieChart>
           </ResponsiveContainer>
         </div>
 
-
-        {/* Controlled legend */}
         <CustomPieLegend
           payload={pieData.map(
             (item, index) => ({
               value: item.name,
               color:
                 COLORS[
-                index %
-                COLORS.length
+                  index %
+                  COLORS.length
                 ],
             })
           )}
         />
-
       </div>
     );
   };
-
 
   /* ============================================================
      SELECT CHART
   ============================================================ */
 
   const renderChart = () => {
-
     if (!canRender) {
       return renderEmptyState();
     }
 
     switch (chartType) {
-
       case "line":
         return renderLineChart();
 
@@ -676,7 +714,6 @@ const Visualization = ({
     }
   };
 
-
   /* ============================================================
      MAIN UI
   ============================================================ */
@@ -689,17 +726,15 @@ const Visualization = ({
         min-w-0
         max-w-full
         overflow-hidden
-
-        rounded-2xl
+        rounded-xl
         border
         border-slate-700
-
         bg-slate-900
-
         shadow-xl
+
+        sm:rounded-2xl
       "
     >
-
       {/* ========================================================
           HEADER
       ======================================================== */}
@@ -709,129 +744,132 @@ const Visualization = ({
           flex
           w-full
           min-w-0
-          flex-wrap
-
-          items-center
-          justify-between
-
-          gap-4
-
+          flex-col
+          gap-3
           border-b
           border-slate-700
+          px-3.5
+          py-3.5
 
-          px-6
-          py-5
+          sm:px-5
+          sm:py-4
+
+          lg:flex-row
+          lg:items-center
+          lg:justify-between
+          lg:gap-5
+          lg:px-6
+          lg:py-5
         "
       >
+        {/* ------------------------------------------------------
+            TITLE
+        ------------------------------------------------------ */}
 
         <div
           className="
+            flex
             min-w-0
             flex-1
+            items-center
+            gap-2.5
+
+            sm:gap-3
           "
         >
           <div
             className="
               flex
+              h-8
+              w-8
+              shrink-0
               items-center
-              gap-3
+              justify-center
+              rounded-lg
+              border
+              border-cyan-500/20
+              bg-cyan-500/10
+
+              sm:h-10
+              sm:w-10
+              sm:rounded-xl
             "
           >
+            {(() => {
+              const Icon =
+                icons[chartType] ||
+                BarChart3;
 
-            <div
+              return (
+                <Icon
+                  className="
+                    h-4
+                    w-4
+                    text-cyan-400
+
+                    sm:h-5
+                    sm:w-5
+                  "
+                />
+              );
+            })()}
+          </div>
+
+          <div className="min-w-0">
+            <h2
               className="
-                flex
-                h-10
-                w-10
-                shrink-0
-                items-center
-                justify-center
+                truncate
+                text-sm
+                font-semibold
+                text-white
 
-                rounded-xl
-
-                border
-                border-cyan-500/20
-
-                bg-cyan-500/10
+                sm:text-lg
               "
             >
-              {(() => {
-                const Icon =
-                  icons[
-                  chartType
-                  ] ||
-                  BarChart3;
+              Visualization
+            </h2>
 
-                return (
-                  <Icon
-                    className="
-                      h-5
-                      w-5
-                      text-cyan-400
-                    "
-                  />
-                );
-              })()}
-            </div>
+            <p
+              className="
+                mt-0.5
+                truncate
+                text-[10px]
+                text-slate-400
 
-            <div className="min-w-0">
-
-              <h2
-                className="
-                  text-lg
-                  font-semibold
-                  text-white
-                "
-              >
-                Visualization
-              </h2>
-
-              <p
-                className="
-                  mt-1
-                  truncate
-                  text-sm
-                  text-slate-400
-                "
-              >
-                Visual representation of
-                your SQL query results.
-              </p>
-
-            </div>
-
+                sm:mt-1
+                sm:text-sm
+              "
+            >
+              Visual representation of your SQL query results.
+            </p>
           </div>
         </div>
 
-
         {/* ======================================================
-            CHART CONTROLS
+            CHART TYPE SELECTOR
         ====================================================== */}
 
         <div
           className="
-            flex
-            shrink-0
-            items-center
+            grid
+            w-full
+            grid-cols-2
             gap-1
-
             rounded-xl
             border
             border-slate-700
-
             bg-slate-800/70
-
             p-1
+
+            sm:flex
+            sm:w-auto
+            sm:gap-1
           "
         >
-
           {chartTypes.map(
             (type) => {
-
               const Icon =
-                icons[
-                type.value
-                ];
+                icons[type.value];
 
               const active =
                 chartType ===
@@ -839,51 +877,76 @@ const Visualization = ({
 
               return (
                 <button
-                  key={
-                    type.value
-                  }
+                  key={type.value}
                   type="button"
                   onClick={() =>
                     onChartTypeChange?.(
                       type.value
                     )
                   }
-                  className={`
-                    flex
-                    h-10
-                    w-10
-                    items-center
-                    justify-center
-
-                    rounded-lg
-
-                    transition-all
-                    duration-200
-
-                    ${active
-                      ? "bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/20"
-                      : "text-slate-400 hover:bg-slate-700 hover:text-white"
-                    }
-                  `}
-                  title={
-                    type.label
-                  }
+                  title={type.label}
                   aria-label={
                     type.label
                   }
+                  aria-pressed={
+                    active
+                  }
+                  className={`
+                    flex
+                    h-10
+                    min-w-0
+                    items-center
+                    justify-center
+                    gap-2
+                    rounded-lg
+                    px-2.5
+                    text-xs
+                    font-medium
+                    transition-all
+                    duration-200
+
+                    sm:h-9
+                    sm:min-w-[92px]
+                    sm:px-3
+
+                    ${
+                      active
+                        ? `
+                          bg-cyan-500
+                          text-slate-950
+                          shadow-md
+                          shadow-cyan-500/20
+                        `
+                        : `
+                          text-slate-400
+                          hover:bg-slate-700
+                          hover:text-slate-100
+                        `
+                    }
+                  `}
                 >
                   <Icon
-                    className="h-4.5 w-4.5"
+                    className="
+                      h-4
+                      w-4
+                      shrink-0
+                    "
+                    strokeWidth={
+                      active
+                        ? 2
+                        : 1.8
+                    }
                   />
+
+                  <span className="truncate">
+                    {type.label}
+                  </span>
                 </button>
               );
             }
           )}
-
         </div>
-
       </div>
-
 
       {/* ========================================================
           CHART CONTENT
@@ -895,36 +958,45 @@ const Visualization = ({
           w-full
           min-w-0
           max-w-full
-
           overflow-hidden
+          p-3
 
-          p-4
-          sm:p-6
+          sm:p-5
+
+          md:p-6
         "
       >
-
         <div
           className="
             w-full
             min-w-0
             max-w-full
             overflow-hidden
-
-            rounded-xl
+            rounded-lg
             border
             border-slate-800
-
             bg-slate-950/40
+
+            sm:rounded-xl
           "
         >
-          {renderChart()}
+          <div
+            className="
+              h-[285px]
+              w-full
+              min-w-0
+
+              sm:h-[340px]
+
+              lg:h-[440px]
+            "
+          >
+            {renderChart()}
+          </div>
         </div>
-
       </div>
-
     </div>
   );
 };
-
 
 export default Visualization;
