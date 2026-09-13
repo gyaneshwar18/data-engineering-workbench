@@ -29,8 +29,11 @@ export default function Pipelines() {
   const [createOpen, setCreateOpen] =
     useState(false);
 
-  const [logsOpen, setLogsOpen] = useState(false);
-  const [logsData, setLogsData] = useState(null);
+  const [logsOpen, setLogsOpen] =
+    useState(false);
+
+  const [logsData, setLogsData] =
+    useState(null);
 
   const [historyOpen, setHistoryOpen] =
     useState(false);
@@ -38,13 +41,18 @@ export default function Pipelines() {
   const [selectedPipelineId, setSelectedPipelineId] =
     useState(null);
 
-  const [error, setError] = useState(null);
+  const [error, setError] =
+    useState(null);
 
   const API = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     fetchPipelines();
   }, []);
+
+  /* ---------------------------------------------------------------------- */
+  /* Fetch Pipelines                                                        */
+  /* ---------------------------------------------------------------------- */
 
   const fetchPipelines = async () => {
     try {
@@ -59,7 +67,9 @@ export default function Pipelines() {
     } catch (err) {
       console.error(err);
 
-      setError("Unable to load pipelines.");
+      setError(
+        "Unable to load pipelines."
+      );
     } finally {
       setLoading(false);
     }
@@ -69,12 +79,16 @@ export default function Pipelines() {
   /* Create Pipeline                                                        */
   /* ---------------------------------------------------------------------- */
 
-  const handleCreatePipeline = async (pipelineData) => {
+  const handleCreatePipeline = async (
+    pipelineData
+  ) => {
     try {
       setCreatingPipeline(true);
       setError(null);
 
-      await createPipeline(pipelineData);
+      await createPipeline(
+        pipelineData
+      );
 
       setCreateOpen(false);
 
@@ -95,9 +109,14 @@ export default function Pipelines() {
   /* Run Pipeline                                                           */
   /* ---------------------------------------------------------------------- */
 
-  const runPipeline = async (pipelineId) => {
+  const runPipeline = async (
+    pipelineId
+  ) => {
     try {
-      setRunningPipelineId(pipelineId);
+      setRunningPipelineId(
+        pipelineId
+      );
+
       setError(null);
 
       await axios.post(
@@ -121,12 +140,16 @@ export default function Pipelines() {
   /* Logs                                                                   */
   /* ---------------------------------------------------------------------- */
 
-  const handleViewLogs = async (pipelineId) => {
+  const handleViewLogs = async (
+    pipelineId
+  ) => {
     try {
       setError(null);
 
       const data =
-        await getPipelineLogs(pipelineId);
+        await getPipelineLogs(
+          pipelineId
+        );
 
       setLogsData(data);
       setLogsOpen(true);
@@ -143,8 +166,13 @@ export default function Pipelines() {
   /* History                                                                */
   /* ---------------------------------------------------------------------- */
 
-  const handleViewHistory = (pipelineId) => {
-    setSelectedPipelineId(pipelineId);
+  const handleViewHistory = (
+    pipelineId
+  ) => {
+    setSelectedPipelineId(
+      pipelineId
+    );
+
     setHistoryOpen(true);
   };
 
@@ -156,7 +184,8 @@ export default function Pipelines() {
     pipeline
   ) => {
     if (
-      runningPipelineId === pipeline.id
+      runningPipelineId ===
+      pipeline.id
     ) {
       return {
         ...pipeline,
@@ -167,150 +196,307 @@ export default function Pipelines() {
     return pipeline;
   };
 
-  return (
-    <div className="px-6 py-3 text-white">
-      <div className="mx-auto max-w-[1400px]">
+  /* ---------------------------------------------------------------------- */
+  /* Render                                                                 */
+  /* ---------------------------------------------------------------------- */
 
-        {/* Header */}
+  return (
+    <div
+      className="
+        min-w-0
+        w-full
+        px-4
+        py-4
+        text-white
+
+        sm:px-5
+        sm:py-5
+
+        md:px-6
+        md:py-5
+
+        lg:px-8
+      "
+    >
+      <div
+        className="
+          mx-auto
+          w-full
+          min-w-0
+          max-w-[1400px]
+        "
+      >
+        {/* ================================================================
+            HEADER
+        ================================================================ */}
 
         <PageHeader
           title="Pipelines"
           subtitle="Manage and monitor your data pipelines"
           action={
-            <div className="flex items-center gap-3">
+            <div
+              className="
+                flex
+                w-full
+                min-w-0
+                flex-col
+                gap-2
 
-              {/* Refresh */}
+                sm:w-auto
+                sm:flex-row
+                sm:items-center
+                sm:gap-3
+              "
+            >
+              {/* ----------------------------------------------------------
+                  Refresh
+              ---------------------------------------------------------- */}
 
               <button
+                type="button"
                 onClick={fetchPipelines}
                 disabled={loading}
                 className="
-                  rounded-xl
+                  inline-flex
+                  h-10
+                  w-full
+                  items-center
+                  justify-center
+                  rounded-lg
                   border
                   border-slate-700
+                  bg-slate-900/60
                   px-3
-                  py-2
                   text-sm
+                  font-medium
+                  text-slate-300
+                  transition-colors
+                  duration-150
+
+                  hover:border-slate-600
                   hover:bg-slate-800
+                  hover:text-white
+
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-blue-500/30
+
                   disabled:cursor-not-allowed
                   disabled:opacity-50
-                  transition
+
+                  sm:w-auto
                 "
               >
-                ↻ Refresh
+                <span
+                  className="
+                    mr-1.5
+                    text-base
+                    leading-none
+                  "
+                  aria-hidden="true"
+                >
+                  ↻
+                </span>
+
+                Refresh
               </button>
 
-              {/* Create */}
+              {/* ----------------------------------------------------------
+                  Create Pipeline
+              ---------------------------------------------------------- */}
 
               <button
+                type="button"
                 onClick={() => {
                   setError(null);
                   setCreateOpen(true);
                 }}
                 className="
-                  rounded-xl
+                  inline-flex
+                  h-10
+                  w-full
+                  items-center
+                  justify-center
+                  rounded-lg
                   bg-blue-600
                   px-4
-                  py-2
                   text-sm
                   font-medium
                   text-white
+                  transition-colors
+                  duration-150
+
                   hover:bg-blue-500
-                  transition
+
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-blue-500/40
+
+                  sm:w-auto
                 "
               >
-                + Create Pipeline
-              </button>
+                <span
+                  className="
+                    mr-1.5
+                    text-base
+                    leading-none
+                  "
+                  aria-hidden="true"
+                >
+                  +
+                </span>
 
+                Create Pipeline
+              </button>
             </div>
           }
         />
 
-        {/* Error */}
+        {/* ================================================================
+            ERROR
+        ================================================================ */}
 
         {error && (
           <div
+            role="alert"
             className="
-              mb-6
+              mb-4
+              min-w-0
               rounded-xl
               border
               border-red-500/20
               bg-red-500/10
-              px-4
+              px-3.5
               py-3
-              text-sm
+              text-xs
+              leading-5
               text-red-400
+
+              sm:mb-5
+              sm:px-4
+              sm:text-sm
             "
           >
             {error}
           </div>
         )}
 
-        {/* Metrics */}
+        {/* ================================================================
+            METRICS
+        ================================================================ */}
 
         {!loading &&
           pipelines.length > 0 && (
-            <div className="mb-6">
+            <div
+              className="
+                mb-5
+                min-w-0
+
+                sm:mb-6
+              "
+            >
               <MetricsBar
                 pipelines={pipelines}
               />
             </div>
           )}
 
-        {/* Empty */}
+        {/* ================================================================
+            EMPTY STATE
+        ================================================================ */}
 
         {!loading &&
           pipelines.length === 0 && (
-            <EmptyState
-              title="No Pipelines Found"
-              description="Create your first pipeline to start processing data."
-            />
+            <div className="min-w-0">
+              <EmptyState
+                title="No Pipelines Found"
+                description="Create your first pipeline to start processing data."
+              />
+            </div>
           )}
 
-        {/* Loading */}
+        {/* ================================================================
+            LOADING
+        ================================================================ */}
 
         {loading && (
-          <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+          <div
+            className="
+              grid
+              min-w-0
+              grid-cols-1
+              gap-4
+
+              md:grid-cols-2
+              md:gap-5
+            "
+          >
             {[1, 2, 3, 4].map(
               (item) => (
-                <LoadingSkeleton
+                <div
                   key={item}
-                />
+                  className="min-w-0"
+                >
+                  <LoadingSkeleton />
+                </div>
               )
             )}
           </div>
         )}
 
-        {/* Pipeline Cards */}
+        {/* ================================================================
+            PIPELINE CARDS
+        ================================================================ */}
 
         {!loading &&
           pipelines.length > 0 && (
-            <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
+            <div
+              className="
+                grid
+                min-w-0
+                grid-cols-1
+                gap-4
+
+                md:grid-cols-2
+                md:gap-5
+              "
+            >
               {pipelines.map(
                 (pipeline) => (
-                  <PipelineCard
+                  <div
                     key={pipeline.id}
-                    pipeline={getPipelineWithDisplayStatus(
-                      pipeline
-                    )}
-                    running={
-                      runningPipelineId ===
-                      pipeline.id
-                    }
-                    onRun={runPipeline}
-                    onLogs={
-                      handleViewLogs
-                    }
-                    onHistory={
-                      handleViewHistory
-                    }
-                  />
+                    className="
+                      min-w-0
+                      w-full
+                    "
+                  >
+                    <PipelineCard
+                      pipeline={getPipelineWithDisplayStatus(
+                        pipeline
+                      )}
+                      running={
+                        runningPipelineId ===
+                        pipeline.id
+                      }
+                      onRun={
+                        runPipeline
+                      }
+                      onLogs={
+                        handleViewLogs
+                      }
+                      onHistory={
+                        handleViewHistory
+                      }
+                    />
+                  </div>
                 )
               )}
             </div>
           )}
 
-        {/* Create Pipeline Dialog */}
+        {/* ================================================================
+            CREATE PIPELINE DIALOG
+        ================================================================ */}
 
         <CreatePipelineDialog
           isOpen={createOpen}
@@ -325,7 +511,9 @@ export default function Pipelines() {
           }
         />
 
-        {/* Logs */}
+        {/* ================================================================
+            LOGS
+        ================================================================ */}
 
         <PipelineLogsModal
           isOpen={logsOpen}
@@ -335,7 +523,9 @@ export default function Pipelines() {
           logsData={logsData}
         />
 
-        {/* History */}
+        {/* ================================================================
+            HISTORY
+        ================================================================ */}
 
         <PipelineRunHistoryModal
           isOpen={historyOpen}
@@ -346,7 +536,6 @@ export default function Pipelines() {
             selectedPipelineId
           }
         />
-
       </div>
     </div>
   );
