@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+  RefreshCw,
+  X,
+} from "lucide-react";
 
 import {
   createPipeline,
@@ -44,6 +51,9 @@ export default function Pipelines() {
   const [error, setError] =
     useState(null);
 
+  const [runFeedback, setRunFeedback] =
+    useState(null);
+
   const API = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
@@ -54,10 +64,13 @@ export default function Pipelines() {
   /* Fetch Pipelines                                                        */
   /* ---------------------------------------------------------------------- */
 
-  const fetchPipelines = async () => {
+  const fetchPipelines = async ({
+    showLoading = true,
+  } = {}) => {
     try {
-      setLoading(true);
-      setError(null);
+      if (showLoading) {
+        setLoading(true);
+      }
 
       const res = await axios.get(
         `${API}/pipelines`
@@ -71,7 +84,9 @@ export default function Pipelines() {
         "Unable to load pipelines."
       );
     } finally {
-      setLoading(false);
+      if (showLoading) {
+        setLoading(false);
+      }
     }
   };
 
@@ -92,13 +107,15 @@ export default function Pipelines() {
 
       setCreateOpen(false);
 
-      await fetchPipelines();
+      await fetchPipelines({
+        showLoading: false,
+      });
     } catch (err) {
       console.error(err);
 
       setError(
         err?.response?.data?.detail ||
-          "Unable to create pipeline."
+        "Unable to create pipeline."
       );
     } finally {
       setCreatingPipeline(false);
@@ -112,25 +129,67 @@ export default function Pipelines() {
   const runPipeline = async (
     pipelineId
   ) => {
+    const selectedPipeline =
+      pipelines.find(
+        (pipeline) =>
+          pipeline.id === pipelineId
+      );
+
+    const pipelineName =
+      selectedPipeline?.name ||
+      "Pipeline";
+
     try {
+      setError(null);
+
+      /*
+        Important:
+        Do NOT set the page-level loading state here.
+
+        The user should remain at the exact position
+        where they clicked Run.
+      */
+
       setRunningPipelineId(
         pipelineId
       );
 
-      setError(null);
+      setRunFeedback({
+        type: "running",
+        pipelineName,
+      });
 
       await axios.post(
         `${API}/pipelines/run/${pipelineId}`
       );
 
-      await fetchPipelines();
+      /*
+        Refresh the data without replacing the
+        existing cards with loading skeletons.
+      */
+
+      await fetchPipelines({
+        showLoading: false,
+      });
+
+      setRunFeedback({
+        type: "success",
+        pipelineName,
+      });
     } catch (err) {
       console.error(err);
 
-      setError(
+      const message =
         err?.response?.data?.detail ||
-          "Pipeline execution failed."
-      );
+        "Pipeline execution failed.";
+
+      setError(message);
+
+      setRunFeedback({
+        type: "error",
+        pipelineName,
+        message,
+      });
     } finally {
       setRunningPipelineId(null);
     }
@@ -196,10 +255,6 @@ export default function Pipelines() {
     return pipeline;
   };
 
-  /* ---------------------------------------------------------------------- */
-  /* Render                                                                 */
-  /* ---------------------------------------------------------------------- */
-
   return (
     <div
       className="
@@ -232,78 +287,82 @@ export default function Pipelines() {
 
         <PageHeader
           title="Pipelines"
-          subtitle="Manage and monitor your data pipelines"
+          subtitle={
+            <>
+              <span className="hidden sm:inline">
+                Manage and monitor your data pipelines
+              </span>
+
+              <span className="sm:hidden">
+                Manage your pipelines
+              </span>
+            </>
+          }
           action={
             <div
               className="
-                flex
-                w-full
-                min-w-0
-                flex-col
-                gap-2
+        flex
+        w-full
+        min-w-0
+        items-center
+        justify-end
+        gap-2
 
-                sm:w-auto
-                sm:flex-row
-                sm:items-center
-                sm:gap-3
-              "
+        sm:w-auto
+        sm:flex-row
+        sm:gap-3
+      "
             >
-              {/* ----------------------------------------------------------
-                  Refresh
-              ---------------------------------------------------------- */}
+              {/* Refresh */}
 
               <button
                 type="button"
-                onClick={fetchPipelines}
+                onClick={() => fetchPipelines()}
                 disabled={loading}
+                aria-label="Refresh pipelines"
+                title="Refresh pipelines"
                 className="
-                  inline-flex
-                  h-10
-                  w-full
-                  items-center
-                  justify-center
-                  rounded-lg
-                  border
-                  border-slate-700
-                  bg-slate-900/60
-                  px-3
-                  text-sm
-                  font-medium
-                  text-slate-300
-                  transition-colors
-                  duration-150
+          inline-flex
+          h-10
+          w-10
+          shrink-0
+          items-center
+          justify-center
+          rounded-lg
+          border
+          border-slate-700
+          bg-slate-900/60
+          text-slate-300
+          transition-colors
+          duration-150
 
-                  hover:border-slate-600
-                  hover:bg-slate-800
-                  hover:text-white
+          hover:border-slate-600
+          hover:bg-slate-800
+          hover:text-white
 
-                  focus:outline-none
-                  focus:ring-2
-                  focus:ring-blue-500/30
+          focus:outline-none
+          focus:ring-2
+          focus:ring-blue-500/30
 
-                  disabled:cursor-not-allowed
-                  disabled:opacity-50
+          disabled:cursor-not-allowed
+          disabled:opacity-50
 
-                  sm:w-auto
-                "
+          sm:w-auto
+          sm:gap-2
+          sm:px-3
+        "
               >
-                <span
-                  className="
-                    mr-1.5
-                    text-base
-                    leading-none
-                  "
-                  aria-hidden="true"
-                >
-                  ↻
-                </span>
+                <RefreshCw
+                  size={14}
+                  className={loading ? "animate-spin" : ""}
+                />
 
-                Refresh
+                <span className="hidden sm:inline">
+                  Refresh
+                </span>
               </button>
 
-              {/* ----------------------------------------------------------
-                  Create Pipeline
-              ---------------------------------------------------------- */}
+              {/* Create */}
 
               <button
                 type="button"
@@ -312,45 +371,189 @@ export default function Pipelines() {
                   setCreateOpen(true);
                 }}
                 className="
-                  inline-flex
-                  h-10
-                  w-full
-                  items-center
-                  justify-center
-                  rounded-lg
-                  bg-blue-600
-                  px-4
-                  text-sm
-                  font-medium
-                  text-white
-                  transition-colors
-                  duration-150
+          inline-flex
+          h-10
+          shrink-0
+          items-center
+          justify-center
+          rounded-lg
+          bg-blue-600
+          px-3
+          text-sm
+          font-medium
+          text-white
+          transition-colors
+          duration-150
 
-                  hover:bg-blue-500
+          hover:bg-blue-500
 
-                  focus:outline-none
-                  focus:ring-2
-                  focus:ring-blue-500/40
+          focus:outline-none
+          focus:ring-2
+          focus:ring-blue-500/40
 
-                  sm:w-auto
-                "
+          sm:px-4
+        "
               >
                 <span
                   className="
-                    mr-1.5
-                    text-base
-                    leading-none
-                  "
+            mr-1.5
+            text-base
+            leading-none
+          "
                   aria-hidden="true"
                 >
                   +
                 </span>
 
-                Create Pipeline
+                <span className="sm:hidden">
+                  Create
+                </span>
+
+                <span className="hidden sm:inline">
+                  Create Pipeline
+                </span>
               </button>
             </div>
           }
         />
+        {/* ================================================================
+            RUN FEEDBACK
+        ================================================================ */}
+
+        {runFeedback && (
+          <div
+            className={`
+              mb-4
+              flex
+              min-w-0
+              items-start
+              gap-3
+              rounded-xl
+              border
+              px-3.5
+              py-3
+
+              sm:mb-5
+              sm:items-center
+              sm:px-4
+
+              ${runFeedback.type ===
+                "running"
+                ? `
+                      border-blue-500/20
+                      bg-blue-500/10
+                      text-blue-300
+                    `
+                : runFeedback.type ===
+                  "success"
+                  ? `
+                        border-emerald-500/20
+                        bg-emerald-500/10
+                        text-emerald-300
+                      `
+                  : `
+                        border-red-500/20
+                        bg-red-500/10
+                        text-red-300
+                      `
+              }
+            `}
+          >
+            {/* Icon */}
+
+            <div className="mt-0.5 shrink-0 sm:mt-0">
+              {runFeedback.type ===
+                "running" && (
+                  <Loader2
+                    size={17}
+                    className="animate-spin"
+                  />
+                )}
+
+              {runFeedback.type ===
+                "success" && (
+                  <CheckCircle2
+                    size={17}
+                  />
+                )}
+
+              {runFeedback.type ===
+                "error" && (
+                  <AlertCircle
+                    size={17}
+                  />
+                )}
+            </div>
+
+            {/* Message */}
+
+            <div className="min-w-0 flex-1">
+              <p
+                className="
+                  text-xs
+                  font-semibold
+
+                  sm:text-sm
+                "
+              >
+                {runFeedback.type ===
+                  "running" &&
+                  `Running ${runFeedback.pipelineName}`}
+
+                {runFeedback.type ===
+                  "success" &&
+                  `${runFeedback.pipelineName} completed successfully`}
+
+                {runFeedback.type ===
+                  "error" &&
+                  `${runFeedback.pipelineName} failed`}
+              </p>
+
+              <p
+                className="
+                  mt-0.5
+                  truncate
+                  text-[10px]
+                  opacity-70
+
+                  sm:text-xs
+                "
+              >
+                {runFeedback.type ===
+                  "running" &&
+                  "Pipeline execution is in progress."}
+
+                {runFeedback.type ===
+                  "success" &&
+                  "Pipeline execution finished just now."}
+
+                {runFeedback.type ===
+                  "error" &&
+                  runFeedback.message}
+              </p>
+            </div>
+
+            {/* Close */}
+
+            <button
+              type="button"
+              onClick={() =>
+                setRunFeedback(null)
+              }
+              aria-label="Dismiss pipeline status"
+              className="
+                shrink-0
+                rounded-md
+                p-1
+                opacity-60
+                transition-opacity
+                hover:opacity-100
+              "
+            >
+              <X size={15} />
+            </button>
+          </div>
+        )}
 
         {/* ================================================================
             ERROR
@@ -416,7 +619,7 @@ export default function Pipelines() {
           )}
 
         {/* ================================================================
-            LOADING
+            INITIAL LOADING ONLY
         ================================================================ */}
 
         {loading && (

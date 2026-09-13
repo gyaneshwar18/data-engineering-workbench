@@ -3,9 +3,6 @@ import {
   FileText,
   History,
   Loader2,
-  Database,
-  Globe,
-  FileSpreadsheet,
   Clock3,
 } from "lucide-react";
 
@@ -65,342 +62,540 @@ export default function PipelineCard({
   return (
     <div
       className={`
-        rounded-2xl
+        w-full
+        min-w-0
+        rounded-xl
         border
-        p-5
+        p-4
         transition-all
         duration-300
 
+        sm:rounded-2xl
+        sm:p-5
+
         ${running
           ? `
-              border-blue-500/50
-              bg-slate-900
-              shadow-[0_0_30px_rgba(59,130,246,0.12)]
-            `
+                border-blue-500/50
+                bg-slate-900
+                shadow-[0_0_30px_rgba(59,130,246,0.12)]
+              `
           : `
-              border-slate-800
-              bg-slate-900/90
-              hover:border-slate-700
-              hover:bg-slate-900
-              hover:-translate-y-0.5
-              hover:shadow-lg
-            `
+                border-slate-800
+                bg-slate-900/90
+                hover:border-slate-700
+                hover:bg-slate-900
+                hover:-translate-y-0.5
+                hover:shadow-lg
+              `
         }
       `}
     >
-      {/* HEADER */}
+      {/* ============================================================
+          HEADER
+      ============================================================ */}
 
-      <div className="flex items-start justify-between gap-4">
+      <div
+        className="
+          flex
+          min-w-0
+          items-center
+          justify-between
+          gap-3
+        "
+      >
+        {/* ----------------------------------------------------------
+            SOURCE + NAME
+        ---------------------------------------------------------- */}
 
-        <div className="flex min-w-0 items-center gap-4">
+        <div
+          className="
+            flex
+            min-w-0
+            flex-1
+            items-center
+            gap-3
 
+            sm:gap-3.5
+          "
+        >
           {/* Source Icon */}
 
           <div
             className="
-    flex
-    h-12
-    w-12
-    shrink-0
-    items-center
-    justify-center
+              flex
+              h-10
+              w-10
+              shrink-0
+              items-center
+              justify-center
+              rounded-lg
+              border
+              border-slate-700
+              bg-slate-800
 
-    rounded-xl
-
-    border
-    border-slate-700/80
-
-    bg-slate-800/70
-
-    shadow-inner
-  "
+              sm:h-11
+              sm:w-11
+              sm:rounded-xl
+            "
           >
             <img
               src={getSourceIcon()}
-              alt={`${pipeline.source} source`}
+              alt={`${getSourceLabel()} source`}
               className={`
-      object-contain
+                block
+                object-contain
 
-      ${source === "api"
-                  ? "h-20 w-20"
-                  : "h-[30px] w-[30px]"
+                ${source === "api"
+                  ? "h-7 w-7 sm:h-8 sm:w-8"
+                  : "h-6 w-6 sm:h-7 sm:w-7"
                 }
-    `}
+              `}
             />
           </div>
 
-          {/* Name */}
+          {/* Pipeline Name */}
 
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
+            <h2
+              className="
+    truncate
+    text-sm
+    font-semibold
+    leading-5
+    tracking-tight
+    text-white
 
-            <h2 className="truncate text-lg font-semibold text-white">
+    sm:text-base
+  "
+              title={pipeline.name}
+            >
               {pipeline.name}
             </h2>
-
-
           </div>
-
         </div>
 
-        {/* Status */}
+        {/* ----------------------------------------------------------
+            STATUS
+        ---------------------------------------------------------- */}
 
         <div className="shrink-0">
           <StatusBadge
             status={pipeline.status}
           />
         </div>
-
       </div>
 
-      {/* DIVIDER */}
+      {/* ============================================================
+          DIVIDER
+      ============================================================ */}
 
-      <div className="my-5 border-t border-slate-800" />
+      <div
+        className="
+          my-4
+          border-t
+          border-slate-800
 
-      {/* PIPELINE DETAILS */}
+          sm:my-5
+        "
+      />
 
-      <div className="grid grid-cols-2 gap-6">
+      {/* ============================================================
+          PIPELINE DETAILS
 
-        {/* SOURCE */}
+          Keep this 2 x 2 even on mobile.
+          This avoids the excessive vertical height that the
+          previous version created.
+      ============================================================ */}
+
+      <div
+        className="
+          grid
+          min-w-0
+          grid-cols-2
+          gap-x-5
+          gap-y-4
+
+          sm:gap-x-6
+          sm:gap-y-5
+        "
+      >
+        {/* ----------------------------------------------------------
+            SOURCE
+        ---------------------------------------------------------- */}
 
         <div className="min-w-0">
-
           <p
             className="
-              mb-2
-              text-[10px]
+              mb-1
+              text-[9px]
               font-medium
               uppercase
-              tracking-widest
+              tracking-[0.14em]
               text-slate-500
+
+              sm:mb-1.5
+              sm:text-[10px]
             "
           >
             Source
           </p>
 
-          <p className="truncate text-sm text-slate-200">
+          <p
+            className="
+              truncate
+              text-xs
+              font-medium
+              leading-5
+              text-slate-200
+
+              sm:text-sm
+            "
+          >
             {source === "api"
               ? "API Source"
               : source === "csv"
                 ? "CSV File"
                 : pipeline.source || "-"}
           </p>
-
         </div>
 
-        {/* DESTINATION */}
+        {/* ----------------------------------------------------------
+            DESTINATION
+        ---------------------------------------------------------- */}
 
         <div className="min-w-0">
-
           <p
             className="
-              mb-2
-              text-[10px]
+              mb-1
+              text-[9px]
               font-medium
               uppercase
-              tracking-widest
+              tracking-[0.14em]
               text-slate-500
+
+              sm:mb-1.5
+              sm:text-[10px]
             "
           >
             Destination
           </p>
 
-          <p className="truncate font-mono text-sm text-slate-200">
-            {pipeline.destination}
-          </p>
-
-        </div>
-
-        {/* SCHEDULE */}
-
-        <div>
-
           <p
             className="
-              mb-2
-              text-[10px]
+              truncate
+              font-mono
+              text-xs
+              leading-5
+              text-slate-200
+
+              sm:text-sm
+            "
+            title={pipeline.destination}
+          >
+            {pipeline.destination}
+          </p>
+        </div>
+
+        {/* ----------------------------------------------------------
+            SCHEDULE
+        ---------------------------------------------------------- */}
+
+        <div className="min-w-0">
+          <p
+            className="
+              mb-1
+              text-[9px]
               font-medium
               uppercase
-              tracking-widest
+              tracking-[0.14em]
               text-slate-500
+
+              sm:mb-1.5
+              sm:text-[10px]
             "
           >
             Schedule
           </p>
 
           {isScheduled ? (
-            <div className="flex items-center gap-2 text-sm text-slate-200">
+            <div
+              className="
+                flex
+                min-w-0
+                items-center
+                gap-1.5
+              "
+            >
               <Clock3
-                size={14}
-                className="text-blue-400"
+                size={13}
+                className="
+                  shrink-0
+                  text-blue-400
+                "
               />
 
-              <span>
+              <span
+                className="
+                  truncate
+                  text-xs
+                  text-slate-200
+
+                  sm:text-sm
+                "
+              >
                 {pipeline.schedule_type}
               </span>
 
-              <span className="text-xs text-emerald-400">
+              <span
+                className="
+                  hidden
+                  shrink-0
+                  text-[10px]
+                  text-emerald-400
+
+                  sm:inline
+                "
+              >
                 • Active
               </span>
             </div>
           ) : (
-            <span className="text-sm text-slate-400">
+            <span
+              className="
+                text-xs
+                leading-5
+                text-slate-400
+
+                sm:text-sm
+              "
+            >
               Manual
             </span>
           )}
-
         </div>
 
-        {/* LAST RUN */}
+        {/* ----------------------------------------------------------
+            LAST RUN
+        ---------------------------------------------------------- */}
 
-        <div>
-
+        <div className="min-w-0">
           <p
             className="
-              mb-2
-              text-[10px]
+              mb-1
+              text-[9px]
               font-medium
               uppercase
-              tracking-widest
+              tracking-[0.14em]
               text-slate-500
+
+              sm:mb-1.5
+              sm:text-[10px]
             "
           >
             Last Run
           </p>
 
-          <p className="text-sm text-slate-300">
+          <p
+            className="
+              truncate
+              text-xs
+              leading-5
+              text-slate-300
+
+              sm:text-sm
+            "
+          >
             {formatLastRun()}
           </p>
-
         </div>
-
       </div>
 
-      {/* ACTIONS */}
+      {/* ============================================================
+          ACTIONS
+      ============================================================ */}
 
-      <div className="mt-6 grid grid-cols-3 gap-3">
+      <div
+        className="
+          mt-4
+          grid
+          grid-cols-3
+          gap-2
 
-        {/* RUN */}
+          sm:mt-5
+          sm:gap-3
+        "
+      >
+        {/* ----------------------------------------------------------
+            RUN
+        ---------------------------------------------------------- */}
 
         <button
+          type="button"
           onClick={() =>
             onRun(pipeline.id)
           }
           disabled={running}
           className="
             flex
-            h-11
+            h-9
+            min-w-0
             items-center
             justify-center
-            gap-2
-            rounded-xl
-
+            gap-1.5
+            rounded-lg
             border
             border-blue-500/20
-
             bg-blue-500/10
-
-            text-sm
+            px-2
+            text-[11px]
             font-medium
             text-blue-300
-
             transition-all
 
             hover:bg-blue-500/15
 
+            focus:outline-none
+            focus:ring-2
+            focus:ring-blue-500/30
+
             disabled:cursor-not-allowed
             disabled:opacity-60
+
+            sm:h-10
+            sm:gap-2
+            sm:rounded-xl
+            sm:px-3
+            sm:text-sm
           "
         >
           {running ? (
             <Loader2
-              size={16}
-              className="animate-spin"
+              size={14}
+              className="
+                shrink-0
+                animate-spin
+              "
             />
           ) : (
-            <Play size={16} />
+            <Play
+              size={14}
+              className="shrink-0"
+            />
           )}
 
-          {running
-            ? "Running..."
-            : "Run"}
+          <span className="truncate">
+            {running
+              ? "Running..."
+              : "Run"}
+          </span>
         </button>
 
-        {/* LOGS */}
+        {/* ----------------------------------------------------------
+            LOGS
+        ---------------------------------------------------------- */}
 
         <button
+          type="button"
           onClick={() =>
             onLogs(pipeline.id)
           }
           disabled={running}
           className="
             flex
-            h-11
+            h-9
+            min-w-0
             items-center
             justify-center
-            gap-2
-            rounded-xl
-
+            gap-1.5
+            rounded-lg
             border
             border-amber-500/20
-
             bg-amber-500/10
-
-            text-sm
+            px-2
+            text-[11px]
             font-medium
             text-amber-300
-
             transition-all
 
             hover:bg-amber-500/15
 
+            focus:outline-none
+            focus:ring-2
+            focus:ring-amber-500/30
+
             disabled:cursor-not-allowed
             disabled:opacity-60
+
+            sm:h-10
+            sm:gap-2
+            sm:rounded-xl
+            sm:px-3
+            sm:text-sm
           "
         >
-          <FileText size={16} />
+          <FileText
+            size={14}
+            className="shrink-0"
+          />
 
-          Logs
+          <span className="truncate">
+            Logs
+          </span>
         </button>
 
-        {/* HISTORY */}
+        {/* ----------------------------------------------------------
+            HISTORY
+        ---------------------------------------------------------- */}
 
         <button
+          type="button"
           onClick={() =>
             onHistory(pipeline.id)
           }
           disabled={running}
           className="
             flex
-            h-11
+            h-9
+            min-w-0
             items-center
             justify-center
-            gap-2
-            rounded-xl
-
+            gap-1.5
+            rounded-lg
             border
             border-purple-500/20
-
             bg-purple-500/10
-
-            text-sm
+            px-2
+            text-[11px]
             font-medium
             text-purple-300
-
             transition-all
 
             hover:bg-purple-500/15
 
+            focus:outline-none
+            focus:ring-2
+            focus:ring-purple-500/30
+
             disabled:cursor-not-allowed
             disabled:opacity-60
+
+            sm:h-10
+            sm:gap-2
+            sm:rounded-xl
+            sm:px-3
+            sm:text-sm
           "
         >
-          <History size={16} />
+          <History
+            size={14}
+            className="shrink-0"
+          />
 
-          History
+          <span className="truncate">
+            History
+          </span>
         </button>
-
       </div>
-
     </div>
   );
 }
