@@ -24,255 +24,448 @@ const PipelineLogsModal = ({
         fixed
         inset-0
         z-50
-
         flex
         items-center
         justify-center
-
-        p-6
-
         bg-black/60
+        p-2
         backdrop-blur-md
+
+        sm:p-4
       "
     >
       <div
         className="
+          flex
+          h-[94vh]
           w-full
           max-w-5xl
-          max-h-[88vh]
-
-          rounded-2xl
-
-          bg-[#0B1120]
-
+          min-w-0
+          flex-col
+          overflow-hidden
+          rounded-xl
           border
           border-slate-700/70
-
-          ring-1
-          ring-slate-800/60
-
+          bg-[#0B1120]
           shadow-[0_30px_90px_rgba(0,0,0,0.75)]
 
-          overflow-hidden
-
-          animate-in
-          fade-in
+          sm:h-[88vh]
+          sm:rounded-2xl
         "
       >
         {/* Header */}
 
         <div
           className="
-            sticky
-            top-0
-            z-10
-
             flex
+            shrink-0
             items-center
             justify-between
-
-            px-6
-            py-5
-
-            bg-[#0B1120]
-
+            gap-3
             border-b
             border-slate-800
+            bg-[#0B1120]
+            px-3.5
+            py-3.5
+
+            sm:px-5
+            sm:py-4
+
+            md:px-6
+            md:py-5
           "
         >
-          <div className="flex items-center gap-4">
+          <div
+            className="
+              flex
+              min-w-0
+              items-center
+              gap-2.5
 
+              sm:gap-3.5
+            "
+          >
             <div
               className="
-                h-14
-                w-14
-
-                rounded-2xl
-
-                bg-blue-500/10
-
                 flex
+                h-9
+                w-9
+                shrink-0
                 items-center
                 justify-center
+                rounded-lg
+                border
+                border-blue-500/20
+                bg-blue-500/10
+
+                sm:h-11
+                sm:w-11
+                sm:rounded-xl
+
+                md:h-12
+                md:w-12
               "
             >
               <FileText
                 className="text-blue-400"
-                size={28}
+                size={18}
               />
             </div>
 
-            <div>
+            <div className="min-w-0">
+              <h2
+                className="
+                  truncate
+                  text-sm
+                  font-semibold
+                  leading-5
+                  text-white
 
-              <h2 className="text-lg font-semibold  text-white">
+                  sm:text-base
+                  md:text-lg
+                "
+              >
                 Pipeline Logs
               </h2>
 
-              <p className="text-slate-400 text-sm">
+              <p
+                className="
+                  mt-0.5
+                  truncate
+                  text-[10px]
+                  leading-4
+                  text-slate-400
+
+                  sm:text-xs
+
+                  md:text-sm
+                "
+              >
                 Execution details and runtime logs
               </p>
-
             </div>
-
           </div>
 
           <button
+            type="button"
             onClick={onClose}
+            aria-label="Close pipeline logs"
             className="
-              h-11
-              w-11
-
-              rounded-xl
-
-              hover:bg-slate-800
-
-              transition
-
               flex
+              h-9
+              w-9
+              shrink-0
               items-center
               justify-center
+              rounded-lg
+              text-slate-400
+              transition-colors
+              duration-150
+              hover:bg-slate-800
+              hover:text-white
+              focus:outline-none
+              focus:ring-2
+              focus:ring-blue-500/30
+
+              sm:h-10
+              sm:w-10
+              sm:rounded-xl
             "
           >
-            <X
-              size={22}
-              className="text-slate-400"
-            />
+            <X size={19} />
           </button>
         </div>
 
         {/* Body */}
 
-        <div className="p-6 overflow-auto max-h-[calc(88vh-95px)]">
+        <div
+          className="
+            min-h-0
+            flex-1
+            overflow-y-auto
+            overflow-x-hidden
+            px-3.5
+            py-4
 
+            sm:px-5
+            sm:py-5
+
+            md:px-6
+            md:py-6
+          "
+        >
           {/* Metrics */}
 
-          <div className="grid md:grid-cols-3 gap-5 mb-8">
+          <div
+            className="
+              mb-5
+              grid
+              min-w-0
+              grid-cols-1
+              gap-3
 
-            <div className="bg-slate-900 rounded-2xl p-4 border border-slate-800">
+              sm:gap-4
 
-              <p className="text-xs uppercase tracking-wider text-slate-500 mb-3">
+              md:mb-7
+              md:grid-cols-3
+              md:gap-5
+            "
+          >
+            {/* Status */}
+
+            <div
+              className="
+                min-w-0
+                rounded-xl
+                border
+                border-slate-800
+                bg-slate-900
+                p-3.5
+
+                sm:p-4
+
+                md:rounded-2xl
+              "
+            >
+              <p
+                className="
+                  mb-2
+                  text-[9px]
+                  font-medium
+                  uppercase
+                  tracking-[0.14em]
+                  text-slate-500
+
+                  sm:mb-3
+                  sm:text-xs
+                  sm:tracking-wider
+                "
+              >
                 Status
               </p>
 
               <div
                 className="
                   inline-flex
+                  max-w-full
                   items-center
-                  gap-2
-
+                  gap-1.5
                   rounded-full
-
-                  px-4
-                  py-2
-
-                  bg-green-500/10
-
                   border
                   border-green-500/20
+                  bg-green-500/10
+                  px-3
+                  py-1.5
+
+                  sm:gap-2
+                  sm:px-4
+                  sm:py-2
                 "
               >
                 <CheckCircle2
-                  size={16}
-                  className="text-green-400"
+                  size={15}
+                  className="shrink-0 text-green-400"
                 />
 
-                <span className="text-green-400 font-semibold">
-                  {logsData?.status?.toUpperCase()}
+                <span className="truncate text-xs font-semibold text-green-400 sm:text-sm">
+                  {logsData?.status?.toUpperCase() || "-"}
                 </span>
               </div>
-
             </div>
 
-            <div className="bg-slate-900 rounded-2xl p-5 border border-slate-800">
+            {/* Started */}
 
-              <p className="text-xs uppercase tracking-wider text-slate-500 mb-3">
+            <div
+              className="
+                min-w-0
+                rounded-xl
+                border
+                border-slate-800
+                bg-slate-900
+                p-3.5
+
+                sm:p-4
+
+                md:rounded-2xl
+                md:p-5
+              "
+            >
+              <p
+                className="
+                  mb-2
+                  text-[9px]
+                  font-medium
+                  uppercase
+                  tracking-[0.14em]
+                  text-slate-500
+
+                  sm:mb-3
+                  sm:text-xs
+                  sm:tracking-wider
+                "
+              >
                 Started
               </p>
 
-              <div className="flex items-center gap-2">
-
+              <div className="flex min-w-0 items-center gap-2">
                 <Clock3
-                  size={16}
-                  className="text-slate-400"
+                  size={15}
+                  className="shrink-0 text-slate-400"
                 />
 
-                <span className="text-slate-200">
+                <span
+                  className="
+                    min-w-0
+                    truncate
+                    text-xs
+                    text-slate-200
+
+                    sm:text-sm
+                  "
+                  title={logsData?.started_at || "-"}
+                >
                   {logsData?.started_at || "-"}
                 </span>
-
               </div>
-
             </div>
 
-            <div className="bg-slate-900 rounded-2xl p-5 border border-slate-800">
+            {/* Finished */}
 
-              <p className="text-xs uppercase tracking-wider text-slate-500 mb-3">
+            <div
+              className="
+                min-w-0
+                rounded-xl
+                border
+                border-slate-800
+                bg-slate-900
+                p-3.5
+
+                sm:p-4
+
+                md:rounded-2xl
+                md:p-5
+              "
+            >
+              <p
+                className="
+                  mb-2
+                  text-[9px]
+                  font-medium
+                  uppercase
+                  tracking-[0.14em]
+                  text-slate-500
+
+                  sm:mb-3
+                  sm:text-xs
+                  sm:tracking-wider
+                "
+              >
                 Finished
               </p>
 
-              <div className="flex items-center gap-2">
-
+              <div className="flex min-w-0 items-center gap-2">
                 <Clock3
-                  size={16}
-                  className="text-slate-400"
+                  size={15}
+                  className="shrink-0 text-slate-400"
                 />
 
-                <span className="text-slate-200">
+                <span
+                  className="
+                    min-w-0
+                    truncate
+                    text-xs
+                    text-slate-200
+
+                    sm:text-sm
+                  "
+                  title={logsData?.finished_at || "-"}
+                >
                   {logsData?.finished_at || "-"}
                 </span>
-
               </div>
-
             </div>
-
           </div>
 
           {/* Terminal Header */}
 
-          <div className="flex justify-between items-center mb-5">
+          <div
+            className="
+              mb-3
+              flex
+              min-w-0
+              items-center
+              justify-between
+              gap-3
 
-            <h3 className="text-lg font-semibold text-white">
+              sm:mb-4
+            "
+          >
+            <h3
+              className="
+                truncate
+                text-sm
+                font-semibold
+                text-white
+
+                sm:text-base
+                md:text-lg
+              "
+            >
               Terminal Output
             </h3>
 
             <button
+              type="button"
               onClick={copyLogs}
+              aria-label="Copy logs"
+              title="Copy Logs"
               className="
-                flex
+                inline-flex
+                h-9
+                w-9
+                shrink-0
                 items-center
+                justify-center
                 gap-2
-
-                rounded-xl
-
+                rounded-lg
                 border
                 border-slate-700
-
-                px-4
-                py-2
-
+                text-slate-300
+                transition-colors
+                duration-150
                 hover:bg-slate-800
+                hover:text-white
+                focus:outline-none
+                focus:ring-2
+                focus:ring-blue-500/30
 
-                transition
+                sm:h-auto
+                sm:w-auto
+                sm:rounded-xl
+                sm:px-3
+                sm:py-2
               "
             >
-              <Copy size={16} />
-              Copy Logs
-            </button>
+              <Copy size={15} />
 
+              <span className="hidden text-xs font-medium sm:inline">
+                Copy Logs
+              </span>
+            </button>
           </div>
 
           {/* Terminal */}
 
           <div
             className="
+              min-w-0
               overflow-hidden
-
-              rounded-2xl
-
+              rounded-xl
               border
               border-slate-800
-
               bg-black
+
+              sm:rounded-2xl
             "
           >
             {/* Window Bar */}
@@ -281,44 +474,52 @@ const PipelineLogsModal = ({
               className="
                 flex
                 items-center
-                gap-3
-
-                px-5
-                py-4
-
+                gap-2
                 border-b
                 border-slate-800
+                px-3.5
+                py-3
+
+                sm:gap-2.5
+                sm:px-4
+                sm:py-3.5
+
+                md:px-5
+                md:py-4
               "
             >
-              <div className="h-3 w-3 rounded-full bg-red-500"></div>
-              <div className="h-3 w-3 rounded-full bg-yellow-400"></div>
-              <div className="h-3 w-3 rounded-full bg-green-500"></div>
+              <div className="h-2.5 w-2.5 rounded-full bg-red-500 sm:h-3 sm:w-3" />
+              <div className="h-2.5 w-2.5 rounded-full bg-yellow-400 sm:h-3 sm:w-3" />
+              <div className="h-2.5 w-2.5 rounded-full bg-green-500 sm:h-3 sm:w-3" />
             </div>
 
             {/* Logs */}
 
             <div
               className="
-                overflow-y-auto
-
-                h-[340px]
-
-                p-7
-
+                h-[280px]
+                overflow-auto
+                p-4
                 font-mono
-                text-[13px]
-                leading-6
-
+                text-[11px]
+                leading-5
                 text-emerald-400
+
+                sm:h-[320px]
+                sm:p-5
+                sm:text-xs
+                sm:leading-6
+
+                md:h-[340px]
+                md:p-6
+                md:text-[13px]
               "
             >
               <pre className="whitespace-pre-wrap break-words">
                 {logsData?.logs || "No logs available"}
               </pre>
             </div>
-
           </div>
-
         </div>
       </div>
     </div>
