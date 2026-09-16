@@ -23,8 +23,18 @@ export default function Datasets() {
   const [source, setSource] = useState("all");
   const [sort, setSort] = useState("recent");
 
+  /* ============================================================ */
+  /* DATASET NAVIGATION                                            */
+  /* ============================================================ */
+
+  const [activeTab, setActiveTab] = useState("all");
+
   const [loading, setLoading] = useState(true);
   const [uploadOpen, setUploadOpen] = useState(false);
+
+  /* ============================================================ */
+  /* LOAD DATASETS                                                 */
+  /* ============================================================ */
 
   useEffect(() => {
     loadDatasets();
@@ -51,9 +61,9 @@ export default function Datasets() {
     }
   };
 
-  /* ------------------------------------------------------------------ */
-  /* Filtering + Sorting                                                */
-  /* ------------------------------------------------------------------ */
+  /* ============================================================ */
+  /* FILTER + SORT                                                 */
+  /* ============================================================ */
 
   const filteredDatasets = useMemo(() => {
     let data = [...datasets];
@@ -155,23 +165,21 @@ export default function Datasets() {
     sort,
   ]);
 
-  /* ------------------------------------------------------------------ */
-  /* Dataset Selection                                                  */
-  /* ------------------------------------------------------------------ */
+  /* ============================================================ */
+  /* DATASET SELECTION                                             */
+  /* ============================================================ */
 
   const handleSelectDataset = (dataset) => {
-    setSelectedTable(
-      dataset.table_name
-    );
+    setSelectedTable(dataset.table_name);
   };
 
   const handleBack = () => {
     setSelectedTable(null);
   };
 
-  /* ------------------------------------------------------------------ */
-  /* Dataset Upload                                                     */
-  /* ------------------------------------------------------------------ */
+  /* ============================================================ */
+  /* DATASET UPLOAD                                                */
+  /* ============================================================ */
 
   const handleUpload = async (file) => {
     try {
@@ -186,6 +194,9 @@ export default function Datasets() {
       );
 
       await loadDatasets();
+
+      /* After uploading, stay on All Datasets */
+      setActiveTab("all");
     } catch (error) {
       console.error(
         "Dataset upload failed:",
@@ -199,30 +210,136 @@ export default function Datasets() {
     }
   };
 
+  /* ============================================================ */
+  /* EMPTY TAB STATE                                               */
+  /* ============================================================ */
+
+  const renderTabEmptyState = () => {
+    const messages = {
+      my: {
+        title: "No datasets found",
+        description:
+          "No datasets have been added to your collection yet.",
+      },
+
+      recent: {
+        title: "No recent datasets",
+        description:
+          "No recently added datasets are available yet.",
+      },
+
+      favorites: {
+        title: "No favorite datasets",
+        description:
+          "No datasets have been added to your favorites yet.",
+      },
+    };
+
+    const content = messages[activeTab];
+
+    if (!content) return null;
+
+    return (
+      <div
+        className="
+          flex
+          min-h-[300px]
+          items-center
+          justify-center
+
+          rounded-2xl
+
+          border
+          border-slate-800/80
+
+          bg-slate-950/40
+
+          px-6
+        "
+      >
+        <div
+          className="
+            flex
+            max-w-sm
+            flex-col
+            items-center
+            text-center
+          "
+        >
+          <div
+            className="
+              mb-4
+              flex
+              h-12
+              w-12
+              items-center
+              justify-center
+
+              rounded-xl
+
+              border
+              border-slate-700/80
+
+              bg-slate-800/50
+            "
+          >
+            <span
+              className="
+                text-xl
+                text-slate-500
+              "
+            >
+              —
+            </span>
+          </div>
+
+          <p
+            className="
+              text-[15px]
+              font-semibold
+              text-slate-300
+            "
+          >
+            {content.title}
+          </p>
+
+          <p
+            className="
+              mt-1.5
+              text-sm
+              leading-6
+              text-slate-500
+            "
+          >
+            {content.description}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
+  /* ============================================================ */
+  /* RENDER                                                        */
+  /* ============================================================ */
+
   return (
     <div className="min-h-full">
       <div
         className="
           mx-auto
-          w-full
           max-w-[1600px]
-
-          space-y-5
-
+          space-y-6
           px-4
-          py-5
+          py-6
 
-          sm:px-5
-          sm:py-6
-          sm:space-y-6
-
-          lg:px-6
-          lg:py-8
+          sm:px-6
+          sm:py-8
         "
       >
-        {/* ---------------------------------------------------------- */}
-        {/* Dataset Details                                             */}
-        {/* ---------------------------------------------------------- */}
+
+        {/* ====================================================== */}
+        {/* DATASET DETAILS                                        */}
+        {/* ====================================================== */}
 
         {selectedTable ? (
           <DatasetDetails
@@ -231,9 +348,9 @@ export default function Datasets() {
           />
         ) : (
           <>
-            {/* ------------------------------------------------------ */}
-            {/* Header                                                 */}
-            {/* ------------------------------------------------------ */}
+            {/* ================================================== */}
+            {/* HEADER                                             */}
+            {/* ================================================== */}
 
             <DatasetHeader
               onUpload={() =>
@@ -241,40 +358,61 @@ export default function Datasets() {
               }
             />
 
-            {/* ------------------------------------------------------ */}
-            {/* Toolbar                                                */}
-            {/* ------------------------------------------------------ */}
+            {/* ================================================== */}
+            {/* TOOLBAR + TABS                                     */}
+            {/* ================================================== */}
 
             <DatasetToolbar
               search={search}
               onSearchChange={setSearch}
+
               type={type}
               onTypeChange={setType}
+
               source={source}
               onSourceChange={setSource}
+
               sort={sort}
               onSortChange={setSort}
+
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
             />
 
-            {/* ------------------------------------------------------ */}
-            {/* Dataset List                                            */}
-            {/* ------------------------------------------------------ */}
+            {/* ================================================== */}
+            {/* ALL DATASETS                                       */}
+            {/* ================================================== */}
 
-            {loading ? (
-              <DatasetListSkeleton />
-            ) : (
-              <DatasetList
-                datasets={filteredDatasets}
-                onSelect={handleSelectDataset}
-              />
+            {activeTab === "all" && (
+              <>
+                {loading ? (
+                  <DatasetListSkeleton />
+                ) : (
+                  <DatasetList
+                    datasets={
+                      filteredDatasets
+                    }
+                    onSelect={
+                      handleSelectDataset
+                    }
+                  />
+                )}
+              </>
             )}
+
+            {/* ================================================== */}
+            {/* OTHER TABS                                         */}
+            {/* ================================================== */}
+
+            {activeTab !== "all" &&
+              renderTabEmptyState()}
           </>
         )}
       </div>
 
-      {/* ------------------------------------------------------------ */}
-      {/* Upload Dialog                                                */}
-      {/* ------------------------------------------------------------ */}
+      {/* ======================================================== */}
+      {/* UPLOAD DIALOG                                            */}
+      {/* ======================================================== */}
 
       <UploadDatasetDialog
         open={uploadOpen}
@@ -287,9 +425,9 @@ export default function Datasets() {
   );
 }
 
-/* ================================================================== */
-/* Dataset Loading Skeleton                                           */
-/* ================================================================== */
+/* ================================================================= */
+/* LOADING SKELETON                                                  */
+/* ================================================================= */
 
 function DatasetListSkeleton() {
   return (
@@ -300,8 +438,6 @@ function DatasetListSkeleton() {
         border
         border-slate-800/80
         bg-slate-950/40
-
-        sm:rounded-2xl
       "
     >
       {/* Header */}
@@ -310,17 +446,22 @@ function DatasetListSkeleton() {
         className="
           border-b
           border-slate-800/80
-          px-4
-          py-3.5
-
-          sm:px-5
-          sm:py-4
+          px-5
+          py-4
         "
       >
-        <div className="h-4 w-24 animate-pulse rounded bg-slate-800" />
+        <div
+          className="
+            h-4
+            w-24
+            animate-pulse
+            rounded
+            bg-slate-800
+          "
+        />
       </div>
 
-      {/* Desktop Column Header */}
+      {/* Column Header */}
 
       <div
         className="
@@ -335,76 +476,140 @@ function DatasetListSkeleton() {
           md:grid
         "
       >
-        <div className="h-3 w-16 animate-pulse rounded bg-slate-800" />
+        <div
+          className="
+            h-3
+            w-16
+            animate-pulse
+            rounded
+            bg-slate-800
+          "
+        />
 
-        <div className="h-3 w-14 animate-pulse rounded bg-slate-800" />
+        <div
+          className="
+            h-3
+            w-14
+            animate-pulse
+            rounded
+            bg-slate-800
+          "
+        />
 
-        <div className="h-3 w-10 animate-pulse rounded bg-slate-800" />
+        <div
+          className="
+            h-3
+            w-10
+            animate-pulse
+            rounded
+            bg-slate-800
+          "
+        />
 
-        <div className="h-3 w-14 animate-pulse rounded bg-slate-800" />
+        <div
+          className="
+            h-3
+            w-14
+            animate-pulse
+            rounded
+            bg-slate-800
+          "
+        />
 
         <div />
       </div>
 
       {/* Rows */}
 
-      <div className="divide-y divide-slate-800/70">
-        {[1, 2, 3, 4, 5].map(
-          (item) => (
-            <div
-              key={item}
-              className="
-                px-4
-                py-4
+      {[1, 2, 3, 4, 5].map(
+        (item) => (
+          <div
+            key={item}
+            className="
+              grid
+              grid-cols-1
+              gap-4
 
-                sm:px-5
-                sm:py-5
+              border-b
+              border-slate-800/70
 
-                md:grid
-                md:grid-cols-[minmax(260px,2fr)_140px_100px_100px_48px]
-                md:items-center
-              "
-            >
-              {/* Dataset */}
+              px-5
+              py-5
 
-              <div className="flex items-center gap-3">
+              md:grid-cols-[minmax(260px,2fr)_140px_100px_100px_48px]
+              md:items-center
+              md:gap-0
+            "
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className="
+                  h-9
+                  w-9
+                  shrink-0
+                  animate-pulse
+                  rounded-lg
+                  bg-slate-800
+                "
+              />
+
+              <div className="space-y-2">
                 <div
                   className="
-                    h-9
-                    w-9
-                    shrink-0
+                    h-3
+                    w-32
                     animate-pulse
-                    rounded-lg
+                    rounded
                     bg-slate-800
                   "
                 />
 
-                <div className="min-w-0 space-y-2">
-                  <div className="h-3 w-32 animate-pulse rounded bg-slate-800" />
-
-                  <div className="h-2.5 w-24 animate-pulse rounded bg-slate-800" />
-                </div>
+                <div
+                  className="
+                    h-2.5
+                    w-24
+                    animate-pulse
+                    rounded
+                    bg-slate-800
+                  "
+                />
               </div>
-
-              {/* Desktop fields */}
-
-              <div className="mt-4 hidden md:block">
-                <div className="h-6 w-16 animate-pulse rounded-md bg-slate-800" />
-              </div>
-
-              <div className="mt-4 hidden md:block">
-                <div className="h-3 w-8 animate-pulse rounded bg-slate-800" />
-              </div>
-
-              <div className="mt-4 hidden md:block">
-                <div className="h-3 w-8 animate-pulse rounded bg-slate-800" />
-              </div>
-
-              <div className="hidden md:block" />
             </div>
-          )
-        )}
-      </div>
+
+            <div
+              className="
+                h-6
+                w-16
+                animate-pulse
+                rounded-md
+                bg-slate-800
+              "
+            />
+
+            <div
+              className="
+                h-3
+                w-8
+                animate-pulse
+                rounded
+                bg-slate-800
+              "
+            />
+
+            <div
+              className="
+                h-3
+                w-8
+                animate-pulse
+                rounded
+                bg-slate-800
+              "
+            />
+
+            <div />
+          </div>
+        )
+      )}
     </div>
   );
 }
