@@ -39,16 +39,19 @@ export default function DatasetList({
 
           bg-slate-900/30
 
-          px-5
+          px-4
           py-4
+
+          sm:px-5
         "
       >
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 items-center gap-3">
           <div
             className="
               flex
               h-9
               w-9
+              shrink-0
               items-center
               justify-center
 
@@ -63,7 +66,7 @@ export default function DatasetList({
             <Database className="h-4 w-4 text-blue-400" />
           </div>
 
-          <div>
+          <div className="min-w-0">
             <p
               className="
                 text-[15px]
@@ -90,13 +93,14 @@ export default function DatasetList({
       </div>
 
       {/* ================================================== */}
-      {/* COLUMN HEADER                                      */}
+      {/* DESKTOP COLUMN HEADER                              */}
       {/* ================================================== */}
 
       {count > 0 && (
         <div
           className="
-            grid
+            hidden
+            md:grid
 
             grid-cols-[minmax(300px,2fr)_140px_110px_110px_48px]
 
@@ -127,11 +131,11 @@ export default function DatasetList({
       )}
 
       {/* ================================================== */}
-      {/* ROWS                                               */}
+      {/* DATASET ROWS                                       */}
       {/* ================================================== */}
 
       {count > 0 ? (
-        <div>
+        <div className="w-full overflow-x-hidden">
           {datasets.map((dataset) => (
             <DatasetRow
               key={dataset.table_name}
@@ -152,10 +156,19 @@ export default function DatasetList({
             items-center
             justify-center
 
-            px-6
+            px-5
+            sm:px-6
           "
         >
-          <div className="flex max-w-sm flex-col items-center text-center">
+          <div
+            className="
+              flex
+              max-w-sm
+              flex-col
+              items-center
+              text-center
+            "
+          >
             <div
               className="
                 mb-4
@@ -194,8 +207,9 @@ export default function DatasetList({
                 text-slate-500
               "
             >
-              No datasets match your current search or filters.
-              Try adjusting your filters or upload a new dataset.
+              No datasets match your current search or
+              filters. Try adjusting your filters or
+              upload a new dataset.
             </p>
           </div>
         </div>
@@ -209,16 +223,21 @@ export default function DatasetList({
         <div
           className="
             flex
-            items-center
-            justify-between
+            flex-col
+            gap-3
 
             border-t
             border-slate-800/80
 
             bg-slate-900/20
 
-            px-5
+            px-4
             py-3.5
+
+            sm:flex-row
+            sm:items-center
+            sm:justify-between
+            sm:px-5
           "
         >
           <p
@@ -235,26 +254,20 @@ export default function DatasetList({
             {count === 1 ? "dataset" : "datasets"}
           </p>
 
-          {/* Pagination */}
           <div className="flex items-center gap-1.5">
             <button
               type="button"
               disabled
               className="
+                cursor-not-allowed
                 rounded-lg
-
                 border
                 border-slate-800
-
                 px-3
                 py-1.5
-
                 text-xs
                 font-medium
-
                 text-slate-600
-
-                cursor-not-allowed
               "
             >
               Previous
@@ -265,18 +278,13 @@ export default function DatasetList({
               aria-current="page"
               className="
                 rounded-lg
-
                 border
                 border-blue-500/40
-
                 bg-blue-500/10
-
                 px-3
                 py-1.5
-
                 text-xs
                 font-semibold
-
                 text-blue-400
               "
             >
@@ -287,20 +295,15 @@ export default function DatasetList({
               type="button"
               disabled
               className="
+                cursor-not-allowed
                 rounded-lg
-
                 border
                 border-slate-800
-
                 px-3
                 py-1.5
-
                 text-xs
                 font-medium
-
                 text-slate-600
-
-                cursor-not-allowed
               "
             >
               Next
