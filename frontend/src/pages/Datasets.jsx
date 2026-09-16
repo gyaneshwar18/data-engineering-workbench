@@ -36,24 +36,34 @@ export default function Datasets() {
 
       const data = await getDatasets();
 
-      setDatasets(Array.isArray(data) ? data : []);
+      setDatasets(
+        Array.isArray(data) ? data : []
+      );
     } catch (error) {
-      console.error("Failed to load datasets:", error);
+      console.error(
+        "Failed to load datasets:",
+        error
+      );
+
       setDatasets([]);
     } finally {
       setLoading(false);
     }
   };
 
+  /* ------------------------------------------------------------------ */
+  /* Filtering + Sorting                                                */
+  /* ------------------------------------------------------------------ */
+
   const filteredDatasets = useMemo(() => {
     let data = [...datasets];
 
-    /* -------------------------------------------------------------- */
-    /* Search                                                          */
-    /* -------------------------------------------------------------- */
+    /* Search */
 
     if (search.trim()) {
-      const query = search.toLowerCase().trim();
+      const query = search
+        .toLowerCase()
+        .trim();
 
       data = data.filter((dataset) =>
         dataset.table_name
@@ -62,20 +72,17 @@ export default function Datasets() {
       );
     }
 
-    /* -------------------------------------------------------------- */
-    /* Type Filter                                                      */
-    /* -------------------------------------------------------------- */
+    /* Type */
 
     if (type !== "all") {
       data = data.filter(
         (dataset) =>
-          dataset.type?.toLowerCase() === type.toLowerCase()
+          dataset.type?.toLowerCase() ===
+          type.toLowerCase()
       );
     }
 
-    /* -------------------------------------------------------------- */
-    /* Source Filter                                                    */
-    /* -------------------------------------------------------------- */
+    /* Source */
 
     if (source !== "all") {
       data = data.filter(
@@ -85,9 +92,7 @@ export default function Datasets() {
       );
     }
 
-    /* -------------------------------------------------------------- */
-    /* Sorting                                                          */
-    /* -------------------------------------------------------------- */
+    /* Sort */
 
     switch (sort) {
       case "name":
@@ -117,12 +122,10 @@ export default function Datasets() {
       case "recent":
       default:
         data.sort((a, b) => {
-          /*
-           * updated_at may currently be null for existing
-           * database tables. Those datasets stay at the bottom.
-           */
-
-          if (!a.updated_at && !b.updated_at) {
+          if (
+            !a.updated_at &&
+            !b.updated_at
+          ) {
             return 0;
           }
 
@@ -152,29 +155,35 @@ export default function Datasets() {
     sort,
   ]);
 
-  /* -------------------------------------------------------------- */
-  /* Dataset Selection                                               */
-  /* -------------------------------------------------------------- */
+  /* ------------------------------------------------------------------ */
+  /* Dataset Selection                                                  */
+  /* ------------------------------------------------------------------ */
 
   const handleSelectDataset = (dataset) => {
-    setSelectedTable(dataset.table_name);
+    setSelectedTable(
+      dataset.table_name
+    );
   };
 
   const handleBack = () => {
     setSelectedTable(null);
   };
 
-  /* -------------------------------------------------------------- */
-  /* Dataset Upload                                                   */
-  /* -------------------------------------------------------------- */
+  /* ------------------------------------------------------------------ */
+  /* Dataset Upload                                                     */
+  /* ------------------------------------------------------------------ */
 
   const handleUpload = async (file) => {
     try {
       setUploadOpen(false);
 
-      const result = await uploadDataset(file);
+      const result =
+        await uploadDataset(file);
 
-      console.log("Dataset uploaded:", result);
+      console.log(
+        "Dataset uploaded:",
+        result
+      );
 
       await loadDatasets();
     } catch (error) {
@@ -192,10 +201,27 @@ export default function Datasets() {
 
   return (
     <div className="min-h-full">
-      <div className="mx-auto max-w-[1600px] space-y-6 px-6 py-8">
+      <div
+        className="
+          mx-auto
+          w-full
+          max-w-[1600px]
 
+          space-y-5
+
+          px-4
+          py-5
+
+          sm:px-5
+          sm:py-6
+          sm:space-y-6
+
+          lg:px-6
+          lg:py-8
+        "
+      >
         {/* ---------------------------------------------------------- */}
-        {/* Dataset Detail                                             */}
+        {/* Dataset Details                                             */}
         {/* ---------------------------------------------------------- */}
 
         {selectedTable ? (
@@ -205,12 +231,20 @@ export default function Datasets() {
           />
         ) : (
           <>
-            {/* Header */}
+            {/* ------------------------------------------------------ */}
+            {/* Header                                                 */}
+            {/* ------------------------------------------------------ */}
+
             <DatasetHeader
-              onUpload={() => setUploadOpen(true)}
+              onUpload={() =>
+                setUploadOpen(true)
+              }
             />
 
-            {/* Toolbar */}
+            {/* ------------------------------------------------------ */}
+            {/* Toolbar                                                */}
+            {/* ------------------------------------------------------ */}
+
             <DatasetToolbar
               search={search}
               onSearchChange={setSearch}
@@ -222,7 +256,10 @@ export default function Datasets() {
               onSortChange={setSort}
             />
 
-            {/* Loading */}
+            {/* ------------------------------------------------------ */}
+            {/* Dataset List                                            */}
+            {/* ------------------------------------------------------ */}
+
             {loading ? (
               <DatasetListSkeleton />
             ) : (
@@ -235,62 +272,139 @@ export default function Datasets() {
         )}
       </div>
 
-      {/* Upload Dialog */}
+      {/* ------------------------------------------------------------ */}
+      {/* Upload Dialog                                                */}
+      {/* ------------------------------------------------------------ */}
+
       <UploadDatasetDialog
         open={uploadOpen}
-        onClose={() => setUploadOpen(false)}
+        onClose={() =>
+          setUploadOpen(false)
+        }
         onUpload={handleUpload}
       />
     </div>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* Loading Skeleton                                                   */
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
+/* Dataset Loading Skeleton                                           */
+/* ================================================================== */
 
 function DatasetListSkeleton() {
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-800/80 bg-slate-950/40">
+    <div
+      className="
+        overflow-hidden
+        rounded-xl
+        border
+        border-slate-800/80
+        bg-slate-950/40
 
+        sm:rounded-2xl
+      "
+    >
       {/* Header */}
-      <div className="border-b border-slate-800/80 px-5 py-4">
+
+      <div
+        className="
+          border-b
+          border-slate-800/80
+          px-4
+          py-3.5
+
+          sm:px-5
+          sm:py-4
+        "
+      >
         <div className="h-4 w-24 animate-pulse rounded bg-slate-800" />
       </div>
 
-      {/* Column Header */}
-      <div className="grid grid-cols-[minmax(260px,2fr)_140px_100px_100px_48px] items-center border-b border-slate-800/80 px-5 py-3">
+      {/* Desktop Column Header */}
+
+      <div
+        className="
+          hidden
+          grid-cols-[minmax(260px,2fr)_140px_100px_100px_48px]
+          items-center
+          border-b
+          border-slate-800/80
+          px-5
+          py-3
+
+          md:grid
+        "
+      >
         <div className="h-3 w-16 animate-pulse rounded bg-slate-800" />
+
         <div className="h-3 w-14 animate-pulse rounded bg-slate-800" />
+
         <div className="h-3 w-10 animate-pulse rounded bg-slate-800" />
+
         <div className="h-3 w-14 animate-pulse rounded bg-slate-800" />
+
         <div />
       </div>
 
       {/* Rows */}
-      {[1, 2, 3, 4, 5].map((item) => (
-        <div
-          key={item}
-          className="grid grid-cols-[minmax(260px,2fr)_140px_100px_100px_48px] items-center border-b border-slate-800/70 px-5 py-5"
-        >
-          <div className="flex items-center gap-3">
-            <div className="h-9 w-9 animate-pulse rounded-lg bg-slate-800" />
 
-            <div className="space-y-2">
-              <div className="h-3 w-32 animate-pulse rounded bg-slate-800" />
-              <div className="h-2.5 w-24 animate-pulse rounded bg-slate-800" />
+      <div className="divide-y divide-slate-800/70">
+        {[1, 2, 3, 4, 5].map(
+          (item) => (
+            <div
+              key={item}
+              className="
+                px-4
+                py-4
+
+                sm:px-5
+                sm:py-5
+
+                md:grid
+                md:grid-cols-[minmax(260px,2fr)_140px_100px_100px_48px]
+                md:items-center
+              "
+            >
+              {/* Dataset */}
+
+              <div className="flex items-center gap-3">
+                <div
+                  className="
+                    h-9
+                    w-9
+                    shrink-0
+                    animate-pulse
+                    rounded-lg
+                    bg-slate-800
+                  "
+                />
+
+                <div className="min-w-0 space-y-2">
+                  <div className="h-3 w-32 animate-pulse rounded bg-slate-800" />
+
+                  <div className="h-2.5 w-24 animate-pulse rounded bg-slate-800" />
+                </div>
+              </div>
+
+              {/* Desktop fields */}
+
+              <div className="mt-4 hidden md:block">
+                <div className="h-6 w-16 animate-pulse rounded-md bg-slate-800" />
+              </div>
+
+              <div className="mt-4 hidden md:block">
+                <div className="h-3 w-8 animate-pulse rounded bg-slate-800" />
+              </div>
+
+              <div className="mt-4 hidden md:block">
+                <div className="h-3 w-8 animate-pulse rounded bg-slate-800" />
+              </div>
+
+              <div className="hidden md:block" />
             </div>
-          </div>
-
-          <div className="h-6 w-16 animate-pulse rounded-md bg-slate-800" />
-
-          <div className="h-3 w-8 animate-pulse rounded bg-slate-800" />
-
-          <div className="h-3 w-8 animate-pulse rounded bg-slate-800" />
-
-          <div />
-        </div>
-      ))}
+          )
+        )}
+      </div>
     </div>
   );
 }

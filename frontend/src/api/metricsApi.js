@@ -4,4 +4,4 @@ export const getPipelineAnalytics = async () => {
   );
 
   return res.data;
-};
+}; 
