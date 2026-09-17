@@ -10,20 +10,39 @@ import ContactCard from "../components/profile/ContactCard";
 
 export default function Profile() {
   return (
-    <div className="min-h-screen bg-[#09090B]">
+    <div className="min-h-screen overflow-x-hidden bg-[#09090B]">
+      <div
+        className="
+          mx-auto
+          w-full
+          max-w-7xl
 
-      <div className="mx-auto max-w-7xl px-6 py-8">
+          px-4
+          py-6
 
+          sm:px-6
+          sm:py-8
+
+          lg:px-8
+        "
+      >
         {/* Header */}
 
         <ProfileHeader />
 
         {/* Content */}
 
-        <div className="mt-8 space-y-8">
+        <div
+          className="
+            mt-6
+            space-y-6
 
+            sm:mt-8
+            sm:space-y-8
+          "
+        >
           <AboutSection />
-          
+
           <EngineeringRoadmap />
 
           <ExperienceTimeline />
@@ -32,18 +51,13 @@ export default function Profile() {
 
           <Certifications />
 
-          
-
           <ProjectsTimeline />
 
           <ResumeCard />
 
           <ContactCard />
-
         </div>
-
       </div>
-
     </div>
   );
 }
