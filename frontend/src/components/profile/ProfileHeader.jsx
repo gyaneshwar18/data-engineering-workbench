@@ -12,10 +12,10 @@ export default function ProfileHeader() {
   const skills = [
     "Python",
     "SQL",
-    "PostgreSQL",
     "PySpark",
-    "FastAPI",
-    "React",
+    "Databricks",
+    "ADF",
+    "Azure Synapse"
   ];
 
   const infoItems = [
