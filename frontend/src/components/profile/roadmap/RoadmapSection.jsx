@@ -39,6 +39,7 @@ const RoadmapSection = ({
             pointer-events-none
             absolute
             inset-0
+
             bg-gradient-to-br
             from-cyan-500/5
             via-transparent
@@ -52,6 +53,7 @@ const RoadmapSection = ({
 
         <div className="relative z-10">
           <div className="flex items-center gap-3">
+
             {/* Icon */}
 
             <div
@@ -144,28 +146,35 @@ const RoadmapSection = ({
 
             grid-cols-[minmax(0,1fr)_16px_minmax(0,1fr)]
 
-            grid-rows-auto
-
             items-center
 
-            gap-y-5
+            gap-y-2
 
             lg:hidden
           "
         >
-          {/* ============================================= */}
-          {/* CARD 1 — TOP LEFT                            */}
-          {/* ============================================= */}
+          {/* ================================================= */}
+          {/* CARD 1                                           */}
+          {/* ================================================= */}
 
           {technologies[0] && (
-            <div className="col-start-1 row-start-1 min-w-0">
-              <TechnologyCard technology={technologies[0]} />
+            <div
+              className="
+                col-start-1
+                row-start-1
+
+                min-w-0
+              "
+            >
+              <TechnologyCard
+                technology={technologies[0]}
+              />
             </div>
           )}
 
-          {/* ============================================= */}
-          {/* CONNECTOR — CARD 1 → CARD 2                  */}
-          {/* ============================================= */}
+          {/* ================================================= */}
+          {/* CONNECTOR 1 → 2                                  */}
+          {/* ================================================= */}
 
           {technologies[1] && (
             <div
@@ -178,23 +187,34 @@ const RoadmapSection = ({
                 justify-center
               "
             >
-              <AnimatedConnector direction="horizontal" />
+              <AnimatedConnector
+                direction="horizontal"
+              />
             </div>
           )}
 
-          {/* ============================================= */}
-          {/* CARD 2 — TOP RIGHT                           */}
-          {/* ============================================= */}
+          {/* ================================================= */}
+          {/* CARD 2                                           */}
+          {/* ================================================= */}
 
           {technologies[1] && (
-            <div className="col-start-3 row-start-1 min-w-0">
-              <TechnologyCard technology={technologies[1]} />
+            <div
+              className="
+                col-start-3
+                row-start-1
+
+                min-w-0
+              "
+            >
+              <TechnologyCard
+                technology={technologies[1]}
+              />
             </div>
           )}
 
-          {/* ============================================= */}
-          {/* VERTICAL CONNECTOR — CARD 2 ↓ CARD 3         */}
-          {/* ============================================= */}
+          {/* ================================================= */}
+          {/* VERTICAL CONNECTOR 2 ↓ 3                        */}
+          {/* ================================================= */}
 
           {technologies[2] && (
             <div
@@ -203,28 +223,39 @@ const RoadmapSection = ({
                 row-start-2
 
                 flex
-                h-5
+                h-3
                 items-center
                 justify-center
               "
             >
-              <AnimatedConnector direction="vertical" />
+              <AnimatedConnector
+                direction="vertical"
+              />
             </div>
           )}
 
-          {/* ============================================= */}
-          {/* CARD 3 — BOTTOM LEFT                         */}
-          {/* ============================================= */}
+          {/* ================================================= */}
+          {/* CARD 3                                           */}
+          {/* ================================================= */}
 
           {technologies[2] && (
-            <div className="col-start-1 row-start-3 min-w-0">
-              <TechnologyCard technology={technologies[2]} />
+            <div
+              className="
+                col-start-1
+                row-start-3
+
+                min-w-0
+              "
+            >
+              <TechnologyCard
+                technology={technologies[2]}
+              />
             </div>
           )}
 
-          {/* ============================================= */}
-          {/* CONNECTOR — CARD 3 → CARD 4                  */}
-          {/* ============================================= */}
+          {/* ================================================= */}
+          {/* CONNECTOR 3 → 4                                  */}
+          {/* ================================================= */}
 
           {technologies[3] && (
             <div
@@ -237,17 +268,28 @@ const RoadmapSection = ({
                 justify-center
               "
             >
-              <AnimatedConnector direction="horizontal" />
+              <AnimatedConnector
+                direction="horizontal"
+              />
             </div>
           )}
 
-          {/* ============================================= */}
-          {/* CARD 4 — BOTTOM RIGHT                        */}
-          {/* ============================================= */}
+          {/* ================================================= */}
+          {/* CARD 4                                           */}
+          {/* ================================================= */}
 
           {technologies[3] && (
-            <div className="col-start-3 row-start-3 min-w-0">
-              <TechnologyCard technology={technologies[3]} />
+            <div
+              className="
+                col-start-3
+                row-start-3
+
+                min-w-0
+              "
+            >
+              <TechnologyCard
+                technology={technologies[3]}
+              />
             </div>
           )}
         </div>
@@ -267,6 +309,7 @@ const RoadmapSection = ({
 
             items-center
             justify-center
+
             gap-y-6
 
             lg:flex
@@ -275,11 +318,17 @@ const RoadmapSection = ({
         >
           {technologies.map((technology, index) => (
             <React.Fragment key={technology.id}>
-              <TechnologyCard technology={technology} />
+
+              <TechnologyCard
+                technology={technology}
+              />
 
               {index !== technologies.length - 1 && (
-                <AnimatedConnector direction="horizontal" />
+                <AnimatedConnector
+                  direction="horizontal"
+                />
               )}
+
             </React.Fragment>
           ))}
         </div>
@@ -290,7 +339,9 @@ const RoadmapSection = ({
       {/* ================================================= */}
 
       {showVerticalConnector && (
-        <AnimatedConnector direction="vertical" />
+        <AnimatedConnector
+          direction="vertical"
+        />
       )}
     </>
   );
