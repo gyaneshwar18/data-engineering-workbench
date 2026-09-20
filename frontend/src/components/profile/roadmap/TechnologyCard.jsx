@@ -127,6 +127,7 @@ const TechnologyCard = ({ technology }) => {
           sm:mt-4
           sm:text-sm
         "
+        title={name}
       >
         {name}
       </h3>
@@ -187,7 +188,7 @@ const TechnologyCard = ({ technology }) => {
             sm:px-3
             sm:text-[10px]
 
-            ${statusStyles[status]}
+            ${statusStyles[status] || statusStyles.Planned}
           `}
         >
           {status}

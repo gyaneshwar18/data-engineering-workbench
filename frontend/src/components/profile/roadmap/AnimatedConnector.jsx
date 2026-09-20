@@ -11,15 +11,18 @@ const AnimatedConnector = ({ direction = "horizontal" }) => {
         className="
           relative
           mx-auto
+
           flex
-          h-16
+          h-8
           w-6
+
           items-center
           justify-center
+
           overflow-hidden
         "
       >
-        {/* Vertical Line */}
+        {/* Line */}
 
         <div
           className="
@@ -40,8 +43,8 @@ const AnimatedConnector = ({ direction = "horizontal" }) => {
             absolute
             left-1/2
 
-            h-2.5
-            w-2.5
+            h-2
+            w-2
 
             -translate-x-1/2
 
@@ -49,7 +52,7 @@ const AnimatedConnector = ({ direction = "horizontal" }) => {
 
             bg-cyan-400
 
-            shadow-[0_0_16px_rgba(34,211,238,0.9)]
+            shadow-[0_0_14px_rgba(34,211,238,0.9)]
 
             animate-roadmap-dot-vertical
           "
@@ -66,16 +69,20 @@ const AnimatedConnector = ({ direction = "horizontal" }) => {
     <div
       className="
         relative
+
         flex
         h-6
-        w-10
+        w-8
+
         shrink-0
+
         items-center
         justify-center
+
         overflow-hidden
       "
     >
-      {/* Horizontal Line */}
+      {/* Line */}
 
       <div
         className="
@@ -95,14 +102,14 @@ const AnimatedConnector = ({ direction = "horizontal" }) => {
         className="
           absolute
 
-          h-2.5
-          w-2.5
+          h-2
+          w-2
 
           rounded-full
 
           bg-cyan-400
 
-          shadow-[0_0_16px_rgba(34,211,238,0.9)]
+          shadow-[0_0_14px_rgba(34,211,238,0.9)]
 
           animate-roadmap-dot-horizontal
         "
