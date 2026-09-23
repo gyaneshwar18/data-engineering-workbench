@@ -1,6 +1,9 @@
 import React from "react";
 
-const AnimatedConnector = ({ direction = "horizontal" }) => {
+const AnimatedConnector = ({
+  direction = "horizontal",
+  reverse = false,
+}) => {
   /* ===================================================== */
   /* VERTICAL CONNECTOR                                    */
   /* ===================================================== */
@@ -67,7 +70,7 @@ const AnimatedConnector = ({ direction = "horizontal" }) => {
 
   return (
     <div
-      className="
+      className={`
         relative
 
         flex
@@ -80,7 +83,9 @@ const AnimatedConnector = ({ direction = "horizontal" }) => {
         justify-center
 
         overflow-hidden
-      "
+
+        ${reverse ? "-scale-x-100" : ""}
+      `}
     >
       {/* Line */}
 

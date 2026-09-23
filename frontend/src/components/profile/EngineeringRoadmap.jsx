@@ -19,7 +19,7 @@ const EngineeringRoadmap = () => {
           </h2>
 
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-            My structured learning journey toward becoming a Modern Data
+            A structured learning journey toward becoming a Modern Data
             Engineer, covering programming foundations, data engineering,
             Azure cloud technologies, and production-grade data platforms.
           </p>
