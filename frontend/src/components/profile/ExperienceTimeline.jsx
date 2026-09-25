@@ -7,7 +7,8 @@ import {
 const experiences = [
   {
     company: "Software Engineer",
-    organization: "National Informatics Centre (NIC) • Sarathi Project",
+    organization:
+      "National Informatics Centre (NIC) • Sarathi Project",
     duration: "Jul 2025 – Present",
     description:
       "Contribute to the Sarathi application by analyzing database-related issues, investigating production scenarios, and delivering SQL-based solutions. Design and optimize SQL queries, prepare analytical reports, validate data integrity, troubleshoot complex database cases, improve query performance, and collaborate with cross-functional teams to ensure reliable and efficient application workflows.",
@@ -22,9 +23,6 @@ const experiences = [
   },
 ];
 
-
-
-
 export default function ExperienceSection() {
   return (
     <section
@@ -38,18 +36,45 @@ export default function ExperienceSection() {
         from-slate-900
         via-slate-900
         to-slate-950
-        p-6
+        p-5
+        sm:p-6
       "
     >
       {/* Background Glow */}
 
-      <div className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-cyan-500/5 blur-3xl" />
+      <div
+        className="
+          pointer-events-none
+          absolute
+          -right-20
+          -top-20
+          h-48
+          w-48
+          rounded-full
+          bg-cyan-500/5
+          blur-3xl
+        "
+      />
 
-      <div className="absolute -left-20 bottom-0 h-40 w-40 rounded-full bg-blue-500/5 blur-3xl" />
+      <div
+        className="
+          pointer-events-none
+          absolute
+          -bottom-20
+          -left-20
+          h-40
+          w-40
+          rounded-full
+          bg-blue-500/5
+          blur-3xl
+        "
+      />
 
       <div className="relative">
 
-        {/* Header */}
+        {/* ================================================= */}
+        {/* HEADER                                            */}
+        {/* ================================================= */}
 
         <div className="flex items-center gap-4">
 
@@ -58,6 +83,7 @@ export default function ExperienceSection() {
               flex
               h-11
               w-11
+              shrink-0
               items-center
               justify-center
               rounded-xl
@@ -73,25 +99,49 @@ export default function ExperienceSection() {
             />
           </div>
 
-          <div>
+          <div className="min-w-0">
 
-            <h2 className="text-xl font-semibold tracking-tight text-white">
+            <h2
+              className="
+                text-xl
+                font-semibold
+                tracking-tight
+                text-white
+              "
+            >
               Experience
             </h2>
 
-            <p className="mt-1 text-sm text-slate-400">
+            <p
+              className="
+                mt-1
+                text-sm
+                leading-5
+                text-slate-400
+              "
+            >
               Professional journey and industry experience
             </p>
 
           </div>
-
         </div>
 
         {/* Divider */}
 
-        <div className="my-5 h-px bg-gradient-to-r from-cyan-500/10 via-slate-700 to-transparent" />
+        <div
+          className="
+            my-5
+            h-px
+            bg-gradient-to-r
+            from-cyan-500/10
+            via-slate-700
+            to-transparent
+          "
+        />
 
-        {/* Timeline */}
+        {/* ================================================= */}
+        {/* EXPERIENCE LIST                                  */}
+        {/* ================================================= */}
 
         <div className="space-y-8">
 
@@ -99,95 +149,178 @@ export default function ExperienceSection() {
 
             <div
               key={index}
-              className="relative pl-12"
+              className="
+                relative
+
+                lg:pl-12
+              "
             >
 
-              {/* Timeline Line */}
-
-              {index !== experiences.length - 1 && (
-                <div
-                  className="
-                    absolute
-                    left-[17px]
-                    top-10
-                    h-full
-                    w-px
-                    bg-gradient-to-b
-                    from-cyan-500/40
-                    via-slate-700
-                    to-transparent
-                  "
-                />
-              )}
-
-              {/* Timeline Dot */}
+              {/* ========================================= */}
+              {/* DESKTOP TIMELINE                         */}
+              {/* ========================================= */}
 
               <div
                 className="
-                  absolute
-                  left-0
-                  top-1
-                  flex
-                  h-9
-                  w-9
-                  items-center
-                  justify-center
-                  rounded-full
-                  border
-                  border-cyan-500/30
-                  bg-cyan-500/10
-                  shadow-[0_0_15px_rgba(6,182,212,0.18)]
+                  hidden
+                  lg:block
                 "
               >
-                <div className="h-3 w-3 rounded-full bg-cyan-400" />
+
+                {/* Timeline Line */}
+
+                {index !== experiences.length - 1 && (
+                  <div
+                    className="
+                      absolute
+                      left-[17px]
+                      top-10
+                      h-full
+                      w-px
+
+                      bg-gradient-to-b
+                      from-cyan-500/40
+                      via-slate-700
+                      to-transparent
+                    "
+                  />
+                )}
+
+                {/* Timeline Dot */}
+
+                <div
+                  className="
+                    absolute
+                    left-0
+                    top-1
+
+                    flex
+                    h-9
+                    w-9
+                    items-center
+                    justify-center
+
+                    rounded-full
+
+                    border
+                    border-cyan-500/30
+
+                    bg-cyan-500/10
+
+                    shadow-[0_0_15px_rgba(6,182,212,0.18)]
+                  "
+                >
+                  <div
+                    className="
+                      h-2.5
+                      w-2.5
+                      rounded-full
+                      bg-cyan-400
+                      shadow-[0_0_10px_rgba(34,211,238,0.7)]
+                    "
+                  />
+                </div>
+
               </div>
 
-              {/* Experience Card */}
+              {/* ========================================= */}
+              {/* EXPERIENCE CARD                          */}
+              {/* ========================================= */}
 
               <div
                 className="
                   rounded-2xl
+
                   border
                   border-slate-700/50
+
                   bg-slate-800/25
-                  p-5
+
+                  p-4
+                  sm:p-5
+
                   transition-all
                   duration-300
+
                   hover:border-cyan-500/30
                   hover:bg-slate-800/35
                 "
               >
 
-                <div className="flex flex-wrap items-start justify-between gap-4">
+                {/* ===================================== */}
+                {/* ROLE                                  */}
+                {/* ===================================== */}
 
-                  <div>
+                <div
+                  className="
+                    flex
+                    items-start
+                    justify-between
+                    gap-3
+                  "
+                >
 
-                    <h3 className="text-lg font-semibold text-white">
-                      {item.company}
-                    </h3>
+                  <div className="min-w-0">
 
-                    <div className="mt-2 flex flex-wrap gap-5 text-sm text-slate-400">
+                    <div className="flex items-center gap-2">
 
-                      <span className="flex items-center gap-2">
+                      {/* Mobile Accent Dot */}
 
-                        <Building2
-                          size={15}
-                          className="text-cyan-400"
-                        />
+                      <span
+                        className="
+                          h-2
+                          w-2
+                          shrink-0
+                          rounded-full
+                          bg-cyan-400
+                          shadow-[0_0_8px_rgba(34,211,238,0.7)]
 
+                          lg:hidden
+                        "
+                      />
+
+                      <h3
+                        className="
+                          text-base
+                          font-semibold
+                          text-white
+
+                          sm:text-lg
+                        "
+                      >
+                        {item.company}
+                      </h3>
+
+                    </div>
+
+                    {/* Organization */}
+
+                    <div
+                      className="
+                        mt-2
+                        flex
+                        items-start
+                        gap-2
+
+                        text-xs
+                        leading-5
+                        text-slate-400
+
+                        sm:text-sm
+                      "
+                    >
+
+                      <Building2
+                        size={14}
+                        className="
+                          mt-0.5
+                          shrink-0
+                          text-cyan-400
+                        "
+                      />
+
+                      <span>
                         {item.organization}
-
-                      </span>
-
-                      <span className="flex items-center gap-2">
-
-                        <CalendarDays
-                          size={15}
-                          className="text-cyan-400"
-                        />
-
-                        {item.duration}
-
                       </span>
 
                     </div>
@@ -195,35 +328,107 @@ export default function ExperienceSection() {
                   </div>
 
                 </div>
-                <p className="mt-5 text-[15px] leading-8 text-slate-300">
+
+                {/* ===================================== */}
+                {/* DATE                                  */}
+                {/* ===================================== */}
+
+                <div
+                  className="
+                    mt-3
+
+                    inline-flex
+                    items-center
+                    gap-2
+
+                    rounded-lg
+                    border
+                    border-slate-700/50
+                    bg-slate-800/40
+
+                    px-2.5
+                    py-1.5
+
+                    text-xs
+                    text-slate-400
+                  "
+                >
+
+                  <CalendarDays
+                    size={13}
+                    className="text-cyan-400"
+                  />
+
+                  {item.duration}
+
+                </div>
+
+                {/* ===================================== */}
+                {/* DESCRIPTION                           */}
+                {/* ===================================== */}
+
+                <p
+                  className="
+                    mt-4
+
+                    text-sm
+                    leading-6
+                    text-slate-300
+
+                    sm:mt-5
+                    sm:text-[15px]
+                    sm:leading-7
+                  "
+                >
                   {item.description}
                 </p>
 
-                {/* Tech Stack */}
+                {/* ===================================== */}
+                {/* TECHNOLOGIES                          */}
+                {/* ===================================== */}
 
-                <div className="mt-5 flex flex-wrap gap-2">
+                <div
+                  className="
+                    mt-4
+                    flex
+                    flex-wrap
+                    gap-1.5
+
+                    sm:mt-5
+                    sm:gap-2
+                  "
+                >
 
                   {item.tech.map((tech) => (
 
                     <span
                       key={tech}
                       className="
-                          rounded-full
-                          border
-                          border-emerald-500/20
-                          bg-emerald-500/10
-                          px-3
-                          py-1
-                          text-xs
-                          font-medium
-                          text-emerald-300
-                          shadow-[0_0_10px_rgba(16,185,129,0.10)]
-                          transition-all
-                          duration-300
-                          hover:border-emerald-400/35
-                          hover:bg-emerald-500/15
-                          hover:shadow-[0_0_18px_rgba(16,185,129,0.18)]
-                          "
+                        rounded-full
+
+                        border
+                        border-emerald-500/20
+
+                        bg-emerald-500/10
+
+                        px-2.5
+                        py-1
+
+                        text-[10px]
+                        font-medium
+                        text-emerald-300
+
+                        shadow-[0_0_10px_rgba(16,185,129,0.10)]
+
+                        transition-all
+                        duration-300
+
+                        hover:border-emerald-400/35
+                        hover:bg-emerald-500/15
+
+                        sm:px-3
+                        sm:text-xs
+                      "
                     >
                       {tech}
                     </span>
@@ -241,7 +446,6 @@ export default function ExperienceSection() {
         </div>
 
       </div>
-
     </section>
   );
 }

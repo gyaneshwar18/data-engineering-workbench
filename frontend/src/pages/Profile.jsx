@@ -1,7 +1,7 @@
 import ProfileHeader from "../components/profile/ProfileHeader";
 import AboutSection from "../components/profile/AboutSection";
 import ExperienceTimeline from "../components/profile/ExperienceTimeline";
-import TechStack from "../components/profile/TechStack";
+
 import Certifications from "../components/profile/Certifications";
 import EngineeringRoadmap from "../components/profile/EngineeringRoadmap";
 import ProjectsTimeline from "../components/profile/ProjectsTimeline";
@@ -47,7 +47,7 @@ export default function Profile() {
 
           <ExperienceTimeline />
 
-          <TechStack />
+         
 
           <Certifications />
 
