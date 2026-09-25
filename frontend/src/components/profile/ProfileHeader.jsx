@@ -491,7 +491,7 @@ export default function ProfileHeader() {
             </Link>
 
             <a
-              href="/resume.pdf"
+              href="/resume/Gyaneshwar_Suryavanshi_Resume.pdf"
               download
               className="
                 inline-flex
