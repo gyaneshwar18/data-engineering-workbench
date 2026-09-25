@@ -1,36 +1,29 @@
-import {
-  Award,
-  ExternalLink,
-} from "lucide-react";
+import { Award } from "lucide-react";
 
 const certifications = [
   {
-    title: "AWS Academy Cloud Foundations",
-    provider: "AWS Academy",
-    year: "2024",
+    title: "Azure Data Engineering",
+    provider: "Udemy",
+    year: "2026",
     logo: "☁️",
-    verified: true,
   },
   {
-    title: "Google IT Automation with Python",
-    provider: "Google",
-    year: "2024",
+    title: "SQL",
+    provider: "Great Learning Academy",
+    year: "2026",
+    logo: "🗄️",
+  },
+  {
+    title: "Python for Data Science",
+    provider: "Great Learning Academy",
+    year: "2026",
     logo: "🐍",
-    verified: true,
   },
   {
-    title: "Google UX Design",
-    provider: "Google",
-    year: "2024",
-    logo: "🎨",
-    verified: true,
-  },
-  {
-    title: "C Programming",
-    provider: "IIT Bombay",
-    year: "2023",
-    logo: "💻",
-    verified: true,
+    title: "Introduction to Data Analytics",
+    provider: "Simplilearn SkillUp",
+    year: "2026",
+    logo: "📊",
   },
 ];
 
@@ -55,6 +48,7 @@ export default function Certifications() {
             flex
             h-11
             w-11
+            shrink-0
             items-center
             justify-center
             rounded-xl
@@ -69,7 +63,7 @@ export default function Certifications() {
           />
         </div>
 
-        <div>
+        <div className="min-w-0">
 
           <h2 className="text-xl font-semibold text-white">
             Certifications
@@ -97,97 +91,64 @@ export default function Certifications() {
               border-slate-800
               bg-slate-950/60
               p-5
+
               transition-all
               duration-200
+
               hover:border-amber-500/30
+              hover:bg-slate-950/80
             "
           >
 
-            <div className="flex items-start justify-between">
+            <div className="flex items-start gap-4">
 
-              <div className="flex gap-4">
+              {/* Certificate Icon */}
 
-                <div
-                  className="
-                    flex
-                    h-12
-                    w-12
-                    items-center
-                    justify-center
-                    rounded-xl
-                    border
-                    border-slate-700
-                    bg-slate-800
-                    text-2xl
-                  "
-                >
-                  {cert.logo}
-                </div>
-
-                <div>
-
-                  <h3 className="font-semibold text-white leading-6">
-                    {cert.title}
-                  </h3>
-
-                  <p className="mt-1 text-sm text-slate-400">
-                    {cert.provider}
-                  </p>
-
-                  <p className="mt-2 text-xs text-slate-500">
-                    Issued • {cert.year}
-                  </p>
-
-                </div>
-
-              </div>
-
-              {cert.verified && (
-
-                <span
-                  className="
-                    rounded-full
-                    border
-                    border-emerald-500/20
-                    bg-emerald-500/10
-                    px-3
-                    py-1
-                    text-xs
-                    font-medium
-                    text-emerald-400
-                  "
-                >
-                  Verified
-                </span>
-
-              )}
-
-            </div>
-
-            <div className="mt-5">
-
-              <button
+              <div
                 className="
-                  inline-flex
+                  flex
+                  h-12
+                  w-12
+                  shrink-0
                   items-center
-                  gap-2
-                  rounded-lg
+                  justify-center
+
+                  rounded-xl
+
                   border
                   border-slate-700
-                  px-3
-                  py-2
-                  text-sm
-                  text-slate-300
-                  transition-all
-                  hover:border-blue-500
-                  hover:text-white
+
+                  bg-slate-800
+
+                  text-2xl
                 "
               >
-                Verify
+                {cert.logo}
+              </div>
 
-                <ExternalLink size={15} />
+              {/* Certificate Details */}
 
-              </button>
+              <div className="min-w-0">
+
+                <h3
+                  className="
+                    font-semibold
+                    leading-6
+                    text-white
+                  "
+                >
+                  {cert.title}
+                </h3>
+
+                <p className="mt-1 text-sm text-slate-400">
+                  {cert.provider}
+                </p>
+
+                <p className="mt-2 text-xs text-slate-500">
+                  Issued • {cert.year}
+                </p>
+
+              </div>
 
             </div>
 
