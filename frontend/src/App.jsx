@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Profile from "./pages/Profile";
 
+import Profile from "./pages/Profile";
 import Landing from "./pages/Landing";
 import AppLayout from "./layout/AppLayout";
 
@@ -10,6 +10,8 @@ import SqlLab from "./pages/SqlLab";
 import Pipelines from "./pages/Pipelines";
 import Datasets from "./pages/Datasets";
 
+import WorkbenchOverview from "./components/profile/WorkbenchOverview";
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -18,7 +20,7 @@ export default function App() {
         {/* Landing */}
         <Route path="/" element={<Landing />} />
 
-        {/* Workbench (with Sidebar + Topbar) */}
+        {/* Workbench */}
         <Route path="/workbench" element={<AppLayout />}>
 
           {/* Default Dashboard */}
@@ -28,7 +30,12 @@ export default function App() {
           <Route path="sql-lab" element={<SqlLab />} />
           <Route path="pipelines" element={<Pipelines />} />
           <Route path="datasets" element={<Datasets />} />
+
+          {/* Profile */}
           <Route path="profile" element={<Profile />} />
+
+          {/* About Workbench */}
+          <Route path="about" element={<WorkbenchOverview />} />
 
         </Route>
 

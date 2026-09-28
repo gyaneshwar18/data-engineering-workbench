@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
 import { Menu } from "lucide-react";
+import ProfileDropdown from "./ProfileDropdown";
 
 export default function Topbar({
   sidebarExpanded = false,
@@ -8,6 +8,8 @@ export default function Topbar({
   return (
     <header
       className="
+        relative
+        z-[100]
         flex
         h-[72px]
         w-full
@@ -28,9 +30,14 @@ export default function Topbar({
         lg:px-7
       "
     >
-      {/* Left side */}
+      {/* ================================================= */}
+      {/* LEFT SIDE                                        */}
+      {/* ================================================= */}
+
       <div className="flex min-w-0 flex-1 items-center">
+
         {/* Mobile / tablet navigation toggle */}
+
         <button
           type="button"
           onClick={onMenuToggle}
@@ -41,34 +48,34 @@ export default function Topbar({
           }
           aria-expanded={sidebarExpanded}
           className="
-      mr-3
-      flex
-      h-10
-      w-10
-      shrink-0
-      items-center
-      justify-center
+            mr-3
+            flex
+            h-10
+            w-10
+            shrink-0
+            items-center
+            justify-center
 
-      rounded-lg
+            rounded-lg
 
-      border
-      border-slate-800
+            border
+            border-slate-800
 
-      text-slate-400
+            text-slate-400
 
-      transition-colors
-      duration-150
+            transition-colors
+            duration-150
 
-      hover:border-slate-700
-      hover:bg-slate-800/60
-      hover:text-slate-200
+            hover:border-slate-700
+            hover:bg-slate-800/60
+            hover:text-slate-200
 
-      focus:outline-none
-      focus:ring-2
-      focus:ring-blue-500/30
+            focus:outline-none
+            focus:ring-2
+            focus:ring-blue-500/30
 
-      lg:hidden
-    "
+            lg:hidden
+          "
         >
           <Menu
             size={19}
@@ -78,229 +85,46 @@ export default function Topbar({
         </button>
 
         {/* Application identity */}
+
         <div className="min-w-0">
           <h2
             className="
-        truncate
-        text-base
-        font-semibold
-        leading-6
-        tracking-tight
-        text-slate-100
+              truncate
+              text-base
+              font-semibold
+              leading-6
+              tracking-tight
+              text-slate-100
 
-        sm:text-lg
-      "
+              sm:text-lg
+            "
           >
             Data Foundry
           </h2>
 
           <p
             className="
-        mt-0.5
-        text-[11px]
-        font-medium
-        leading-4
-        text-slate-500
+              mt-0.5
+              text-[11px]
+              font-medium
+              leading-4
+              text-slate-500
 
-        sm:text-xs
-      "
+              sm:text-xs
+            "
           >
             Data Engineering Platform
           </p>
         </div>
       </div>
 
-      {/* Profile */}
-      <Link
-        to="/workbench/profile"
-        aria-label="View Gyaneshwar's profile"
-        className="
-          group
-          relative
-          ml-3
-          flex
-          shrink-0
-          items-center
+      {/* ================================================= */}
+      {/* PROFILE DROPDOWN — RIGHT SIDE                    */}
+      {/* ================================================= */}
 
-          py-1.5
-
-          transition-all
-          duration-200
-
-          focus:outline-none
-
-          sm:ml-4
-        "
-      >
-        {/* Profile tooltip */}
-        <span
-          className="
-            pointer-events-none
-            invisible
-
-            absolute
-            right-0
-            top-full
-            z-50
-
-            mt-1.5
-
-            whitespace-nowrap
-
-            rounded-lg
-            border
-            border-slate-700/80
-
-            bg-slate-800
-
-            px-3
-            py-1.5
-
-            text-xs
-            font-medium
-            text-slate-100
-
-            shadow-lg
-            shadow-black/30
-
-            opacity-0
-            translate-y-[-2px]
-
-            transition-all
-            duration-150
-
-            group-hover:visible
-            group-hover:translate-y-0
-            group-hover:opacity-100
-          "
-        >
-          View my profile
-        </span>
-
-        {/* Avatar */}
-        <div
-          className="
-            relative
-            h-9
-            w-9
-            shrink-0
-            rounded-full
-
-            transition-transform
-            duration-200
-
-            group-hover:scale-[1.03]
-
-            sm:h-10
-            sm:w-10
-          "
-        >
-          {/* Subtle avatar glow */}
-          <div
-            className="
-              absolute
-              -inset-1.5
-              rounded-full
-
-              bg-blue-500/15
-
-              opacity-80
-              blur-md
-
-              transition-all
-              duration-200
-
-              group-hover:bg-blue-500/25
-              group-hover:opacity-100
-            "
-          />
-
-          <div
-            className="
-              relative
-              h-9
-              w-9
-              overflow-hidden
-              rounded-full
-
-              bg-slate-900
-
-              shadow-[0_0_14px_rgba(59,130,246,0.16)]
-
-              transition-all
-              duration-200
-
-              group-hover:shadow-[0_0_22px_rgba(59,130,246,0.28)]
-
-              sm:h-10
-              sm:w-10
-            "
-          >
-            <img
-              src="/images/developer-avatar.svg"
-              alt="Gyaneshwar"
-              className="
-                h-full
-                w-full
-                object-cover
-              "
-            />
-          </div>
-        </div>
-
-        {/* Name — only when enough space exists */}
-        <span
-          className="
-            hidden
-            ml-3
-
-            text-sm
-            font-semibold
-            tracking-tight
-            text-slate-200
-
-            transition-colors
-            duration-200
-
-            group-hover:text-white
-
-            md:block
-          "
-        >
-          Gyaneshwar
-        </span>
-
-        {/* Profile navigation indicator */}
-        <svg
-          viewBox="0 0 20 20"
-          fill="none"
-          className="
-            ml-1
-            hidden
-            h-4
-            w-4
-
-            text-slate-600
-
-            transition-all
-            duration-200
-
-            group-hover:translate-x-0.5
-            group-hover:text-blue-400
-
-            md:block
-          "
-          aria-hidden="true"
-        >
-          <path
-            d="M7.5 4.5L13 10L7.5 15.5"
-            stroke="currentColor"
-            strokeWidth="1.7"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </Link>
+      <div className="ml-3 shrink-0 sm:ml-4">
+        <ProfileDropdown />
+      </div>
     </header>
   );
 }
