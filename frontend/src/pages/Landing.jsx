@@ -28,7 +28,7 @@ export default function Landing() {
         className="
           absolute
           inset-0
-          bg-[url('/images/data-bg-mobile.png')]
+          bg-[url('/images/data-bg-mobile3.png')]
           bg-cover
           bg-center
           bg-no-repeat
