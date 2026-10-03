@@ -3,6 +3,10 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
+  color-scheme: light dark;
+}
+
+.dark {
   color-scheme: dark;
 }
 

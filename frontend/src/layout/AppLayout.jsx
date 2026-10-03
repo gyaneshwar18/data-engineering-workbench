@@ -15,7 +15,7 @@ export default function AppLayout() {
   }
 
   return (
-    <div className="flex h-screen w-full min-w-0 overflow-hidden">
+    <div className="dark flex h-screen w-full min-w-0 overflow-hidden">
       {/* Navigation */}
       <Sidebar
         expanded={sidebarExpanded}
