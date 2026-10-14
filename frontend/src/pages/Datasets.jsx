@@ -40,6 +40,12 @@ export default function Datasets() {
     loadDatasets();
   }, []);
 
+  useEffect(() => {
+    if (selectedTable === null) {
+      document.querySelector("main")?.scrollTo(0, 0);
+    }
+  }, [selectedTable]);
+
   const loadDatasets = async () => {
     try {
       setLoading(true);

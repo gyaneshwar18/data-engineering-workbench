@@ -9,11 +9,18 @@ export default function AppLayout() {
   const mainRef = useRef(null);
 
   useLayoutEffect(() => {
-    if (mainRef.current) {
-      mainRef.current.scrollTop = 0;
-      mainRef.current.scrollLeft = 0;
-    }
-  }, [location.pathname]);
+    const main = mainRef.current;
+    if (!main) return undefined;
+
+    const scrollToTop = () => {
+      main.scrollTop = 0;
+      main.scrollLeft = 0;
+    };
+
+    scrollToTop();
+    const frame = window.requestAnimationFrame(scrollToTop);
+    return () => window.cancelAnimationFrame(frame);
+  }, [location.key]);
 
   function toggleSidebar() {
     setSidebarExpanded((current) => !current);
