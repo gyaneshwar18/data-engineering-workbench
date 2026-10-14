@@ -1,10 +1,19 @@
-import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { useLayoutEffect, useRef, useState } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 
 export default function AppLayout() {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
+  const location = useLocation();
+  const mainRef = useRef(null);
+
+  useLayoutEffect(() => {
+    if (mainRef.current) {
+      mainRef.current.scrollTop = 0;
+      mainRef.current.scrollLeft = 0;
+    }
+  }, [location.pathname]);
 
   function toggleSidebar() {
     setSidebarExpanded((current) => !current);
@@ -31,6 +40,7 @@ export default function AppLayout() {
         />
 
         <main
+          ref={mainRef}
           className="
             min-w-0
             flex-1
