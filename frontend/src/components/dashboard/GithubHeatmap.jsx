@@ -7,12 +7,16 @@ import ContributionGrid from "./ContributionGrid";
 export default function GithubHeatmap() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetchGithubData();
   }, []);
 
   async function fetchGithubData() {
+    setLoading(true);
+    setError("");
+
     try {
       const res = await apiClient.get(
         "/github/contributions"
@@ -20,7 +24,10 @@ export default function GithubHeatmap() {
 
       setData(res.data);
     } catch (err) {
-      console.error(err);
+      setError(
+        err.response?.data?.detail ||
+        "Could not load GitHub contributions. Check the backend connection and try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -182,21 +189,42 @@ export default function GithubHeatmap() {
               weeks={data.weeks}
             />
           </div>
+        ) : loading ? (
+          <div
+            className="flex h-[100px] items-center justify-center text-xs text-slate-500 sm:h-[120px] sm:text-sm"
+            role="status"
+          >
+            Loading contributions...
+          </div>
         ) : (
           <div
             className="
               flex
-              h-[100px]
+              min-h-[100px]
+              flex-col
               items-center
               justify-center
+              gap-3
+              px-2
+              py-4
+              text-center
               text-xs
               text-slate-500
 
-              sm:h-[120px]
+              sm:min-h-[120px]
               sm:text-sm
             "
+            role="status"
+            aria-live="polite"
           >
-            {loading ? "Loading contributions..." : "Contributions unavailable"}
+            <p className="max-w-lg">{error || "Contributions are unavailable right now."}</p>
+            <button
+              type="button"
+              onClick={fetchGithubData}
+              className="rounded-lg border border-slate-700 px-3 py-1.5 font-medium text-slate-300 transition hover:border-slate-500 hover:bg-slate-800 hover:text-white"
+            >
+              Try again
+            </button>
           </div>
         )}
       </div>
