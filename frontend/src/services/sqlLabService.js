@@ -1,4 +1,5 @@
 import axios from "axios";
+import apiClient from "../api/httpClient";
 
 const API = import.meta.env.VITE_API_BASE_URL;
 
@@ -8,40 +9,43 @@ const sqlLabService = {
   /* ================================================== */
 
   async fetchTables() {
-    const { data } = await axios.get(
-      `${API}/sql-lab/tables`
+    const { data } = await apiClient.get(
+      "/sql-lab/tables"
     );
 
     return data;
   },
 
   async fetchSchema(tableName) {
-    const { data } = await axios.get(
-      `${API}/sql-lab/schema/${tableName}`
+    const { data } = await apiClient.get(
+      `/sql-lab/schema/${tableName}`
     );
 
     return data;
   },
 
   async fetchMetadata() {
-    const tables = await this.fetchTables();
+    try {
+      const { data } = await apiClient.get(
+        "/sql-lab/metadata"
+      );
 
-    const allColumns = {};
+      return data;
+    } catch (error) {
+      if (error.response?.status !== 404) throw error;
 
-    await Promise.all(
-      tables.map(async (table) => {
-        const columns = await this.fetchSchema(table);
+      const tables = await this.fetchTables();
+      const columns = {};
 
-        allColumns[table] = columns.map(
-          (column) => column.column
-        );
-      })
-    );
+      await Promise.all(
+        tables.map(async (table) => {
+          const schema = await this.fetchSchema(table);
+          columns[table] = schema.map((column) => column.column);
+        })
+      );
 
-    return {
-      tables,
-      columns: allColumns,
-    };
+      return { tables, columns };
+    }
   },
 
   /* ================================================== */
@@ -64,8 +68,8 @@ const sqlLabService = {
   /* ================================================== */
 
   async fetchHistory() {
-    const { data } = await axios.get(
-      `${API}/sql-lab/history`
+    const { data } = await apiClient.get(
+      "/sql-lab/history"
     );
 
     return data;
@@ -87,8 +91,8 @@ const sqlLabService = {
   },
 
   async fetchSavedQueries() {
-    const { data } = await axios.get(
-      `${API}/sql-lab/saved`
+    const { data } = await apiClient.get(
+      "/sql-lab/saved"
     );
 
     return data;

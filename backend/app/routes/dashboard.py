@@ -4,6 +4,12 @@ from sqlalchemy import func, text
 
 from app.database import get_db
 from app.models import QueryHistory, Pipeline, PipelineRun
+from app.routes.metrics import (
+    pipeline_analytics,
+    pipeline_trends,
+    query_performance,
+    query_stats,
+)
 
 
 router = APIRouter()
@@ -67,6 +73,19 @@ def get_dashboard_stats(
         "datasets": datasets,
         "pipelines": pipelines,
         "api_sources": api_sources,
+    }
+
+
+@router.get("/dashboard/overview")
+def get_dashboard_overview(
+    db: Session = Depends(get_db),
+):
+    return {
+        "stats": get_dashboard_stats(db),
+        "metrics": query_stats(db),
+        "performance": query_performance(db),
+        "pipelineAnalytics": pipeline_analytics(db),
+        "pipelineTrends": pipeline_trends(db),
     }
 
 

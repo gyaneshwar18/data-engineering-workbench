@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import apiClient from "../api/httpClient";
 import {
   CheckCircle2,
   AlertCircle,
@@ -72,9 +73,7 @@ export default function Pipelines() {
         setLoading(true);
       }
 
-      const res = await axios.get(
-        `${API}/pipelines`
-      );
+      const res = await apiClient.get("/pipelines");
 
       setPipelines(res.data);
     } catch (err) {

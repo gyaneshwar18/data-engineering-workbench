@@ -160,6 +160,25 @@ def get_tables(db: Session = Depends(get_db)):
     return [t[0] for t in tables]
 
 
+@router.get("/sql-lab/metadata")
+def get_sql_lab_metadata(db: Session = Depends(get_db)):
+    rows = db.execute(text("""
+        SELECT table_name, column_name
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+        ORDER BY table_name, ordinal_position
+    """)).fetchall()
+
+    columns_by_table = {}
+    for table_name, column_name in rows:
+        columns_by_table.setdefault(table_name, []).append(column_name)
+
+    return {
+        "tables": list(columns_by_table),
+        "columns": columns_by_table,
+    }
+
+
 @router.get("/sql-lab/table/{table_name}")
 def get_table_data(table_name: str, db: Session = Depends(get_db)):
 

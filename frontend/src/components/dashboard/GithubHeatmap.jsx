@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import apiClient from "../../api/httpClient";
 import { Github, ExternalLink } from "lucide-react";
 
 import ContributionGrid from "./ContributionGrid";
 
 export default function GithubHeatmap() {
   const [data, setData] = useState(null);
-
-  const API = import.meta.env.VITE_API_BASE_URL;
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchGithubData();
@@ -15,13 +14,15 @@ export default function GithubHeatmap() {
 
   async function fetchGithubData() {
     try {
-      const res = await axios.get(
-        `${API}/github/contributions`
+      const res = await apiClient.get(
+        "/github/contributions"
       );
 
       setData(res.data);
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -111,7 +112,9 @@ export default function GithubHeatmap() {
             >
               {data
                 ? `${data.total_contributions} contributions • Last 12 months`
-                : "Loading contributions..."}
+                : loading
+                  ? "Loading contributions..."
+                  : "Contributions unavailable"}
             </p>
           </div>
         </div>
@@ -193,7 +196,7 @@ export default function GithubHeatmap() {
               sm:text-sm
             "
           >
-            Loading contributions...
+            {loading ? "Loading contributions..." : "Contributions unavailable"}
           </div>
         )}
       </div>

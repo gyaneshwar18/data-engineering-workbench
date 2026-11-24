@@ -1,19 +1,16 @@
-import axios from "axios";
-
-const API = import.meta.env.VITE_API_BASE_URL;
-
+import apiClient from "./httpClient";
 
 export const getTopSlowQueries = async () => {
-  const res = await axios.get(
-    `${API}/metrics/analytics/top-slow-queries`
+  const res = await apiClient.get(
+    "/metrics/analytics/top-slow-queries"
   );
 
   return res.data;
 };
 
 export const getRecentActivity = async () => {
-  const res = await axios.get(
-    `${API}/dashboard/recent-activity`
+  const res = await apiClient.get(
+    "/dashboard/recent-activity"
   );
 
   return res.data;

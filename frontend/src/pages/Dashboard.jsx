@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useCallback, useEffect, useRef, useState } from "react";
+import apiClient from "../api/httpClient";
 
 import MetricCard from "../components/ui/MetricCard";
 import QueryChart from "../components/QueryChart";
@@ -17,6 +17,7 @@ import {
   BadgeCheck,
   CheckCircle2,
   AlertTriangle,
+  RefreshCw,
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -27,60 +28,97 @@ export default function Dashboard() {
   const [pipelineTrends, setPipelineTrends] = useState([]);
 
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
+  const hasLoadedRef = useRef(false);
 
-  const API = import.meta.env.VITE_API_BASE_URL;
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
-      const [
-        statsRes,
-        metricsRes,
-        perfRes,
-        pipelineRes,
-        trendRes,
-      ] = await Promise.all([
-        axios.get(`${API}/dashboard/stats`),
-        axios.get(`${API}/metrics/query-stats`),
-        axios.get(`${API}/metrics/query-performance`),
-        axios.get(`${API}/metrics/pipeline-analytics`),
-        axios.get(`${API}/metrics/pipeline-trends`),
-      ]);
+      setLoadError(null);
+      if (!hasLoadedRef.current) setLoading(true);
 
-      setStats(statsRes.data);
-      setMetrics(metricsRes.data);
-      setPerformance(perfRes.data);
-      setPipelineAnalytics(pipelineRes.data);
-      setPipelineTrends(trendRes.data);
+      let data;
+      try {
+        ({ data } = await apiClient.get(
+          "/dashboard/overview"
+        ));
+      } catch (err) {
+        if (err.response?.status !== 404) throw err;
+
+        const [statsRes, metricsRes, performanceRes, analyticsRes, trendsRes] =
+          await Promise.all([
+            apiClient.get("/dashboard/stats"),
+            apiClient.get("/metrics/query-stats"),
+            apiClient.get("/metrics/query-performance"),
+            apiClient.get("/metrics/pipeline-analytics"),
+            apiClient.get("/metrics/pipeline-trends"),
+          ]);
+
+        data = {
+          stats: statsRes.data,
+          metrics: metricsRes.data,
+          performance: performanceRes.data,
+          pipelineAnalytics: analyticsRes.data,
+          pipelineTrends: trendsRes.data,
+        };
+      }
+
+      setStats(data.stats);
+      setMetrics(data.metrics);
+      setPerformance(data.performance);
+      setPipelineAnalytics(data.pipelineAnalytics);
+      setPipelineTrends(data.pipelineTrends);
       setLastUpdated(new Date());
+      hasLoadedRef.current = true;
     } catch (err) {
       console.error("Dashboard error:", err);
+      setLoadError(
+        "Dashboard data could not be loaded. Check your connection and try again."
+      );
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   if (
-    loading ||
     !stats ||
     !performance ||
     !pipelineAnalytics
   ) {
     return (
-      <p
+      <div
         className="
+          flex
+          min-h-48
+          flex-col
+          items-start
+          justify-center
+          gap-3
           p-4
-          text-white
+          text-sm
+          text-slate-300
           sm:p-5
           md:p-6
         "
       >
-        Loading dashboard...
-      </p>
+        <p role={loading ? "status" : "alert"}>
+          {loading ? "Loading dashboard..." : loadError || "Dashboard data is unavailable."}
+        </p>
+        {!loading && (
+          <button
+            type="button"
+            onClick={fetchData}
+            className="inline-flex items-center gap-2 rounded-md border border-slate-700 px-3 py-2 text-sm text-slate-200 hover:bg-slate-800"
+          >
+            <RefreshCw size={15} />
+            Retry
+          </button>
+        )}
+      </div>
     );
   }
 
