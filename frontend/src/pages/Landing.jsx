@@ -171,30 +171,8 @@ export default function Landing() {
               md:leading-[1.7]
             "
           >
-            Data Engineering & SQL Specialist building analytics
-            platforms, ETL pipelines, and dashboard-driven insights.
-          </p>
-
-          <p
-            className="
-              mt-2
-              w-full
-              max-w-[195px]
-              text-[9px]
-              leading-[1.5]
-              text-slate-200
-
-              sm:max-w-[220px]
-              sm:text-[10px]
-
-              md:mt-3
-              md:max-w-[570px]
-              md:text-[13px]
-              md:leading-relaxed
-            "
-          >
-            A hands-on workbench for turning datasets into insights: upload data,
-            explore it with SQL, run pipelines, and monitor results in one place.
+            Data Engineering &amp; SQL Specialist building data platforms that
+            turn raw data into insights through ETL pipelines, SQL, and dashboards.
           </p>
 
           {/* ================================================= */}
