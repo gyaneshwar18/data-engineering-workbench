@@ -66,7 +66,7 @@ export default function ProfileActions() {
         {/* Resume */}
 
         <a
-          href="/resume.pdf"
+          href="/resume/Gyaneshwar_Suryavanshi_Resume.pdf"
           target="_blank"
           className="
             flex
